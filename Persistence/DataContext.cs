@@ -8,7 +8,13 @@ namespace Persistence
         public DataContext(DbContextOptions options) : base(options)
         {
         }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Complaint>().Property(q => q.decLat).HasPrecision(8, 6);
+            modelBuilder.Entity<Complaint>().Property(q => q.decLng).HasPrecision(8, 6);
 
-        public DbSet<Activity> Activities { get; set; }
+        }
+
+        public DbSet<Complaint> Complaints { get; set; }
     }
 }
