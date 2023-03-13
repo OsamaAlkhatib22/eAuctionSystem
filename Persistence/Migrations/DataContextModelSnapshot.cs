@@ -31,10 +31,6 @@ namespace Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("intId"), 1L, 1);
 
-                    b.Property<byte[]>("bytImage")
-                        .HasColumnType("varbinary(max)")
-                        .HasColumnName("IMAGE");
-
                     b.Property<decimal>("decLat")
                         .HasPrecision(8, 6)
                         .HasColumnType("decimal(8,6)")
@@ -45,8 +41,33 @@ namespace Persistence.Migrations
                         .HasColumnType("decimal(8,6)")
                         .HasColumnName("LNG");
 
-                    b.Property<DateTime>("dtmSubmissionDate")
-                        .HasColumnType("datetime2");
+                    b.Property<decimal>("decPriority")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("PRIORITY");
+
+                    b.Property<DateTime>("dtmDateLastModified")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATE_LAST_MODIFIED");
+
+                    b.Property<DateTime>("dtmDateLastReminded")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATE_LAST_REMINDED");
+
+                    b.Property<DateTime>("dtmDateSubmitted")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DATE_SUBMITTED");
+
+                    b.Property<int>("intLastModifiedBy")
+                        .HasColumnType("int")
+                        .HasColumnName("LAST_MODIFIED_BY");
+
+                    b.Property<int>("intReminder")
+                        .HasColumnType("int")
+                        .HasColumnName("REMINDER");
+
+                    b.Property<int>("intStatus")
+                        .HasColumnType("int")
+                        .HasColumnName("STATUS");
 
                     b.Property<int>("intType")
                         .HasColumnType("int")
@@ -60,9 +81,14 @@ namespace Persistence.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("ADDRESS");
 
-                    b.Property<string>("strCategory")
+                    b.Property<string>("strComment")
                         .HasColumnType("nvarchar(max)")
-                        .HasColumnName("CLASSIFICATION");
+                        .HasColumnName("COMMENT");
+
+                    b.Property<string>("strImageRef")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("IMAGE_REF");
 
                     b.HasKey("intId");
 
