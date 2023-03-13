@@ -11,7 +11,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<DataContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetComplaintsList.Handler).Assembly));
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(MediatREntrypoint).Assembly));
 
 
 var app = builder.Build();

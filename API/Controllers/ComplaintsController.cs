@@ -10,22 +10,23 @@ namespace API.Controllers
     public class ComplaintsController : BaseApiController
     {
         [HttpGet] // .../api/complaints
-        public async Task<ActionResult<List<Complaint>>> GetComplaints()
+        public async Task<ActionResult<List<Complaint>>> GetComplaintsList()
         {
-            return await Mediator.Send(new GetComplaintsList.Query());
+            return await Mediator.Send(new GetComplaintsListQuery());
         }
 
-        [HttpGet("{id}")] // .../api/activities/44531BAE-4B45-4FCC-BF2F-565DFFB9EA81
-        public async Task<ActionResult<Complaint>> GetComplaint(int id)
+        [HttpGet("{id}")] // .../api/complaints/...
+        public async Task<ActionResult<Complaint>> GetComplaintById(int id)
         {
-            return await Mediator.Send(new GetComplaint.Query { Id = id });
+            return await Mediator.Send(new GetComplaintByIdQuery(id));
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateComplaint(Complaint complaint)
+        [HttpPost] // .../api/complaints
+        public async Task<IActionResult> InsertComplaint([FromBody]Complaint complaint)
         {
-            await Mediator.Send(new AddComplaint.Command { Complaint = complaint});
-            return Ok();
+            Console.WriteLine(complaint);
+            var command = new InsertComplaintCommand(complaint);
+            return Ok(await Mediator.Send(command));
         }
 
     }
