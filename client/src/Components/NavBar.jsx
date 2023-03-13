@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 // Context
-import AppContext from "../AppContext";
+import AppContext from "../Context/AppContext";
 
 // Mui
 import {

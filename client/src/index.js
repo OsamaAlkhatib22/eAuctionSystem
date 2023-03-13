@@ -8,10 +8,10 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 
 // Context
-import { AppProvider } from "./AppContext";
+import { AppProvider } from "./Context/AppContext";
 
 // Style, Assets
-import config from "./config";
+import config from "./Data/config";
 import "./Assets/Styles/Style.css";
 
 const root = createRoot(document.getElementById("root"));

@@ -2,7 +2,7 @@ import React, { lazy } from "react";
 
 // Project imports
 import Layout from "../Layouts";
-import Loadable from "../Components/Loaders/Loadable";
+import Loadable from "../Utils/Loadable";
 
 // Views Routing
 const SearchView = Loadable(lazy(() => import("../Views/SearchView")));

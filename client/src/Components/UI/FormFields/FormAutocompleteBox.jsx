@@ -11,7 +11,7 @@ import { Autocomplete, TextField, IconButton } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
 
 // Static Debug data
-import { cities } from "../../../Assets/Temp/Data";
+import { cities } from "../../../Data/CitiesData";
 
 function GetOptions(query) {
   const citiesNames = cities.map((city) => city[0]);

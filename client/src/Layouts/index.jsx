@@ -2,7 +2,7 @@ import React from "react";
 import { Outlet } from "react-router-dom";
 
 // Project imports
-import NavBar from "./NavBar";
+import NavBar from "../Components/NavBar";
 
 const Layout = () => {
   return (

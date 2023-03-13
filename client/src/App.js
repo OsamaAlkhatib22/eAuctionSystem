@@ -8,7 +8,7 @@ import { CssBaseline } from "@mui/material";
 import Routes from "./Routes";
 
 // App context
-import AppContext from "./AppContext";
+import AppContext from "./Context/AppContext";
 
 // Themes
 import theme from "./Themes";

@@ -11,7 +11,7 @@ import LocationSection from "./Components/LocationSection";
 import haversine from "haversine-distance";
 
 // Temp Data
-import { cities } from "../../Assets/Temp/Data";
+import { cities } from "../../Data/CitiesData";
 
 const TripView = () => {
   const [searchParams, setSearchParams] = useSearchParams();
