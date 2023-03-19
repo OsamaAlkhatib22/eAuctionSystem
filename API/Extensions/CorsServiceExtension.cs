@@ -1,6 +1,6 @@
 ﻿namespace API.Extensions
 {
-    public static class CorsServiceExtention
+    public static class CorsServiceExtension
     {
         public static IServiceCollection AddCorsService(
             this IServiceCollection services,

@@ -4,7 +4,7 @@ using Persistence;
 
 namespace API.Extensions
 {
-    public static class ApplicationServicesExtensions
+    public static class ApplicationServicesExtension
     {
         public static IServiceCollection AddApplicationServices(
             this IServiceCollection services,

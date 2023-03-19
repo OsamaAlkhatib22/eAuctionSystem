@@ -11,7 +11,7 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230319105808_Identity_Added")]
+    [Migration("20230319135808_Identity_Added")]
     partial class Identity_Added
     {
         /// <inheritdoc />
@@ -197,10 +197,6 @@ namespace Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("ID");
-
-                    b.Property<bool>("isJordainian")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("IS_JORDAINIAN");
 
                     b.Property<string>("strNationalId")
                         .HasColumnType("longtext")

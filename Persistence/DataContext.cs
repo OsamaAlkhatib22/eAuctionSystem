@@ -21,7 +21,7 @@ namespace Persistence
 
         public DbSet<Complaint> Complaints { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
-        public DbSet<UserInfo> UsersInfo { get; set; }
+        public DbSet<UserInfo> UserInfos { get; set; }
         public DbSet<UserType> UserTypes { get; set; }
     }
 }

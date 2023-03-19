@@ -195,10 +195,6 @@ namespace Persistence.Migrations
                         .HasColumnType("int")
                         .HasColumnName("ID");
 
-                    b.Property<bool>("isJordainian")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("IS_JORDAINIAN");
-
                     b.Property<string>("strNationalId")
                         .HasColumnType("longtext")
                         .HasColumnName("NATIONAL_ID");

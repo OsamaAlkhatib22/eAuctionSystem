@@ -37,8 +37,7 @@ namespace Persistence.Migrations
                     NATIONAL_ID = table.Column<string>(type: "longtext", nullable: true),
                     PASSPORT_NUMBER = table.Column<string>(type: "longtext", nullable: true),
                     REGISTRATION_NUMBER = table.Column<string>(type: "longtext", nullable: true),
-                    NATIONAL_ID_NUMBER = table.Column<string>(type: "longtext", nullable: true),
-                    IS_JORDAINIAN = table.Column<bool>(type: "tinyint(1)", nullable: false)
+                    NATIONAL_ID_NUMBER = table.Column<string>(type: "longtext", nullable: true)
                 },
                 constraints: table =>
                 {

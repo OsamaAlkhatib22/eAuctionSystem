@@ -22,9 +22,6 @@ namespace Domain.DataModels
         [Column("NATIONAL_ID_NUMBER")]
         public string strNationalIdNumber { get; set; }
 
-        [Column("IS_JORDAINIAN")]
-        public Boolean isJordainian { get; set; }
-
         public ApplicationUser User { get; set; }
     }
 }
