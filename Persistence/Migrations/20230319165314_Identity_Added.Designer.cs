@@ -11,7 +11,7 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230319135808_Identity_Added")]
+    [Migration("20230319165314_Identity_Added")]
     partial class Identity_Added
     {
         /// <inheritdoc />
@@ -154,10 +154,6 @@ namespace Persistence.Migrations
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("IS_BLACKLISTED");
 
-                    b.Property<bool>("blnIsBlocked")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("IS_BLOCKED");
-
                     b.Property<bool>("blnIsVerified")
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("IS_VERIFIED");
@@ -197,6 +193,14 @@ namespace Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("ID");
+
+                    b.Property<string>("strFirstName")
+                        .HasColumnType("longtext")
+                        .HasColumnName("FIRST_NAME");
+
+                    b.Property<string>("strLastName")
+                        .HasColumnType("longtext")
+                        .HasColumnName("LAST_NAME");
 
                     b.Property<string>("strNationalId")
                         .HasColumnType("longtext")

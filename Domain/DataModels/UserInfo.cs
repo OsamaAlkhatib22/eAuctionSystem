@@ -10,6 +10,12 @@ namespace Domain.DataModels
         [Key]
         public int intId { get; set; }
 
+        [Column("FIRST_NAME")]
+        public string strFirstName { get; set; }
+
+        [Column("LAST_NAME")]
+        public string strLastName { get; set; }
+
         [Column("NATIONAL_ID")]
         public string strNationalId { get; set; }
 

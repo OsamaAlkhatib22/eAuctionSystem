@@ -34,6 +34,8 @@ namespace Persistence.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    FIRST_NAME = table.Column<string>(type: "longtext", nullable: true),
+                    LAST_NAME = table.Column<string>(type: "longtext", nullable: true),
                     NATIONAL_ID = table.Column<string>(type: "longtext", nullable: true),
                     PASSPORT_NUMBER = table.Column<string>(type: "longtext", nullable: true),
                     REGISTRATION_NUMBER = table.Column<string>(type: "longtext", nullable: true),
@@ -89,7 +91,6 @@ namespace Persistence.Migrations
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     GROUP_ID = table.Column<int>(type: "int", nullable: false),
                     IS_VERIFIED = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    IS_BLOCKED = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     IS_BLACKLISTED = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     IS_ACTIVE = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     USER_TYPE = table.Column<int>(type: "int", nullable: false),

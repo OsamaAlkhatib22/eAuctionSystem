@@ -18,9 +18,6 @@ namespace Domain.DataModels
         [Column("IS_VERIFIED")]
         public Boolean blnIsVerified { get; set; }
 
-        [Column("IS_BLOCKED")]
-        public Boolean blnIsBlocked { get; set; }
-
         [Column("IS_BLACKLISTED")]
         public Boolean blnIsBlacklisted { get; set; }
 

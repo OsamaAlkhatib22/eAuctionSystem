@@ -44,13 +44,31 @@ namespace Persistence
                 }
 
                 var infoAdmin = await context.UserInfos.AddAsync(
-                    new UserInfo { strNationalId = "2000555333", strNationalIdNumber = "RUX55333" }
+                    new UserInfo
+                    {
+                        strFirstName = "Admin",
+                        strLastName = "User",
+                        strNationalId = "2000555333",
+                        strNationalIdNumber = "RUX55333"
+                    }
                 );
                 var infoWorker = await context.UserInfos.AddAsync(
-                    new UserInfo { strNationalId = "2000111222", strNationalIdNumber = "RUX11222" }
+                    new UserInfo
+                    {
+                        strFirstName = "Worker",
+                        strLastName = "User",
+                        strNationalId = "2000111222",
+                        strNationalIdNumber = "RUX11222"
+                    }
                 );
                 var infoUser = await context.UserInfos.AddAsync(
-                    new UserInfo { strNationalId = "2000666888", strNationalIdNumber = "RUX66888" }
+                    new UserInfo
+                    {
+                        strFirstName = "User",
+                        strLastName = "User",
+                        strNationalId = "2000666888",
+                        strNationalIdNumber = "RUX66888"
+                    }
                 );
                 await context.SaveChangesAsync();
 
@@ -64,7 +82,6 @@ namespace Persistence
                     UserName = "admin",
                     blnIsVerified = false,
                     blnIsActive = false,
-                    blnIsBlocked = false,
                     blnIsBlacklisted = false,
                     intUserInfo = infoAdmin.Entity.intId,
                     intUserType = typeAdmin,
@@ -79,7 +96,6 @@ namespace Persistence
                     UserName = "worker",
                     blnIsVerified = false,
                     blnIsActive = false,
-                    blnIsBlocked = false,
                     blnIsBlacklisted = false,
                     intUserInfo = infoWorker.Entity.intId,
                     intUserType = typeWorker,
@@ -94,7 +110,6 @@ namespace Persistence
                     UserName = "user",
                     blnIsVerified = false,
                     blnIsActive = false,
-                    blnIsBlocked = false,
                     blnIsBlacklisted = false,
                     intUserInfo = infoUser.Entity.intId,
                     intUserType = typeUser,
