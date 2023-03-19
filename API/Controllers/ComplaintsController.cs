@@ -24,9 +24,7 @@ namespace API.Controllers
         [HttpPost] // .../api/complaints
         public async Task<IActionResult> InsertComplaint([FromBody]Complaint complaint)
         {
-            Console.WriteLine(complaint);
-            var command = new InsertComplaintCommand(complaint);
-            return Ok(await Mediator.Send(command));
+            return Ok(await Mediator.Send(new InsertComplaintCommand(complaint)));
         }
 
     }

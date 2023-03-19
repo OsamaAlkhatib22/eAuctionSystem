@@ -2,7 +2,6 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
@@ -12,17 +11,16 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230313145410_InitialCreation")]
-    partial class InitialCreation
+    [Migration("20230319073456_Initial_Creation")]
+    partial class Initial_Creation
     {
+        /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.14")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
-
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+                .HasAnnotation("ProductVersion", "7.0.4")
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("Domain.Complaint", b =>
                 {
@@ -30,8 +28,6 @@ namespace Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("ID");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("intId"), 1L, 1);
 
                     b.Property<decimal>("decLat")
                         .HasPrecision(8, 6)
@@ -48,15 +44,15 @@ namespace Persistence.Migrations
                         .HasColumnName("PRIORITY");
 
                     b.Property<DateTime>("dtmDateLastModified")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("datetime(6)")
                         .HasColumnName("DATE_LAST_MODIFIED");
 
                     b.Property<DateTime>("dtmDateLastReminded")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("datetime(6)")
                         .HasColumnName("DATE_LAST_REMINDED");
 
                     b.Property<DateTime>("dtmDateSubmitted")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("datetime(6)")
                         .HasColumnName("DATE_SUBMITTED");
 
                     b.Property<int>("intLastModifiedBy")
@@ -80,16 +76,16 @@ namespace Persistence.Migrations
                         .HasColumnName("USER_ID");
 
                     b.Property<string>("strAddress")
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("longtext")
                         .HasColumnName("ADDRESS");
 
                     b.Property<string>("strComment")
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("longtext")
                         .HasColumnName("COMMENT");
 
                     b.Property<string>("strImageRef")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("longtext")
                         .HasColumnName("IMAGE_REF");
 
                     b.HasKey("intId");

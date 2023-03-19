@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
@@ -8,33 +7,33 @@ namespace Domain
     [Table("Complaints")]
     public class Complaint
     {
-        [Key]
         [Column("ID")]
+        [Key]
         public int intId { get; set; }
 
-        [Column("USER_ID")]
         [Required]
+        [Column("USER_ID")]
         public int intUserID { get; set; }
 
-        [Required]
         [Column("TYPE")]
+        [Required]
         public int intType { get; set; }
 
-        [Required]
         [Column("STATUS")]
+        [Required]
         public int intStatus { get; set; }
 
         // Change according to image table PK
-        [Required]
         [Column("IMAGE_REF")]
+        [Required]
         public string strImageRef { get; set; }
 
-        [Required]
         [Column("LAT")]
+        [Required]
         public decimal decLat { get; set; }
 
-        [Required]
         [Column("LNG")]
+        [Required]
         public decimal decLng { get; set; }
 
         [Column("ADDRESS")]
@@ -45,32 +44,29 @@ namespace Domain
         [AllowNull]
         public string strComment { get; set; }
 
-        [Required]
         [Column("REMINDER")]
+        [Required]
         public int intReminder { get; set; }
 
-        [Required]
         [Column("PRIORITY")]
+        [Required]
         public decimal decPriority { get; set; }
 
-        [Required]
         [Column("DATE_SUBMITTED")]
+        [Required]
         public DateTime dtmDateSubmitted { get; set; }
 
-        [AllowNull]
         [Column("DATE_LAST_REMINDED")]
+        [AllowNull]
         public DateTime dtmDateLastReminded { get; set; }
 
         [Column("LAST_MODIFIED_BY")]
         [Required]
         public int intLastModifiedBy { get; set; }
 
-        [AllowNull]
         [Column("DATE_LAST_MODIFIED")]
+        [AllowNull]
         public DateTime dtmDateLastModified { get; set; }
-
-        [NotMapped]
-        public IFormFile File { get; set; }
 
     }
 }
