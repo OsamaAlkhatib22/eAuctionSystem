@@ -13,12 +13,16 @@ namespace Application.Handlers
     public class GetComplaintsListHandler : IRequestHandler<GetComplaintsListQuery, List<Complaint>>
     {
         private readonly DataContext _context;
+
         public GetComplaintsListHandler(DataContext context)
         {
             _context = context;
         }
 
-        public async Task<List<Complaint>> Handle(GetComplaintsListQuery request, CancellationToken cancellationToken)
+        public async Task<List<Complaint>> Handle(
+            GetComplaintsListQuery request,
+            CancellationToken cancellationToken
+        )
         {
             return await _context.Complaints.ToListAsync();
         }

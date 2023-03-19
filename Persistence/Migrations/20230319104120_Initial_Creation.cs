@@ -16,7 +16,7 @@ namespace Persistence.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Complaints",
+                name: "complaints",
                 columns: table => new
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
@@ -38,7 +38,7 @@ namespace Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Complaints", x => x.ID);
+                    table.PrimaryKey("PK_complaints", x => x.ID);
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
         }
@@ -47,7 +47,7 @@ namespace Persistence.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Complaints");
+                name: "complaints");
         }
     }
 }

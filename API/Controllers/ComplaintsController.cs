@@ -22,10 +22,9 @@ namespace API.Controllers
         }
 
         [HttpPost] // .../api/complaints
-        public async Task<IActionResult> InsertComplaint([FromBody]Complaint complaint)
+        public async Task<IActionResult> InsertComplaint([FromBody] Complaint complaint)
         {
             return Ok(await Mediator.Send(new InsertComplaintCommand(complaint)));
         }
-
     }
 }

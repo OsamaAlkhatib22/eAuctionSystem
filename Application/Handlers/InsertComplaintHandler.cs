@@ -12,12 +12,16 @@ namespace Application.Handlers
     public class InsertComplaintHandler : IRequestHandler<InsertComplaintCommand, Complaint>
     {
         private readonly DataContext _context;
+
         public InsertComplaintHandler(DataContext context)
         {
             _context = context;
         }
 
-        public async Task<Complaint> Handle(InsertComplaintCommand request, CancellationToken cancellationToken)
+        public async Task<Complaint> Handle(
+            InsertComplaintCommand request,
+            CancellationToken cancellationToken
+        )
         {
             _context.Complaints.Add(request.Complaint);
             await _context.SaveChangesAsync(cancellationToken);

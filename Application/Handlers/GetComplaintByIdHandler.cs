@@ -12,12 +12,16 @@ namespace Application.Handlers
     public class GetComplaintByIdHandler : IRequestHandler<GetComplaintByIdQuery, Complaint>
     {
         private readonly DataContext _context;
+
         public GetComplaintByIdHandler(DataContext context)
         {
             _context = context;
         }
 
-        public async Task<Complaint> Handle(GetComplaintByIdQuery request, CancellationToken cancellationToken)
+        public async Task<Complaint> Handle(
+            GetComplaintByIdQuery request,
+            CancellationToken cancellationToken
+        )
         {
             return await _context.Complaints.FindAsync(request.Id);
         }

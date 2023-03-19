@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Domain
 {
-    [Table("Complaints")]
+    [Table("complaints")]
     public class Complaint
     {
         [Column("ID")]
@@ -67,6 +67,5 @@ namespace Domain
         [Column("DATE_LAST_MODIFIED")]
         [AllowNull]
         public DateTime dtmDateLastModified { get; set; }
-
     }
 }
