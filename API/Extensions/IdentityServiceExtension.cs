@@ -11,16 +11,18 @@ namespace API.Extensions
     {
         public static IServiceCollection AddIdentityService(
             this IServiceCollection services,
-            IConfigurationBuilder configuration
+            IConfiguration configuration
         )
         {
             services
-                .AddIdentityCore<ApplicationUser>(
-                    opt => opt.SignIn.RequireConfirmedPhoneNumber = true
-                )
+                .AddIdentityCore<ApplicationUser>(opt =>
+                {
+                    opt.SignIn.RequireConfirmedPhoneNumber = true;
+                    opt.User.RequireUniqueEmail = true;
+                })
                 .AddEntityFrameworkStores<DataContext>();
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SecretTokenForUser"));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["TokenKey"]));
             services
                 .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(

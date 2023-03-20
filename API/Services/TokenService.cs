@@ -8,6 +8,13 @@ namespace API.Services
 {
     public class TokenService
     {
+        private readonly IConfiguration _configuration;
+
+        public TokenService(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         public string CreateToken(ApplicationUser user)
         {
             var claims = new List<Claim>
@@ -16,7 +23,7 @@ namespace API.Services
                 new Claim(ClaimTypes.MobilePhone, user.PhoneNumber),
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SecretTokenForUser"));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["TokenKey"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
