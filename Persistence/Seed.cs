@@ -119,6 +119,64 @@ namespace Persistence
                 await userManager.CreateAsync(userWorker, "Pass@123");
                 await userManager.CreateAsync(userUser, "Pass@123");
             }
+
+            if (!context.Complaints.Any())
+            {
+                var complaints = new List<Complaint>
+                {
+                    new Complaint
+                    {
+                        intUserID = 3,
+                        intType = 1,
+                        intStatus = 1,
+                        strImageRef = "imageid",
+                        // two ways to cast decimals
+                        decLat = 32.565555M,
+                        decLng = (decimal)38.598984,
+                        strComment = "can be null",
+                        intReminder = 1,
+                        dtmDateLastModified = DateTime.Now,
+                        dtmDateLastReminded = DateTime.Now,
+                        intLastModifiedBy = 1,
+                        dtmDateSubmitted = DateTime.Now,
+                    },
+                    new Complaint
+                    {
+                        intUserID = 3,
+                        intType = 2,
+                        intStatus = 1,
+                        strImageRef = "imageid",
+                        // two ways to cast decimals
+                        decLat = 32.894555M,
+                        decLng = (decimal)38.264984,
+                        strComment = "can be null",
+                        intReminder = 1,
+                        dtmDateLastModified = DateTime.Now,
+                        dtmDateLastReminded = DateTime.Now,
+                        intLastModifiedBy = 1,
+                        dtmDateSubmitted = DateTime.Now,
+                    },
+                    new Complaint
+                    {
+                        intUserID = 3,
+                        intType = 3,
+                        intStatus = 1,
+                        strImageRef = "imageid",
+                        // two ways to cast decimals
+                        decLat = 32.122555M,
+                        decLng = (decimal)38.500284,
+                        strComment = "can be null",
+                        intReminder = 1,
+                        dtmDateLastModified = DateTime.Now,
+                        dtmDateLastReminded = DateTime.Now,
+                        intLastModifiedBy = 1,
+                        dtmDateSubmitted = DateTime.Now,
+                    }
+                };
+
+                await context.Complaints.AddRangeAsync(complaints);
+                await context.SaveChangesAsync();
+            }
         }
     }
 }

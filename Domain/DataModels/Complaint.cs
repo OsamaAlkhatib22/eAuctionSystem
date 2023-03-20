@@ -36,10 +36,6 @@ namespace Domain
         [Required]
         public decimal decLng { get; set; }
 
-        [Column("ADDRESS")]
-        [AllowNull]
-        public string strAddress { get; set; }
-
         [Column("COMMENT")]
         [AllowNull]
         public string strComment { get; set; }
@@ -47,10 +43,6 @@ namespace Domain
         [Column("REMINDER")]
         [Required]
         public int intReminder { get; set; }
-
-        [Column("PRIORITY")]
-        [Required]
-        public decimal decPriority { get; set; }
 
         [Column("DATE_SUBMITTED")]
         [Required]

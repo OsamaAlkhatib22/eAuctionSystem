@@ -11,7 +11,7 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230319165314_Identity_Added")]
+    [Migration("20230320092239_Identity_Added")]
     partial class Identity_Added
     {
         /// <inheritdoc />
@@ -38,10 +38,6 @@ namespace Persistence.Migrations
                         .HasPrecision(8, 6)
                         .HasColumnType("decimal(8,6)")
                         .HasColumnName("LNG");
-
-                    b.Property<decimal>("decPriority")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("PRIORITY");
 
                     b.Property<DateTime>("dtmDateLastModified")
                         .HasColumnType("datetime(6)")
@@ -74,10 +70,6 @@ namespace Persistence.Migrations
                     b.Property<int>("intUserID")
                         .HasColumnType("int")
                         .HasColumnName("USER_ID");
-
-                    b.Property<string>("strAddress")
-                        .HasColumnType("longtext")
-                        .HasColumnName("ADDRESS");
 
                     b.Property<string>("strComment")
                         .HasColumnType("longtext")

@@ -12,6 +12,14 @@ namespace Persistence.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropColumn(
+                name: "ADDRESS",
+                table: "complaints");
+
+            migrationBuilder.DropColumn(
+                name: "PRIORITY",
+                table: "complaints");
+
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
@@ -295,6 +303,19 @@ namespace Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "users_types");
+
+            migrationBuilder.AddColumn<string>(
+                name: "ADDRESS",
+                table: "complaints",
+                type: "longtext",
+                nullable: true);
+
+            migrationBuilder.AddColumn<decimal>(
+                name: "PRIORITY",
+                table: "complaints",
+                type: "decimal(18,2)",
+                nullable: false,
+                defaultValue: 0m);
         }
     }
 }

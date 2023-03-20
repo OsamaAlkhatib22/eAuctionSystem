@@ -36,10 +36,6 @@ namespace Persistence.Migrations
                         .HasColumnType("decimal(8,6)")
                         .HasColumnName("LNG");
 
-                    b.Property<decimal>("decPriority")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("PRIORITY");
-
                     b.Property<DateTime>("dtmDateLastModified")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("DATE_LAST_MODIFIED");
@@ -71,10 +67,6 @@ namespace Persistence.Migrations
                     b.Property<int>("intUserID")
                         .HasColumnType("int")
                         .HasColumnName("USER_ID");
-
-                    b.Property<string>("strAddress")
-                        .HasColumnType("longtext")
-                        .HasColumnName("ADDRESS");
 
                     b.Property<string>("strComment")
                         .HasColumnType("longtext")

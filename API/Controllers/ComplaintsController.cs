@@ -1,9 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Domain;
-using Persistence;
-using MediatR;
 using Application;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
@@ -15,6 +13,7 @@ namespace API.Controllers
             return await Mediator.Send(new GetComplaintsListQuery());
         }
 
+        [Authorize]
         [HttpGet("{id}")] // .../api/complaints/...
         public async Task<ActionResult<Complaint>> GetComplaintById(int id)
         {
