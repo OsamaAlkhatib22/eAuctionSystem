@@ -12,7 +12,10 @@ namespace API.ClientDTOs
         public string strPhonenumber { get; set; }
 
         [Required]
-        [RegularExpression("(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{4,8}$" ErrorMessage = "Password not valid")]
+        [RegularExpression(
+            "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{4,8}$",
+            ErrorMessage = "Password not valid"
+        )]
         public string strPassword { get; set; }
 
         [Required]
