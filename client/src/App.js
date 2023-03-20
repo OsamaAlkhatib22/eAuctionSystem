@@ -1,25 +1,26 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useContext } from "react";
 
-function App() {
+// Mui
+import { ThemeProvider } from "@mui/material/styles";
+import { CssBaseline } from "@mui/material";
+
+// Project imports
+import Routes from "./Routes";
+
+// App context
+import AppContext from "./Context/AppContext";
+
+// Themes
+import theme from "./Themes";
+
+const App = () => {
+  const { mode } = useContext(AppContext);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider theme={theme(mode)}>
+      <CssBaseline />
+      <Routes />
+    </ThemeProvider>
   );
-}
+};
 
 export default App;
