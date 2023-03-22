@@ -1,4 +1,4 @@
-﻿namespace API.ClientDTOs
+﻿namespace Domain.ClientDTOs
 {
     public class UserDTO
     {

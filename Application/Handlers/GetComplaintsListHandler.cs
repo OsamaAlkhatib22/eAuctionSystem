@@ -1,16 +1,13 @@
-﻿using Domain;
+﻿using Application.Core;
+using Domain;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Handlers
 {
-    public class GetComplaintsListHandler : IRequestHandler<GetComplaintsListQuery, List<Complaint>>
+    public class GetComplaintsListHandler
+        : IRequestHandler<GetComplaintsListQuery, Result<List<Complaint>>>
     {
         private readonly DataContext _context;
 
@@ -19,12 +16,13 @@ namespace Application.Handlers
             _context = context;
         }
 
-        public async Task<List<Complaint>> Handle(
+        public async Task<Result<List<Complaint>>> Handle(
             GetComplaintsListQuery request,
             CancellationToken cancellationToken
         )
         {
-            return await _context.Complaints.ToListAsync();
+            var result = await _context.Complaints.ToListAsync();
+            return Result<List<Complaint>>.Success(result);
         }
     }
 }

@@ -1,15 +1,11 @@
-﻿using Domain;
+﻿using Application.Core;
+using Domain;
 using MediatR;
 using Persistence;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Handlers
 {
-    public class GetComplaintByIdHandler : IRequestHandler<GetComplaintByIdQuery, Complaint>
+    public class GetComplaintByIdHandler : IRequestHandler<GetComplaintByIdQuery, Result<Complaint>>
     {
         private readonly DataContext _context;
 
@@ -18,12 +14,13 @@ namespace Application.Handlers
             _context = context;
         }
 
-        public async Task<Complaint> Handle(
+        public async Task<Result<Complaint>> Handle(
             GetComplaintByIdQuery request,
             CancellationToken cancellationToken
         )
         {
-            return await _context.Complaints.FindAsync(request.Id);
+            var result = await _context.Complaints.FindAsync(request.Id);
+            return Result<Complaint>.Success(result);
         }
     }
 }

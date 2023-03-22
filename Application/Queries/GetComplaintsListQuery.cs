@@ -1,9 +1,8 @@
-﻿using Domain;
+﻿using Application.Core;
+using Domain;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using Persistence;
 
 namespace Application
 {
-    public record GetComplaintsListQuery() : IRequest<List<Complaint>>;
+    public record GetComplaintsListQuery() : IRequest<Result<List<Complaint>>>;
 }

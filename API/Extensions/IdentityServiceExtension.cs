@@ -18,7 +18,6 @@ namespace API.Extensions
                 .AddIdentityCore<ApplicationUser>(opt =>
                 {
                     opt.SignIn.RequireConfirmedPhoneNumber = true;
-                    opt.User.RequireUniqueEmail = true;
                 })
                 .AddEntityFrameworkStores<DataContext>();
 

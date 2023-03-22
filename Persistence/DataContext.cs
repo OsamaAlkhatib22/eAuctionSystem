@@ -15,6 +15,13 @@ namespace Persistence
         {
             base.OnModelCreating(builder);
 
+            builder
+                .Entity<ApplicationUser>()
+                .Ignore(q => q.Email)
+                .Ignore(q => q.EmailConfirmed)
+                .Ignore(q => q.NormalizedEmail)
+                .Ignore(q => q.TwoFactorEnabled);
+
             builder.Entity<Complaint>().Property(q => q.decLat).HasPrecision(8, 6);
             builder.Entity<Complaint>().Property(q => q.decLng).HasPrecision(8, 6);
         }

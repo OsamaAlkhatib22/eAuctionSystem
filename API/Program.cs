@@ -16,6 +16,7 @@ builder.Services.AddControllers(opt =>
     var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
     opt.Filters.Add(new AuthorizeFilter(policy));
 });
+
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddCorsService(builder.Configuration, builder.Environment);
 builder.Services.AddIdentityService(builder.Configuration);
@@ -39,6 +40,8 @@ app.MapControllers();
 
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
+
+// Debug seeding
 try
 {
     var context = services.GetRequiredService<DataContext>();

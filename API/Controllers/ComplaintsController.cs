@@ -7,15 +7,15 @@ namespace API.Controllers
     public class ComplaintsController : BaseApiController
     {
         [HttpGet] // .../api/complaints
-        public async Task<ActionResult<List<Complaint>>> GetComplaintsList()
+        public async Task<IActionResult> GetComplaintsList()
         {
-            return await Mediator.Send(new GetComplaintsListQuery());
+            return HandleResult(await Mediator.Send(new GetComplaintsListQuery()));
         }
 
         [HttpGet("{id}")] // .../api/complaints/...
         public async Task<ActionResult<Complaint>> GetComplaintById(int id)
         {
-            return await Mediator.Send(new GetComplaintByIdQuery(id));
+            return HandleResult(await Mediator.Send(new GetComplaintByIdQuery(id)));
         }
 
         [HttpPost] // .../api/complaints

@@ -1,9 +1,8 @@
-﻿using Domain;
+﻿using Application.Core;
+using Domain;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using Persistence;
 
 namespace Application
 {
-    public record GetComplaintByIdQuery(int Id) : IRequest<Complaint>;
+    public record GetComplaintByIdQuery(int Id) : IRequest<Result<Complaint>>;
 }

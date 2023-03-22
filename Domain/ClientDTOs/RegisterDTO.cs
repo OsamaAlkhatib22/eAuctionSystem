@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 
-namespace API.ClientDTOs
+namespace Domain.ClientDTOs
 {
     public class RegisterDTO
     {
@@ -12,10 +12,10 @@ namespace API.ClientDTOs
         public string strPhonenumber { get; set; }
 
         [Required]
-        [RegularExpression(
-            "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{4,8}$",
-            ErrorMessage = "Password not valid"
-        )]
+        //[RegularExpression(
+        //    "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{4,8}$",
+        //    ErrorMessage = "Password not valid"
+        //)]
         public string strPassword { get; set; }
 
         [Required]

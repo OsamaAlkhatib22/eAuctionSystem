@@ -19,8 +19,9 @@ namespace API.Services
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(ClaimTypes.MobilePhone, user.PhoneNumber),
+                new Claim("username", user.UserName),
+                new Claim("phonenumber", user.PhoneNumber),
+                new Claim("usertype", user.intUserType.ToString()),
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["TokenKey"]));
