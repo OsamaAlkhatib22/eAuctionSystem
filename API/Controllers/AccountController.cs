@@ -157,7 +157,6 @@ namespace API.Controllers
                 return BadRequest("Passport number is already used.");
             }
             ///
-            Console.WriteLine("sadas");
             // Null validation
 
             ///
