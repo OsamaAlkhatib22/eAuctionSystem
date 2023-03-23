@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.IdentityModel.Tokens;
 using Persistence;
 using System.Security.Claims;
 
@@ -59,6 +60,13 @@ namespace API.Controllers
                 return validation;
             }
 
+            // Set empty properties to null for database
+            foreach (var prop in register.GetType().GetProperties())
+            {
+                prop.SetValue(register, EmptyToNull(prop.GetValue(register).ToString()));
+            }
+
+            // NOTE TO USE TRANSACTIONS INSTEAD
             EntityEntry<UserInfo> userInfo = await InsertUserInfo(register);
             await _context.SaveChangesAsync();
 
@@ -159,25 +167,13 @@ namespace API.Controllers
             ///
 
             // Null validation
-            if (register.strUsername == null)
-            {
-                return BadRequest("Username must not be empty");
-            }
-            if (register.strPhonenumber == null)
-            {
-                return BadRequest("Phonenumber must not be empty");
-            }
             if (
-                register.strNationalId == null
-                && register.strRegistrationNumber == null
-                && register.strPassportNumber == null
+                register.strNationalId.IsNullOrEmpty()
+                && register.strRegistrationNumber.IsNullOrEmpty()
+                && register.strPassportNumber.IsNullOrEmpty()
             )
             {
-                return BadRequest("Identifier must be entered (Id, Id number or Passport)");
-            }
-            if (register.strFirstName == null || register.strLastName == null)
-            {
-                return BadRequest("Full name must be provided");
+                return BadRequest("Identifier must be entered (Id, Id number or Passport).");
             }
             ///
 
@@ -197,6 +193,18 @@ namespace API.Controllers
                     strRegistrationNumber = register.strRegistrationNumber,
                 }
             );
+        }
+
+        private string EmptyToNull(string input)
+        {
+            if (String.IsNullOrWhiteSpace(input))
+            {
+                return null;
+            }
+            else
+            {
+                return input;
+            }
         }
 
         private UserDTO CreateUserDTO(ApplicationUser user)
