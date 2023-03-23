@@ -157,8 +157,28 @@ namespace API.Controllers
                 return BadRequest("Passport number is already used.");
             }
             ///
-            // Null validation
 
+            // Null validation
+            if (register.strUsername == null)
+            {
+                return BadRequest("Username must not be empty");
+            }
+            if (register.strPhonenumber == null)
+            {
+                return BadRequest("Phonenumber must not be empty");
+            }
+            if (
+                register.strNationalId == null
+                && register.strRegistrationNumber == null
+                && register.strPassportNumber == null
+            )
+            {
+                return BadRequest("Identifier must be entered (Id, Id number or Passport)");
+            }
+            if (register.strFirstName == null || register.strLastName == null)
+            {
+                return BadRequest("Full name must be provided");
+            }
             ///
 
             return Ok();
