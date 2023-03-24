@@ -36,7 +36,19 @@ namespace API.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<UserDTO>> Login(LoginDTO login)
         {
-            var user = await _userManager.FindByNameAsync(login.strLogin);
+            ApplicationUser user;
+            // Check if user used phonenumber or username for login
+            if (login.strLogin.Length == 10 && login.strLogin.All(char.IsDigit))
+            {
+                user = await _context.ApplicationUsers
+                    .Where(q => q.PhoneNumber == login.strLogin)
+                    .FirstOrDefaultAsync();
+            }
+            else
+            {
+                user = await _userManager.FindByNameAsync(login.strLogin);
+            }
+
             if (user == null)
                 return Unauthorized("User doesn't exist.");
 

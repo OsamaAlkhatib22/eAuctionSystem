@@ -7,8 +7,8 @@ namespace Domain.ClientDTOs
     {
         [Required]
         [RegularExpression(
-            @"^.{4,}$",
-            ErrorMessage = "Username must be at least 4 characters long."
+            @"^(?=.*[a-zA-Z])[a-zA-Z0-9._]{4,}$",
+            ErrorMessage = "Username must be at least 4 characters long and no special characters."
         )]
         public string strUsername { get; set; }
 
