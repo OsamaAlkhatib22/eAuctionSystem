@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.IdentityModel.Tokens;
 using Persistence;
 using System.Security.Claims;
@@ -78,48 +79,55 @@ namespace API.Controllers
                 prop.SetValue(register, EmptyToNull(prop.GetValue(register).ToString()));
             }
 
-            // NOTE TO USE TRANSACTIONS INSTEAD
-            EntityEntry<UserInfo> userInfo = await InsertUserInfo(register);
-            await _context.SaveChangesAsync();
-
-            // Query user type
-            UserType userType = await _context.UserTypes
-                .Where(q => q.strName == ConstantsDB.UserTypes.User)
-                .FirstOrDefaultAsync();
-
-            // Create User
-            ApplicationUser user =
-                new()
-                {
-                    UserName = register.strUsername.ToLower(),
-                    PhoneNumber = register.strPhonenumber,
-                    intUserType = userType.intId,
-                    intUserInfo = userInfo.Entity.intId,
-                    UserInfo = userInfo.Entity
-                };
-
-            var result = await _userManager.CreateAsync(user, register.strPassword);
-
-            if (result.Succeeded)
+            // START TRANSACTION
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
             {
-                return CreateUserDTO(user);
+                EntityEntry<UserInfo> userInfo = await InsertUserInfo(register);
+                await _context.SaveChangesAsync();
+
+                // Query user type
+                UserType userType = await _context.UserTypes
+                    .Where(q => q.strName == ConstantsDB.UserTypes.User)
+                    .FirstOrDefaultAsync();
+
+                // Create User
+                ApplicationUser user =
+                    new()
+                    {
+                        UserName = register.strUsername.ToLower(),
+                        PhoneNumber = register.strPhonenumber,
+                        intUserType = userType.intId,
+                        intUserInfo = userInfo.Entity.intId,
+                        UserInfo = userInfo.Entity
+                    };
+
+                var result = await _userManager.CreateAsync(user, register.strPassword);
+
+                if (result.Succeeded)
+                {
+                    await transaction.CommitAsync();
+                    return CreateUserDTO(user);
+                }
+
+                // Rollback changes if failed
+                await transaction.RollbackAsync();
+                return BadRequest(result.Errors);
             }
-
-            // Rollback changes if failed
-            _context.UserInfos.Remove(userInfo.Entity);
-            await _context.SaveChangesAsync();
-
-            return BadRequest(result.Errors);
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                // Display error
+                return BadRequest();
+            }
         }
 
         [Authorize]
-        [HttpGet]
-        public async Task<ActionResult<UserDTO>> GetActiveUser()
+        [HttpPost("refresh")]
+        public async Task<ActionResult<string>> RefreshToken()
         {
             var user = await _userManager.FindByNameAsync(User.FindFirstValue(ClaimTypes.Name));
-            user.UserInfo = await _context.UserInfos.FindAsync(user.intUserInfo);
-
-            return CreateUserDTO(user);
+            return _tokenService.CreateToken(user);
         }
 
         // Private Methods
