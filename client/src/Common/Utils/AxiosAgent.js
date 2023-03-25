@@ -14,7 +14,6 @@ axios.defaults.headers.common[
 axios.defaults.headers.common["Accept-Language"] =
   CultureHelper.language || process.env.REACT_APP_DEFAULT_LANGIAGE;
 
-// NOT IMPLEMENTED YET
 axios.interceptors.response.use(
   (response) => {
     if (
@@ -23,14 +22,17 @@ axios.interceptors.response.use(
         process.env.REACT_APP_TOKEN_EXPIRATION_THRESHOLD
     ) {
       axios.post("api/account/refresh").then((response) => {
-        IdentityHelper.token = response;
-        axios.defaults.headers.common["Authorization"] = `Bearer ${response}`;
+        IdentityHelper.token = response.data;
+        axios.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${response.data}`;
       });
     }
 
     return response;
   },
 
+  // NOT IMPLEMENTED YET
   (error) => {
     if (error?.response?.status === 401) {
       IdentityHelper.removeToken();

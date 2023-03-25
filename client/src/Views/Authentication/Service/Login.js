@@ -6,7 +6,7 @@ export const Authorize = {
     try {
       const response = await axios.post("/api/account/login", LoginRequest);
 
-      const { strToken } = response;
+      const { strToken } = response.data;
       IdentityHelper.token = strToken;
     } catch (error) {
       console.error(error);
