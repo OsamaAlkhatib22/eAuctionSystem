@@ -1,7 +1,7 @@
 import { createTheme } from "@mui/material/styles";
 
 // Assets
-import LightColors from "../Assets/Styles/_themes-vars.module.scss";
+import LightColors from "../../Assets/Styles/_themes-vars.module.scss";
 
 // Project imports
 import ThemePalette from "./Palette";

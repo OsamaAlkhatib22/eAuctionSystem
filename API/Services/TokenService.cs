@@ -1,5 +1,6 @@
 ﻿using Domain.DataModels;
 using Microsoft.IdentityModel.Tokens;
+using Persistence;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -9,10 +10,12 @@ namespace API.Services
     public class TokenService
     {
         private readonly IConfiguration _configuration;
+        private readonly DataContext _context;
 
-        public TokenService(IConfiguration configuration)
+        public TokenService(IConfiguration configuration, DataContext context)
         {
             _configuration = configuration;
+            _context = context;
         }
 
         public string CreateToken(ApplicationUser user)
@@ -21,7 +24,7 @@ namespace API.Services
             {
                 new Claim("username", user.UserName),
                 new Claim("phonenumber", user.PhoneNumber),
-                new Claim("usertype", user.intUserType.ToString()),
+                new Claim("usertype", _context.UserTypes.Find(user.intUserType).strName),
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["TokenKey"]));

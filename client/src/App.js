@@ -5,13 +5,13 @@ import { ThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
 
 // Project imports
-import Routes from "./Routes";
+import Routes from "./Common/Routes";
 
 // App context
-import AppContext from "./Context/AppContext";
+import AppContext from "./Common/Context/AppContext";
 
 // Themes
-import theme from "./Themes";
+import theme from "./Common/Themes";
 
 const App = () => {
   const { mode } = useContext(AppContext);

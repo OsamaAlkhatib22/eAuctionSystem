@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.IdentityModel.Tokens;
 using Persistence;
 using System.Security.Claims;
 
@@ -35,14 +37,26 @@ namespace API.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<UserDTO>> Login(LoginDTO login)
         {
-            var user = await _userManager.FindByNameAsync(login.strLogin);
+            ApplicationUser user;
+            // Check if user used phonenumber or username for login
+            if (login.strLogin.Length == 10 && login.strLogin.All(char.IsDigit))
+            {
+                user = await _context.ApplicationUsers
+                    .Where(q => q.PhoneNumber == login.strLogin)
+                    .FirstOrDefaultAsync();
+            }
+            else
+            {
+                user = await _userManager.FindByNameAsync(login.strLogin);
+            }
+
             if (user == null)
                 return Unauthorized("User doesn't exist.");
 
             var result = await _userManager.CheckPasswordAsync(user, login.strPassword);
             if (result)
             {
-                user.UserInfo = await _context.UserInfos.FindAsync(user.intUserType);
+                user.UserInfo = await _context.UserInfos.FindAsync(user.Id);
                 return CreateUserDTO(user);
             }
             return Unauthorized("Password is not correct.");
@@ -59,47 +73,61 @@ namespace API.Controllers
                 return validation;
             }
 
-            EntityEntry<UserInfo> userInfo = await InsertUserInfo(register);
-            await _context.SaveChangesAsync();
-
-            // Query user type
-            UserType userType = await _context.UserTypes
-                .Where(q => q.strName == ConstantsDB.UserTypes.User)
-                .FirstOrDefaultAsync();
-
-            // Create User
-            ApplicationUser user =
-                new()
-                {
-                    UserName = register.strUsername.ToLower(),
-                    PhoneNumber = register.strPhonenumber,
-                    intUserType = userType.intId,
-                    intUserInfo = userInfo.Entity.intId,
-                    UserInfo = userInfo.Entity
-                };
-
-            var result = await _userManager.CreateAsync(user, register.strPassword);
-
-            if (result.Succeeded)
+            // Set empty properties to null for database
+            foreach (var prop in register.GetType().GetProperties())
             {
-                return CreateUserDTO(user);
+                prop.SetValue(register, EmptyToNull(prop.GetValue(register).ToString()));
             }
 
-            // Rollback changes if failed
-            _context.UserInfos.Remove(userInfo.Entity);
-            await _context.SaveChangesAsync();
+            // START TRANSACTION
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                EntityEntry<UserInfo> userInfo = await InsertUserInfo(register);
+                await _context.SaveChangesAsync();
 
-            return BadRequest(result.Errors);
+                // Query user type
+                UserType userType = await _context.UserTypes
+                    .Where(q => q.strName == ConstantsDB.UserTypes.User)
+                    .FirstOrDefaultAsync();
+
+                // Create User
+                ApplicationUser user =
+                    new()
+                    {
+                        UserName = register.strUsername.ToLower(),
+                        PhoneNumber = register.strPhonenumber,
+                        intUserType = userType.intId,
+                        intUserInfo = userInfo.Entity.intId,
+                        UserInfo = userInfo.Entity
+                    };
+
+                var result = await _userManager.CreateAsync(user, register.strPassword);
+
+                if (result.Succeeded)
+                {
+                    await transaction.CommitAsync();
+                    return CreateUserDTO(user);
+                }
+
+                // Rollback changes if failed
+                await transaction.RollbackAsync();
+                return BadRequest(result.Errors);
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                // Display error
+                return BadRequest();
+            }
         }
 
         [Authorize]
-        [HttpGet]
-        public async Task<ActionResult<UserDTO>> GetActiveUser()
+        [HttpPost("refresh")]
+        public async Task<ActionResult<string>> RefreshToken()
         {
-            var user = await _userManager.FindByNameAsync(User.FindFirstValue(ClaimTypes.Name));
-            user.UserInfo = await _context.UserInfos.FindAsync(user.intUserInfo);
-
-            return CreateUserDTO(user);
+            var user = await _userManager.FindByNameAsync(User.FindFirstValue("username"));
+            return _tokenService.CreateToken(user);
         }
 
         // Private Methods
@@ -159,7 +187,14 @@ namespace API.Controllers
             ///
 
             // Null validation
-
+            if (
+                register.strNationalId.IsNullOrEmpty()
+                && register.strRegistrationNumber.IsNullOrEmpty()
+                && register.strPassportNumber.IsNullOrEmpty()
+            )
+            {
+                return BadRequest("Identifier must be entered (Id, Id number or Passport).");
+            }
             ///
 
             return Ok();
@@ -178,6 +213,18 @@ namespace API.Controllers
                     strRegistrationNumber = register.strRegistrationNumber,
                 }
             );
+        }
+
+        private string EmptyToNull(string input)
+        {
+            if (String.IsNullOrWhiteSpace(input))
+            {
+                return null;
+            }
+            else
+            {
+                return input;
+            }
         }
 
         private UserDTO CreateUserDTO(ApplicationUser user)
