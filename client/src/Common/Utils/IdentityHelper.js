@@ -1,3 +1,4 @@
+// Third Party
 import jwtDecode from "jwt-decode";
 
 export const IdentityHelper = {
@@ -15,28 +16,8 @@ export const IdentityHelper = {
     return this.isTokenValid() ? jwtDecode(this.token) : null;
   },
 
-  get CourtData() {
-    if (this.isTokenValid()) {
-      if (jwtDecode(this.token).objCourtData) {
-        return JSON.parse(jwtDecode(this.token).objCourtData);
-      }
-    }
-
-    return null;
-  },
-
   get isAuthorized() {
     return this.isTokenValid() ? true : false;
-  },
-
-  get hasCourt() {
-    if (this.isTokenValid()) {
-      if (jwtDecode(this.token).objCourtData) {
-        return true;
-      }
-    }
-
-    return false;
   },
 
   get token() {
