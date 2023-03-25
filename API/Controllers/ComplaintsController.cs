@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Domain;
 using Application;
+using Domain.ClientDTOs;
 
 namespace API.Controllers
 {
@@ -23,5 +24,14 @@ namespace API.Controllers
         {
             return Ok(await Mediator.Send(new InsertComplaintCommand(complaint)));
         }
+
+
+        [HttpGet("user/{userId}")] // .../api/complaints/user/..
+        public async Task<ActionResult<UserDTO>> GetComplaintByUserId(int userId)
+        {
+            return HandleResult(await Mediator.Send(new GetComplaintByUserIdQuery(userId)));
+        }
+
     }
 }
+
