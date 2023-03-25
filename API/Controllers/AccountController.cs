@@ -56,7 +56,7 @@ namespace API.Controllers
             var result = await _userManager.CheckPasswordAsync(user, login.strPassword);
             if (result)
             {
-                user.UserInfo = await _context.UserInfos.FindAsync(user.intUserType);
+                user.UserInfo = await _context.UserInfos.FindAsync(user.Id);
                 return CreateUserDTO(user);
             }
             return Unauthorized("Password is not correct.");
@@ -126,7 +126,7 @@ namespace API.Controllers
         [HttpPost("refresh")]
         public async Task<ActionResult<string>> RefreshToken()
         {
-            var user = await _userManager.FindByNameAsync(User.FindFirstValue(ClaimTypes.Name));
+            var user = await _userManager.FindByNameAsync(User.FindFirstValue("username"));
             return _tokenService.CreateToken(user);
         }
 
