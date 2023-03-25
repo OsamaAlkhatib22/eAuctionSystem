@@ -22,7 +22,7 @@ namespace Application.Handlers
         )
         {
 
-            var user = await _context.ApplicationUsers.Where(q => q.intUserInfo == request.Id).FirstAsync();
+            var user = await _context.ApplicationUsers.Where(q => q.Id == request.Id).FirstAsync();
             var result = await _context.Complaints.Where(q => q.intUserID == user.Id).ToListAsync();
             return Result<List<Complaint>>.Success(result);
         }
