@@ -2,6 +2,7 @@
 using Application;
 using Domain.DataModels.Complaints;
 using Domain.ClientDTOs.User;
+using Domain.ClientDTOs.Complaint;
 
 namespace API.Controllers
 {
@@ -20,9 +21,9 @@ namespace API.Controllers
         }
 
         [HttpPost] // .../api/complaints
-        public async Task<IActionResult> InsertComplaint([FromBody] Complaint complaint)
+        public async Task<IActionResult> InsertComplaint([FromForm] ComplaintDTO complaintDTO)
         {
-            return Ok(await Mediator.Send(new InsertComplaintCommand(complaint)));
+            return Ok(await Mediator.Send(new InsertComplaintCommand(complaintDTO)));
         }
 
         [HttpGet("user/{userId}")] // .../api/complaints/user/..
