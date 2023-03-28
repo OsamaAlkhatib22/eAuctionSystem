@@ -1,13 +1,12 @@
 ﻿using API.Resources;
 using API.Services;
 using Domain.ClientDTOs;
-using Domain.DataModels;
+using Domain.DataModels.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.IdentityModel.Tokens;
 using Persistence;
 using System.Security.Claims;

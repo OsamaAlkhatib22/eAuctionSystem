@@ -1,4 +1,4 @@
-﻿using Domain.DataModels;
+﻿using Domain.DataModels.User;
 using Microsoft.IdentityModel.Tokens;
 using Persistence;
 using System.IdentityModel.Tokens.Jwt;

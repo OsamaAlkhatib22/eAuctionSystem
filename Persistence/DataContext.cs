@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Domain;
-using Domain.DataModels;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using Domain.DataModels.User;
+using Domain.DataModels.Complaints;
 
 namespace Persistence
 {

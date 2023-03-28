@@ -1,5 +1,5 @@
 ﻿using API.Services;
-using Domain.DataModels;
+using Domain.DataModels.User;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Persistence;

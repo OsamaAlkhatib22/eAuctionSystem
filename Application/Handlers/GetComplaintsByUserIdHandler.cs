@@ -1,5 +1,5 @@
 ﻿using Application.Core;
-using Domain;
+using Domain.DataModels.Complaints;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
@@ -21,11 +21,9 @@ namespace Application.Handlers
             CancellationToken cancellationToken
         )
         {
-
             var user = await _context.ApplicationUsers.Where(q => q.Id == request.Id).FirstAsync();
             var result = await _context.Complaints.Where(q => q.intUserID == user.Id).ToListAsync();
             return Result<List<Complaint>>.Success(result);
         }
     }
 }
-

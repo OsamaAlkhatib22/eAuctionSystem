@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.DataModels
+namespace Domain.DataModels.User
 {
     [Table("users_types")]
     public class UserType

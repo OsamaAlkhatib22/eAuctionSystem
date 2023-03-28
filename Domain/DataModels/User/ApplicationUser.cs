@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.DataModels
+namespace Domain.DataModels.User
 {
     public class ApplicationUser : IdentityUser<int>
     {

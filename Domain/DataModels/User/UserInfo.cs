@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Domain.DataModels
+namespace Domain.DataModels.User
 {
     [Table("users_info")]
     public class UserInfo

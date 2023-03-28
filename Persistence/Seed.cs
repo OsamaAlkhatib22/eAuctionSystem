@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Domain;
-using Domain.DataModels;
+﻿using Domain.DataModels.Complaints;
+using Domain.DataModels.User;
 using Microsoft.AspNetCore.Identity;
 
 namespace Persistence
