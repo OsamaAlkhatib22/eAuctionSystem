@@ -171,6 +171,34 @@ namespace Persistence
                 };
 
                 await context.Complaints.AddRangeAsync(complaints);
+
+                if (!context.ComplaintStatus.Any())
+                {
+                    var complaintStatus = new List<ComplaintStatus>
+                    {
+                        new ComplaintStatus { strName = "Pending" },
+                        new ComplaintStatus { strName = "Rejected" },
+                        new ComplaintStatus { strName = "Approved" },
+                        new ComplaintStatus { strName = "Scheduled" },
+                        new ComplaintStatus { strName = "In Progress" },
+                        new ComplaintStatus { strName = "Waiting Evaluation" },
+                        new ComplaintStatus { strName = "Completed" },
+                        new ComplaintStatus { strName = "Re-Filed" }
+                    };
+                    await context.ComplaintStatus.AddRangeAsync(complaintStatus);
+                }
+
+                if (!context.ComplaintPrivacy.Any())
+                {
+                    var complaintPrivacy = new List<ComplaintPrivacy>
+                    {
+                        new ComplaintPrivacy { strName = "Private" },
+                        new ComplaintPrivacy { strName = "Public" },
+                        new ComplaintPrivacy { strName = "Any" },
+                    };
+                    await context.ComplaintPrivacy.AddRangeAsync(complaintPrivacy);
+                }
+
                 await context.SaveChangesAsync();
             }
         }
