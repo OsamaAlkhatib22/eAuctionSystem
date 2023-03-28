@@ -23,7 +23,13 @@ namespace API.Services
             var claims = new List<Claim>
             {
                 new Claim("username", user.UserName),
-                new Claim("phonenumber", user.PhoneNumber),
+                new Claim(
+                    "phonenumber",
+                    _context.UserInfos
+                        .Where(q => q.intId == user.Id)
+                        .Select(p => p.strPhoneNumber)
+                        .FirstOrDefault()
+                ),
                 new Claim("usertype", _context.UserTypes.Find(user.intUserTypeId).strName),
             };
 
