@@ -16,6 +16,9 @@ namespace Domain.DataModels.User
         [Column("LAST_NAME")]
         public string strLastName { get; set; }
 
+        [Column("PHONE_NUMBER")]
+        public string strPhoneNumber { get; set; }
+
         [Column("NATIONAL_ID")]
         public string strNationalId { get; set; }
 

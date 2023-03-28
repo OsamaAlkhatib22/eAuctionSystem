@@ -5,16 +5,16 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Domain.DataModels.Complaints
 {
-    [Table("complaint_types")]
+    [Table("complaints_types")]
     public class ComplaintType
     {
         [Column("ID")]
         [Key]
         public int intId { get; set; }
 
-        [Column("DEPARTMENT")]
+        [Column("DEPARTMENT_ID")]
         [Required]
-        public int intDepartment { get; set; }
+        public int intDepartmentId { get; set; }
 
         [Column("NAME_AR")]
         [Required]
@@ -28,10 +28,10 @@ namespace Domain.DataModels.Complaints
         [Required]
         public decimal decGrade { get; set; }
 
-        [Column("PRIVACY")]
+        [Column("PRIVACY_ID")]
         [Required]
         [ForeignKey("Privacy")]
-        public int intPrivacy { get; set; }
+        public int intPrivacyId { get; set; }
         public ComplaintPrivacy Privacy { get; set; }
 
         [Column("CREATED_BY")]

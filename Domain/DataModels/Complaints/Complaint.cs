@@ -16,16 +16,16 @@ namespace Domain.DataModels.Complaints
         [Column("USER_ID")]
         public int intUserID { get; set; }
 
-        [Column("TYPE")]
+        [Column("TYPE_ID")]
         [Required]
         [ForeignKey("ComplaintType")]
-        public int intType { get; set; }
+        public int intTypeId { get; set; }
         public ComplaintType ComplaintType { get; set; }
 
-        [Column("STATUS")]
+        [Column("STATUS_ID")]
         [Required]
         [ForeignKey("Status")]
-        public int intStatus { get; set; }
+        public int intStatusId { get; set; }
         public ComplaintStatus Status { get; set; }
 
         [Column("IMAGE_REF")]

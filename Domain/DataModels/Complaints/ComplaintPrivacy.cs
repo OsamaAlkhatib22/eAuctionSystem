@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.DataModels.Complaints
 {
-    [Table("complaint_privacy")]
+    [Table("complaints_privacy")]
     public class ComplaintPrivacy
     {
         [Column("ID")]

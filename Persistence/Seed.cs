@@ -123,8 +123,8 @@ namespace Persistence
                     new Complaint
                     {
                         intUserID = 3,
-                        intType = 1,
-                        intStatus = 1,
+                        intTypeId = 1,
+                        intStatusId = 1,
                         strImageRef = "imageid",
                         // two ways to cast decimals
                         decLat = 32.565555M,
@@ -139,8 +139,8 @@ namespace Persistence
                     new Complaint
                     {
                         intUserID = 3,
-                        intType = 2,
-                        intStatus = 1,
+                        intTypeId = 2,
+                        intStatusId = 1,
                         strImageRef = "imageid",
                         // two ways to cast decimals
                         decLat = 32.894555M,
@@ -155,8 +155,8 @@ namespace Persistence
                     new Complaint
                     {
                         intUserID = 3,
-                        intType = 3,
-                        intStatus = 1,
+                        intTypeId = 3,
+                        intStatusId = 1,
                         strImageRef = "imageid",
                         // two ways to cast decimals
                         decLat = 32.122555M,

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.DataModels.Complaints
 {
-    [Table("complaint_voters")]
+    [Table("complaints_voters")]
     public class ComplaintVoters
     {
         [ForeignKey("User")]

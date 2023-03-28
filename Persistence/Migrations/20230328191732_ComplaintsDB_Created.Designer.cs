@@ -11,8 +11,8 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230328150636_ComplaintsDB_Added")]
-    partial class ComplaintsDB_Added
+    [Migration("20230328191732_ComplaintsDB_Created")]
+    partial class ComplaintsDB_Created
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -59,13 +59,13 @@ namespace Persistence.Migrations
                         .HasColumnType("int")
                         .HasColumnName("REMINDER");
 
-                    b.Property<int>("intStatus")
+                    b.Property<int>("intStatusId")
                         .HasColumnType("int")
-                        .HasColumnName("STATUS");
+                        .HasColumnName("STATUS_ID");
 
-                    b.Property<int>("intType")
+                    b.Property<int>("intTypeId")
                         .HasColumnType("int")
-                        .HasColumnName("TYPE");
+                        .HasColumnName("TYPE_ID");
 
                     b.Property<int>("intUserID")
                         .HasColumnType("int")
@@ -82,10 +82,10 @@ namespace Persistence.Migrations
 
                     b.HasKey("intId");
 
-                    b.HasIndex("intStatus")
+                    b.HasIndex("intStatusId")
                         .IsUnique();
 
-                    b.HasIndex("intType");
+                    b.HasIndex("intTypeId");
 
                     b.ToTable("complaints");
                 });
@@ -104,7 +104,7 @@ namespace Persistence.Migrations
 
                     b.HasKey("intId");
 
-                    b.ToTable("complaint_privacy");
+                    b.ToTable("complaints_privacy");
                 });
 
             modelBuilder.Entity("Domain.DataModels.Complaints.ComplaintStatus", b =>
@@ -121,7 +121,7 @@ namespace Persistence.Migrations
 
                     b.HasKey("intId");
 
-                    b.ToTable("complaint_status");
+                    b.ToTable("complaints_status");
                 });
 
             modelBuilder.Entity("Domain.DataModels.Complaints.ComplaintType", b =>
@@ -151,17 +151,17 @@ namespace Persistence.Migrations
                         .HasColumnType("int")
                         .HasColumnName("CREATED_BY");
 
-                    b.Property<int>("intDepartment")
+                    b.Property<int>("intDepartmentId")
                         .HasColumnType("int")
-                        .HasColumnName("DEPARTMENT");
+                        .HasColumnName("DEPARTMENT_ID");
 
                     b.Property<int>("intLastModifiedBy")
                         .HasColumnType("int")
                         .HasColumnName("LAST_MODIFIED_BY");
 
-                    b.Property<int>("intPrivacy")
+                    b.Property<int>("intPrivacyId")
                         .HasColumnType("int")
-                        .HasColumnName("PRIVACY");
+                        .HasColumnName("PRIVACY_ID");
 
                     b.Property<string>("strNameAr")
                         .IsRequired()
@@ -175,9 +175,9 @@ namespace Persistence.Migrations
 
                     b.HasKey("intId");
 
-                    b.HasIndex("intPrivacy");
+                    b.HasIndex("intPrivacyId");
 
-                    b.ToTable("complaint_types");
+                    b.ToTable("complaints_types");
                 });
 
             modelBuilder.Entity("Domain.DataModels.Complaints.ComplaintVoters", b =>
@@ -198,47 +198,45 @@ namespace Persistence.Migrations
 
                     b.HasIndex("intComplaintId");
 
-                    b.ToTable("complaint_voters");
+                    b.ToTable("complaints_voters");
                 });
 
             modelBuilder.Entity("Domain.DataModels.User.ApplicationUser", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("ID");
 
                     b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("ACCESS_FAILED_COUNT");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("longtext");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("longtext")
+                        .HasColumnName("CONCURRENCY_STAMP");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("LOCKOUT_END");
 
                     b.Property<string>("PasswordHash")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("longtext");
+                        .HasColumnType("longtext")
+                        .HasColumnName("PASSWORD_HASH");
 
                     b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("IS_CONFIRMED");
 
                     b.Property<string>("SecurityStamp")
-                        .HasColumnType("longtext");
+                        .HasColumnType("longtext")
+                        .HasColumnName("SECURITY_STAMP");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
+                        .HasColumnType("varchar(256)")
+                        .HasColumnName("USER_NAME");
 
                     b.Property<bool>("blnIsActive")
                         .HasColumnType("tinyint(1)")
@@ -266,16 +264,12 @@ namespace Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("UserNameIndex");
-
                     b.HasIndex("intUserInfo")
                         .IsUnique();
 
                     b.HasIndex("intUserType");
 
-                    b.ToTable("AspNetUsers", (string)null);
+                    b.ToTable("users", (string)null);
                 });
 
             modelBuilder.Entity("Domain.DataModels.User.UserInfo", b =>
@@ -304,6 +298,10 @@ namespace Persistence.Migrations
                     b.Property<string>("strPassportNumber")
                         .HasColumnType("longtext")
                         .HasColumnName("PASSPORT_NUMBER");
+
+                    b.Property<string>("strPhoneNumber")
+                        .HasColumnType("longtext")
+                        .HasColumnName("PHONE_NUMBER");
 
                     b.Property<string>("strRegistrationNumber")
                         .HasColumnType("longtext")
@@ -334,19 +332,23 @@ namespace Persistence.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("ID");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("longtext");
+                        .HasColumnType("longtext")
+                        .HasColumnName("CONCURRENCY_STAMP");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
+                        .HasColumnType("varchar(256)")
+                        .HasColumnName("NAME");
 
                     b.Property<string>("NormalizedName")
                         .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
+                        .HasColumnType("varchar(256)")
+                        .HasColumnName("NORMALIZED_NAME");
 
                     b.HasKey("Id");
 
@@ -354,119 +356,137 @@ namespace Persistence.Migrations
                         .IsUnique()
                         .HasDatabaseName("RoleNameIndex");
 
-                    b.ToTable("AspNetRoles", (string)null);
+                    b.ToTable("roles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("ID");
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("longtext");
+                        .HasColumnType("longtext")
+                        .HasColumnName("CLAIM_TYPE");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("longtext");
+                        .HasColumnType("longtext")
+                        .HasColumnName("CLAIM_VALUE");
 
                     b.Property<int>("RoleId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("ROLE_ID");
 
                     b.HasKey("Id");
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetRoleClaims", (string)null);
+                    b.ToTable("roles_claims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("ID");
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("longtext");
+                        .HasColumnType("longtext")
+                        .HasColumnName("CLAIM_TYPE");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("longtext");
+                        .HasColumnType("longtext")
+                        .HasColumnName("CLAIM_VALUE");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("USER_ID");
 
                     b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserClaims", (string)null);
+                    b.ToTable("users_claims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("LOGIN_PROVIDER");
 
                     b.Property<string>("ProviderKey")
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("PROVIDER_KEY");
 
                     b.Property<string>("ProviderDisplayName")
-                        .HasColumnType("longtext");
+                        .HasColumnType("longtext")
+                        .HasColumnName("PROVIDER_DISPLAY_NAME");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("USER_ID");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserLogins", (string)null);
+                    b.ToTable("users_login", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("USER_ID");
 
                     b.Property<int>("RoleId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("ROLE_ID");
 
                     b.HasKey("UserId", "RoleId");
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetUserRoles", (string)null);
+                    b.ToTable("users_roles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("USER_ID");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("LOGIN_PROVIDER");
 
                     b.Property<string>("Name")
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("NAME");
 
                     b.Property<string>("Value")
-                        .HasColumnType("longtext");
+                        .HasColumnType("longtext")
+                        .HasColumnName("VALUE");
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("AspNetUserTokens", (string)null);
+                    b.ToTable("users_tokens", (string)null);
                 });
 
             modelBuilder.Entity("Domain.DataModels.Complaints.Complaint", b =>
                 {
                     b.HasOne("Domain.DataModels.Complaints.ComplaintStatus", "Status")
                         .WithOne("Complaint")
-                        .HasForeignKey("Domain.DataModels.Complaints.Complaint", "intStatus")
+                        .HasForeignKey("Domain.DataModels.Complaints.Complaint", "intStatusId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Domain.DataModels.Complaints.ComplaintType", "ComplaintType")
                         .WithMany("Complaints")
-                        .HasForeignKey("intType")
+                        .HasForeignKey("intTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -479,7 +499,7 @@ namespace Persistence.Migrations
                 {
                     b.HasOne("Domain.DataModels.Complaints.ComplaintPrivacy", "Privacy")
                         .WithMany("ComplaintTypes")
-                        .HasForeignKey("intPrivacy")
+                        .HasForeignKey("intPrivacyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
