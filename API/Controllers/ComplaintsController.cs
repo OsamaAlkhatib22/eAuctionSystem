@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Application;
-using Domain.ClientDTOs;
 using Domain.DataModels.Complaints;
+using Domain.ClientDTOs.User;
 
 namespace API.Controllers
 {

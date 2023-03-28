@@ -1,6 +1,6 @@
 ﻿using API.Resources;
 using API.Services;
-using Domain.ClientDTOs;
+using Domain.ClientDTOs.User;
 using Domain.DataModels.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
