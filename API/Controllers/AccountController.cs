@@ -95,7 +95,6 @@ namespace API.Controllers
                     new()
                     {
                         UserName = register.strUsername.ToLower(),
-                        PhoneNumber = register.strPhonenumber,
                         intUserType = userType.intId,
                         intUserInfo = userInfo.Entity.intId,
                         UserInfo = userInfo.Entity
@@ -165,16 +164,6 @@ namespace API.Controllers
             }
 
             if (
-                register.strRegistrationNumber != null
-                && await _context.UserInfos
-                    .Where(q => q.strRegistrationNumber == register.strRegistrationNumber)
-                    .FirstOrDefaultAsync() != null
-            )
-            {
-                return BadRequest("Registration number is already used.");
-            }
-
-            if (
                 register.strPassportNumber != null
                 && await _context.UserInfos
                     .Where(q => q.strPassportNumber == register.strPassportNumber)
@@ -206,6 +195,7 @@ namespace API.Controllers
                 {
                     strFirstName = register.strFirstName.ToLower(),
                     strLastName = register.strLastName.ToLower(),
+                    strPhoneNumber = register.strPhonenumber,
                     strNationalId = register.strNationalId,
                     strNationalIdNumber = register.strNationalIdNumber?.ToUpper(),
                     strPassportNumber = register.strPassportNumber?.ToUpper(),
