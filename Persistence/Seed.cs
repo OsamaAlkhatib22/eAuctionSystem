@@ -44,6 +44,7 @@ namespace Persistence
                     {
                         strFirstName = "Admin",
                         strLastName = "User",
+                        strPhoneNumber = "0799999999",
                         strNationalId = "2000555333",
                         strNationalIdNumber = "RUX55333"
                     }
@@ -53,6 +54,7 @@ namespace Persistence
                     {
                         strFirstName = "Worker",
                         strLastName = "User",
+                        strPhoneNumber = "0788888888",
                         strNationalId = "2000111222",
                         strNationalIdNumber = "RUX11222"
                     }
@@ -62,6 +64,7 @@ namespace Persistence
                     {
                         strFirstName = "User",
                         strLastName = "User",
+                        strPhoneNumber = "0777777777",
                         strNationalId = "2000666888",
                         strNationalIdNumber = "RUX66888"
                     }
@@ -71,11 +74,8 @@ namespace Persistence
                 // Create users AFTER awaiting info creation and types
                 var userAdmin = new ApplicationUser
                 {
-                    Email = "admin@test.com",
-                    EmailConfirmed = true,
-                    PhoneNumber = "0799999999",
-                    PhoneNumberConfirmed = true,
                     UserName = "admin",
+                    PhoneNumberConfirmed = true,
                     blnIsVerified = false,
                     blnIsActive = false,
                     blnIsBlacklisted = false,
@@ -85,11 +85,8 @@ namespace Persistence
 
                 var userWorker = new ApplicationUser
                 {
-                    Email = "worker@test.com",
-                    EmailConfirmed = true,
-                    PhoneNumber = "0788888888",
-                    PhoneNumberConfirmed = true,
                     UserName = "worker",
+                    PhoneNumberConfirmed = true,
                     blnIsVerified = false,
                     blnIsActive = false,
                     blnIsBlacklisted = false,
@@ -99,11 +96,8 @@ namespace Persistence
 
                 var userUser = new ApplicationUser
                 {
-                    Email = "user@test.com",
-                    EmailConfirmed = true,
-                    PhoneNumber = "0777777777",
-                    PhoneNumberConfirmed = true,
                     UserName = "user",
+                    PhoneNumberConfirmed = true,
                     blnIsVerified = false,
                     blnIsActive = false,
                     blnIsBlacklisted = false,
