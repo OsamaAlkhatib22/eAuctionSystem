@@ -3,8 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.DataModels.Complaints
 {
-    [Table("complaint_status")]
-    public class ComplaintStatus
+    [Table("complaint_privacy")]
+    public class ComplaintPrivacy
     {
         [Column("ID")]
         [Key]
@@ -15,6 +15,6 @@ namespace Domain.DataModels.Complaints
         public string strName { get; set; }
 
         // Relations
-        public Complaint Complaint { get; set; }
+        public ICollection<ComplaintType> ComplaintTypes { get; set; }
     }
 }

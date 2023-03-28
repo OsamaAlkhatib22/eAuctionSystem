@@ -28,6 +28,7 @@ namespace Domain.DataModels.User
         [Column("NATIONAL_ID_NUMBER")]
         public string strNationalIdNumber { get; set; }
 
+        // Relations
         public ApplicationUser User { get; set; }
     }
 }

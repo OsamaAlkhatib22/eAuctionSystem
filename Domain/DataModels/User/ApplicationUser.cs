@@ -1,11 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
+﻿using Domain.DataModels.Complaints;
+using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Domain.DataModels.User
 {
@@ -35,5 +31,8 @@ namespace Domain.DataModels.User
         [ForeignKey("UserInfo")]
         public int intUserInfo { get; set; }
         public UserInfo UserInfo { get; set; }
+
+        // Relations
+        public ICollection<ComplaintVoters> Complaints { get; set; }
     }
 }

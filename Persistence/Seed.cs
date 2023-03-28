@@ -134,7 +134,7 @@ namespace Persistence
                         dtmDateLastModified = DateTime.Now,
                         dtmDateLastReminded = DateTime.Now,
                         intLastModifiedBy = 1,
-                        dtmDateSubmitted = DateTime.Now,
+                        dtmDateCreated = DateTime.Now,
                     },
                     new Complaint
                     {
@@ -150,7 +150,7 @@ namespace Persistence
                         dtmDateLastModified = DateTime.Now,
                         dtmDateLastReminded = DateTime.Now,
                         intLastModifiedBy = 1,
-                        dtmDateSubmitted = DateTime.Now,
+                        dtmDateCreated = DateTime.Now,
                     },
                     new Complaint
                     {
@@ -166,7 +166,7 @@ namespace Persistence
                         dtmDateLastModified = DateTime.Now,
                         dtmDateLastReminded = DateTime.Now,
                         intLastModifiedBy = 1,
-                        dtmDateSubmitted = DateTime.Now,
+                        dtmDateCreated = DateTime.Now,
                     }
                 };
 
