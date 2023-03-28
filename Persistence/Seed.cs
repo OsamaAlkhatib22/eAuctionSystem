@@ -79,8 +79,8 @@ namespace Persistence
                     blnIsVerified = false,
                     blnIsActive = false,
                     blnIsBlacklisted = false,
-                    intUserInfo = infoAdmin.Entity.intId,
-                    intUserType = typeAdmin,
+                    intUserInfoId = infoAdmin.Entity.intId,
+                    intUserTypeId = typeAdmin,
                 };
 
                 var userWorker = new ApplicationUser
@@ -90,8 +90,8 @@ namespace Persistence
                     blnIsVerified = false,
                     blnIsActive = false,
                     blnIsBlacklisted = false,
-                    intUserInfo = infoWorker.Entity.intId,
-                    intUserType = typeWorker,
+                    intUserInfoId = infoWorker.Entity.intId,
+                    intUserTypeId = typeWorker,
                 };
 
                 var userUser = new ApplicationUser
@@ -101,8 +101,8 @@ namespace Persistence
                     blnIsVerified = false,
                     blnIsActive = false,
                     blnIsBlacklisted = false,
-                    intUserInfo = infoUser.Entity.intId,
-                    intUserType = typeUser,
+                    intUserInfoId = infoUser.Entity.intId,
+                    intUserTypeId = typeUser,
                 };
 
                 await userManager.CreateAsync(userAdmin, "Pass@123");
@@ -112,60 +112,24 @@ namespace Persistence
 
             if (!context.Complaints.Any())
             {
-                var complaints = new List<Complaint>
+                if (!context.ComplaintTypes.Any())
                 {
-                    new Complaint
-                    {
-                        intUserID = 3,
-                        intTypeId = 1,
-                        intStatusId = 1,
-                        strImageRef = "imageid",
-                        // two ways to cast decimals
-                        decLat = 32.565555M,
-                        decLng = (decimal)38.598984,
-                        strComment = "can be null",
-                        intReminder = 1,
-                        dtmDateLastModified = DateTime.Now,
-                        dtmDateLastReminded = DateTime.Now,
-                        intLastModifiedBy = 1,
-                        dtmDateCreated = DateTime.Now,
-                    },
-                    new Complaint
-                    {
-                        intUserID = 3,
-                        intTypeId = 2,
-                        intStatusId = 1,
-                        strImageRef = "imageid",
-                        // two ways to cast decimals
-                        decLat = 32.894555M,
-                        decLng = (decimal)38.264984,
-                        strComment = "can be null",
-                        intReminder = 1,
-                        dtmDateLastModified = DateTime.Now,
-                        dtmDateLastReminded = DateTime.Now,
-                        intLastModifiedBy = 1,
-                        dtmDateCreated = DateTime.Now,
-                    },
-                    new Complaint
-                    {
-                        intUserID = 3,
-                        intTypeId = 3,
-                        intStatusId = 1,
-                        strImageRef = "imageid",
-                        // two ways to cast decimals
-                        decLat = 32.122555M,
-                        decLng = (decimal)38.500284,
-                        strComment = "can be null",
-                        intReminder = 1,
-                        dtmDateLastModified = DateTime.Now,
-                        dtmDateLastReminded = DateTime.Now,
-                        intLastModifiedBy = 1,
-                        dtmDateCreated = DateTime.Now,
-                    }
-                };
-
-                await context.Complaints.AddRangeAsync(complaints);
-
+                    await context.ComplaintTypes.AddAsync(
+                        new ComplaintType
+                        {
+                            intDepartmentId = 1,
+                            strNameAr = "حفر شوارع",
+                            strNameEn = "Potholes",
+                            decGrade = 1.24M,
+                            intPrivacyId = 1,
+                            intCreatedBy = 1,
+                            dtmDateCreated = DateTime.Now,
+                            intLastModifiedBy = 1,
+                            dtmDateLastModified = DateTime.Now,
+                            blnIsDeleted = false,
+                        }
+                    );
+                }
                 if (!context.ComplaintStatus.Any())
                 {
                     var complaintStatus = new List<ComplaintStatus>
@@ -193,6 +157,61 @@ namespace Persistence
                     await context.ComplaintPrivacy.AddRangeAsync(complaintPrivacy);
                 }
 
+                await context.SaveChangesAsync();
+
+                var complaints = new List<Complaint>
+                {
+                    new Complaint
+                    {
+                        intUserID = 3,
+                        intTypeId = 1,
+                        intStatusId = 1,
+                        strImageRef = "imageid",
+                        // two ways to cast decimals
+                        decLat = 32.565555M,
+                        decLng = (decimal)38.598984,
+                        strComment = "can be null",
+                        intReminder = 1,
+                        dtmDateLastModified = DateTime.Now,
+                        dtmDateLastReminded = DateTime.Now,
+                        intLastModifiedBy = 1,
+                        dtmDateCreated = DateTime.Now,
+                    },
+                    new Complaint
+                    {
+                        intUserID = 3,
+                        intTypeId = 1,
+                        intStatusId = 1,
+                        strImageRef = "imageid",
+                        // two ways to cast decimals
+                        decLat = 32.894555M,
+                        decLng = (decimal)38.264984,
+                        strComment = "can be null",
+                        intReminder = 1,
+                        dtmDateLastModified = DateTime.Now,
+                        dtmDateLastReminded = DateTime.Now,
+                        intLastModifiedBy = 1,
+                        dtmDateCreated = DateTime.Now,
+                    },
+                    new Complaint
+                    {
+                        intUserID = 3,
+                        intTypeId = 1,
+                        intStatusId = 1,
+                        strImageRef = "imageid",
+                        // two ways to cast decimals
+                        decLat = 32.122555M,
+                        decLng = (decimal)38.500284,
+                        strComment = "can be null",
+                        intReminder = 1,
+                        dtmDateLastModified = DateTime.Now,
+                        dtmDateLastReminded = DateTime.Now,
+                        intLastModifiedBy = 1,
+                        dtmDateCreated = DateTime.Now,
+                    }
+                };
+
+                await context.Complaints.AddRangeAsync(complaints);
                 await context.SaveChangesAsync();
             }
         }
