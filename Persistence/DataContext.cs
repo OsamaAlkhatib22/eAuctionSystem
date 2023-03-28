@@ -21,6 +21,7 @@ namespace Persistence
                 b.ToTable("users");
                 b.Property(e => e.Id).HasColumnName("ID");
                 b.Property(e => e.UserName).HasColumnName("USER_NAME");
+                b.Property(e => e.NormalizedUserName).HasColumnName("NORMALIZED_USER_NAME");
                 b.Property(e => e.PhoneNumberConfirmed).HasColumnName("IS_CONFIRMED");
                 b.Property(e => e.PasswordHash).HasColumnName("PASSWORD_HASH");
                 b.Property(e => e.SecurityStamp).HasColumnName("SECURITY_STAMP");
@@ -84,7 +85,6 @@ namespace Persistence
             // Ignore properties
             builder
                 .Entity<ApplicationUser>()
-                .Ignore(q => q.NormalizedUserName)
                 .Ignore(q => q.Email)
                 .Ignore(q => q.EmailConfirmed)
                 .Ignore(q => q.PhoneNumber)

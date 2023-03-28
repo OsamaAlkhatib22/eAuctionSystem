@@ -11,7 +11,7 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230328191732_ComplaintsDB_Created")]
+    [Migration("20230328194926_ComplaintsDB_Created")]
     partial class ComplaintsDB_Created
     {
         /// <inheritdoc />
@@ -82,8 +82,7 @@ namespace Persistence.Migrations
 
                     b.HasKey("intId");
 
-                    b.HasIndex("intStatusId")
-                        .IsUnique();
+                    b.HasIndex("intStatusId");
 
                     b.HasIndex("intTypeId");
 
@@ -221,6 +220,11 @@ namespace Persistence.Migrations
                         .HasColumnType("datetime(6)")
                         .HasColumnName("LOCKOUT_END");
 
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)")
+                        .HasColumnName("NORMALIZED_USER_NAME");
+
                     b.Property<string>("PasswordHash")
                         .HasColumnType("longtext")
                         .HasColumnName("PASSWORD_HASH");
@@ -254,20 +258,24 @@ namespace Persistence.Migrations
                         .HasColumnType("int")
                         .HasColumnName("GROUP_ID");
 
-                    b.Property<int>("intUserInfo")
+                    b.Property<int>("intUserInfoId")
                         .HasColumnType("int")
-                        .HasColumnName("USER_INFO");
+                        .HasColumnName("USER_INFO_ID");
 
-                    b.Property<int>("intUserType")
+                    b.Property<int>("intUserTypeId")
                         .HasColumnType("int")
-                        .HasColumnName("USER_TYPE");
+                        .HasColumnName("USER_TYPE_ID");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("intUserInfo")
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex");
+
+                    b.HasIndex("intUserInfoId")
                         .IsUnique();
 
-                    b.HasIndex("intUserType");
+                    b.HasIndex("intUserTypeId");
 
                     b.ToTable("users", (string)null);
                 });
@@ -479,13 +487,13 @@ namespace Persistence.Migrations
             modelBuilder.Entity("Domain.DataModels.Complaints.Complaint", b =>
                 {
                     b.HasOne("Domain.DataModels.Complaints.ComplaintStatus", "Status")
-                        .WithOne("Complaint")
-                        .HasForeignKey("Domain.DataModels.Complaints.Complaint", "intStatusId")
+                        .WithMany()
+                        .HasForeignKey("intStatusId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Domain.DataModels.Complaints.ComplaintType", "ComplaintType")
-                        .WithMany("Complaints")
+                        .WithMany()
                         .HasForeignKey("intTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -498,7 +506,7 @@ namespace Persistence.Migrations
             modelBuilder.Entity("Domain.DataModels.Complaints.ComplaintType", b =>
                 {
                     b.HasOne("Domain.DataModels.Complaints.ComplaintPrivacy", "Privacy")
-                        .WithMany("ComplaintTypes")
+                        .WithMany()
                         .HasForeignKey("intPrivacyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -529,13 +537,13 @@ namespace Persistence.Migrations
                 {
                     b.HasOne("Domain.DataModels.User.UserInfo", "UserInfo")
                         .WithOne("User")
-                        .HasForeignKey("Domain.DataModels.User.ApplicationUser", "intUserInfo")
+                        .HasForeignKey("Domain.DataModels.User.ApplicationUser", "intUserInfoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Domain.DataModels.User.UserType", "UserType")
                         .WithMany("Users")
-                        .HasForeignKey("intUserType")
+                        .HasForeignKey("intUserTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -598,21 +606,6 @@ namespace Persistence.Migrations
             modelBuilder.Entity("Domain.DataModels.Complaints.Complaint", b =>
                 {
                     b.Navigation("Voters");
-                });
-
-            modelBuilder.Entity("Domain.DataModels.Complaints.ComplaintPrivacy", b =>
-                {
-                    b.Navigation("ComplaintTypes");
-                });
-
-            modelBuilder.Entity("Domain.DataModels.Complaints.ComplaintStatus", b =>
-                {
-                    b.Navigation("Complaint");
-                });
-
-            modelBuilder.Entity("Domain.DataModels.Complaints.ComplaintType", b =>
-                {
-                    b.Navigation("Complaints");
                 });
 
             modelBuilder.Entity("Domain.DataModels.User.ApplicationUser", b =>

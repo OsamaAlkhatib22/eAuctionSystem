@@ -56,8 +56,5 @@ namespace Domain.DataModels.Complaints
 
         [Column("IS_DELETED")]
         public Boolean blnIsDeleted { get; set; }
-
-        // Relations
-        public ICollection<Complaint> Complaints { get; set; }
     }
 }

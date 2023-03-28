@@ -13,8 +13,5 @@ namespace Domain.DataModels.Complaints
         [Column("NAME")]
         [Required]
         public string strName { get; set; }
-
-        // Relations
-        public Complaint Complaint { get; set; }
     }
 }

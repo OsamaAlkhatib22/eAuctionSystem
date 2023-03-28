@@ -154,9 +154,10 @@ namespace Persistence.Migrations
                     IS_VERIFIED = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     IS_BLACKLISTED = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     IS_ACTIVE = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    USER_TYPE = table.Column<int>(type: "int", nullable: false),
-                    USER_INFO = table.Column<int>(type: "int", nullable: false),
+                    USER_TYPE_ID = table.Column<int>(type: "int", nullable: false),
+                    USER_INFO_ID = table.Column<int>(type: "int", nullable: false),
                     USER_NAME = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true),
+                    NORMALIZED_USER_NAME = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true),
                     PASSWORD_HASH = table.Column<string>(type: "longtext", nullable: true),
                     SECURITY_STAMP = table.Column<string>(type: "longtext", nullable: true),
                     CONCURRENCY_STAMP = table.Column<string>(type: "longtext", nullable: true),
@@ -168,14 +169,14 @@ namespace Persistence.Migrations
                 {
                     table.PrimaryKey("PK_users", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_users_users_info_USER_INFO",
-                        column: x => x.USER_INFO,
+                        name: "FK_users_users_info_USER_INFO_ID",
+                        column: x => x.USER_INFO_ID,
                         principalTable: "users_info",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_users_users_types_USER_TYPE",
-                        column: x => x.USER_TYPE,
+                        name: "FK_users_users_types_USER_TYPE_ID",
+                        column: x => x.USER_TYPE_ID,
                         principalTable: "users_types",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
@@ -337,8 +338,7 @@ namespace Persistence.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_complaints_STATUS_ID",
                 table: "complaints",
-                column: "STATUS_ID",
-                unique: true);
+                column: "STATUS_ID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_complaints_TYPE_ID",
@@ -367,15 +367,21 @@ namespace Persistence.Migrations
                 column: "ROLE_ID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_users_USER_INFO",
+                name: "IX_users_USER_INFO_ID",
                 table: "users",
-                column: "USER_INFO",
+                column: "USER_INFO_ID",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_users_USER_TYPE",
+                name: "IX_users_USER_TYPE_ID",
                 table: "users",
-                column: "USER_TYPE");
+                column: "USER_TYPE_ID");
+
+            migrationBuilder.CreateIndex(
+                name: "UserNameIndex",
+                table: "users",
+                column: "NORMALIZED_USER_NAME",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_users_claims_USER_ID",
