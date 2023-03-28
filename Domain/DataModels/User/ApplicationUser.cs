@@ -20,16 +20,16 @@ namespace Domain.DataModels.User
         [Column("IS_ACTIVE")]
         public Boolean blnIsActive { get; set; }
 
-        [Column("USER_TYPE")]
+        [Column("USER_TYPE_ID")]
         [Required]
         [ForeignKey("UserType")]
-        public int intUserType { get; set; }
+        public int intUserTypeId { get; set; }
         public UserType UserType { get; set; }
 
-        [Column("USER_INFO")]
+        [Column("USER_INFO_ID")]
         [Required]
         [ForeignKey("UserInfo")]
-        public int intUserInfo { get; set; }
+        public int intUserInfoId { get; set; }
         public UserInfo UserInfo { get; set; }
 
         // Relations

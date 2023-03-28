@@ -95,8 +95,8 @@ namespace API.Controllers
                     new()
                     {
                         UserName = register.strUsername.ToLower(),
-                        intUserType = userType.intId,
-                        intUserInfo = userInfo.Entity.intId,
+                        intUserTypeId = userType.intId,
+                        intUserInfoId = userInfo.Entity.intId,
                         UserInfo = userInfo.Entity
                     };
 

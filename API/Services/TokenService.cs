@@ -24,7 +24,7 @@ namespace API.Services
             {
                 new Claim("username", user.UserName),
                 new Claim("phonenumber", user.PhoneNumber),
-                new Claim("usertype", _context.UserTypes.Find(user.intUserType).strName),
+                new Claim("usertype", _context.UserTypes.Find(user.intUserTypeId).strName),
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["TokenKey"]));
