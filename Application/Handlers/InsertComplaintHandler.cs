@@ -32,9 +32,9 @@ namespace Application.Handlers
                 return Result<ComplaintDTO>.Failure("No file was Uploaded.");
             }
 
-            // BUG: FILES CONTAIN THE SAME NAME, LEADS TO OVERRIDE, ZOMBIES.
-            // GENERATE UNIQUE NAMES
-            string fileName = fileImage.FileName;
+            string extension = Path.GetExtension(fileImage.FileName);
+            string fileName =
+                $"{DateTime.UtcNow.Hour}-{DateTime.UtcNow.Minute}-{DateTime.UtcNow.Second}-{DateTime.UtcNow.Millisecond}{extension}";
             string directory = _configuration["FilesPath"];
             string path =
                 @$"{DateTime.Now.Year}\{DateTime.Now.Month}\{DateTime.Now.Day}\{complaintDTO.intUserId}\";
