@@ -12,4 +12,15 @@ export const Authorize = {
       console.error(error);
     }
   },
+  
+  Register: async (registrationRequest) => {
+    try {
+      const response = await axios.post("/api/account/register", registrationRequest);
+
+      const { strToken } = response.data;
+      IdentityHelper.token = strToken;
+    } catch (error) {
+      console.error(error);
+    }
+  },
 };
