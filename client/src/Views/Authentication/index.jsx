@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 
 // Project Imports
-import { Authorize } from "./Service/Login";
+import { Authorize } from "./Service/Auth";
 
 const LoginForm = () => {
   const [login, setLogin] = React.useState("");

@@ -5,7 +5,12 @@ import Layout from "../Layouts";
 import Loadable from "../Utils/Loadable";
 
 // Views Routing
-const LoginForm = Loadable(lazy(() => import("../../Views/Authentication")));
+const Login = Loadable(
+  lazy(() => import("../../Views/Authentication/Components/Login"))
+);
+const Register = Loadable(
+  lazy(() => import("../../Views/Authentication/Components/Register"))
+);
 const Dashboard = Loadable(lazy(() => import("../../Views/Dashboard")));
 
 const MainRoutes = {
@@ -17,8 +22,12 @@ const MainRoutes = {
       element: <Dashboard />,
     },
     {
-      path: "login",
-      element: <LoginForm />,
+      path: "/",
+      element: <Login />,
+    },
+    {
+      path: "register",
+      element: <Register />,
     },
   ],
 };
