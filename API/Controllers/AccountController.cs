@@ -1,13 +1,12 @@
-﻿using API.Resources;
-using API.Services;
-using Domain.ClientDTOs;
-using Domain.DataModels;
+﻿using API.Services;
+using Domain.ClientDTOs.User;
+using Domain.DataModels.User;
+using Domain.Resources;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.IdentityModel.Tokens;
 using Persistence;
 using System.Security.Claims;
@@ -96,9 +95,8 @@ namespace API.Controllers
                     new()
                     {
                         UserName = register.strUsername.ToLower(),
-                        PhoneNumber = register.strPhonenumber,
-                        intUserType = userType.intId,
-                        intUserInfo = userInfo.Entity.intId,
+                        intUserTypeId = userType.intId,
+                        intUserInfoId = userInfo.Entity.intId,
                         UserInfo = userInfo.Entity
                     };
 
@@ -166,16 +164,6 @@ namespace API.Controllers
             }
 
             if (
-                register.strRegistrationNumber != null
-                && await _context.UserInfos
-                    .Where(q => q.strRegistrationNumber == register.strRegistrationNumber)
-                    .FirstOrDefaultAsync() != null
-            )
-            {
-                return BadRequest("Registration number is already used.");
-            }
-
-            if (
                 register.strPassportNumber != null
                 && await _context.UserInfos
                     .Where(q => q.strPassportNumber == register.strPassportNumber)
@@ -207,6 +195,7 @@ namespace API.Controllers
                 {
                     strFirstName = register.strFirstName.ToLower(),
                     strLastName = register.strLastName.ToLower(),
+                    strPhoneNumber = register.strPhonenumber,
                     strNationalId = register.strNationalId,
                     strNationalIdNumber = register.strNationalIdNumber?.ToUpper(),
                     strPassportNumber = register.strPassportNumber?.ToUpper(),

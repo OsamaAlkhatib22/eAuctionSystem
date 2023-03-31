@@ -1,11 +1,9 @@
 using Persistence;
-using Microsoft.EntityFrameworkCore;
-using Application;
 using API.Extensions;
 using Microsoft.AspNetCore.Identity;
-using Domain.DataModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Domain.DataModels.User;
 
 var builder = WebApplication.CreateBuilder(args);
 

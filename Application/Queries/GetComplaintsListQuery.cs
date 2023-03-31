@@ -1,5 +1,5 @@
 ﻿using Application.Core;
-using Domain;
+using Domain.DataModels.Complaints;
 using MediatR;
 
 namespace Application

@@ -1,13 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
+﻿using Domain.DataModels.Complaints;
+using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Domain.DataModels
+namespace Domain.DataModels.User
 {
     public class ApplicationUser : IdentityUser<int>
     {
@@ -24,16 +20,19 @@ namespace Domain.DataModels
         [Column("IS_ACTIVE")]
         public Boolean blnIsActive { get; set; }
 
-        [Column("USER_TYPE")]
+        [Column("USER_TYPE_ID")]
         [Required]
         [ForeignKey("UserType")]
-        public int intUserType { get; set; }
+        public int intUserTypeId { get; set; }
         public UserType UserType { get; set; }
 
-        [Column("USER_INFO")]
+        [Column("USER_INFO_ID")]
         [Required]
         [ForeignKey("UserInfo")]
-        public int intUserInfo { get; set; }
+        public int intUserInfoId { get; set; }
         public UserInfo UserInfo { get; set; }
+
+        // Relations
+        public ICollection<ComplaintVoters> Complaints { get; set; }
     }
 }

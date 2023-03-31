@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Domain.DataModels
+namespace Domain.DataModels.User
 {
     [Table("users_types")]
     public class UserType
@@ -18,6 +13,7 @@ namespace Domain.DataModels
         [Column("NAME")]
         public string strName { get; set; }
 
+        // Relations
         public ICollection<ApplicationUser> Users { get; set; }
     }
 }

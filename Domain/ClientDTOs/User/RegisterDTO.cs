@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Domain.ClientDTOs
+namespace Domain.ClientDTOs.User
 {
     public class RegisterDTO
     {

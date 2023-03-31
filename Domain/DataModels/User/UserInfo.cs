@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Domain.DataModels
+namespace Domain.DataModels.User
 {
     [Table("users_info")]
     public class UserInfo
@@ -16,6 +16,9 @@ namespace Domain.DataModels
         [Column("LAST_NAME")]
         public string strLastName { get; set; }
 
+        [Column("PHONE_NUMBER")]
+        public string strPhoneNumber { get; set; }
+
         [Column("NATIONAL_ID")]
         public string strNationalId { get; set; }
 
@@ -28,6 +31,7 @@ namespace Domain.DataModels
         [Column("NATIONAL_ID_NUMBER")]
         public string strNationalIdNumber { get; set; }
 
+        // Relations
         public ApplicationUser User { get; set; }
     }
 }

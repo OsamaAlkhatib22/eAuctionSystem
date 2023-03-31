@@ -1,8 +1,9 @@
+using Domain.DataModels.User;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Domain
+namespace Domain.DataModels.Complaints
 {
     [Table("complaints")]
     public class Complaint
@@ -15,15 +16,18 @@ namespace Domain
         [Column("USER_ID")]
         public int intUserID { get; set; }
 
-        [Column("TYPE")]
+        [Column("TYPE_ID")]
         [Required]
-        public int intType { get; set; }
+        [ForeignKey("ComplaintType")]
+        public int intTypeId { get; set; }
+        public ComplaintType ComplaintType { get; set; }
 
-        [Column("STATUS")]
+        [Column("STATUS_ID")]
         [Required]
-        public int intStatus { get; set; }
+        [ForeignKey("Status")]
+        public int intStatusId { get; set; }
+        public ComplaintStatus Status { get; set; }
 
-        // Change according to image table PK
         [Column("IMAGE_REF")]
         [Required]
         public string strImageRef { get; set; }
@@ -44,9 +48,9 @@ namespace Domain
         [Required]
         public int intReminder { get; set; }
 
-        [Column("DATE_SUBMITTED")]
+        [Column("DATE_CREATED")]
         [Required]
-        public DateTime dtmDateSubmitted { get; set; }
+        public DateTime dtmDateCreated { get; set; }
 
         [Column("DATE_LAST_REMINDED")]
         [AllowNull]
@@ -54,10 +58,15 @@ namespace Domain
 
         [Column("LAST_MODIFIED_BY")]
         [Required]
+        [ForeignKey("ModifiedBy")]
         public int intLastModifiedBy { get; set; }
+        ApplicationUser ModifiedBy { get; set; }
 
         [Column("DATE_LAST_MODIFIED")]
         [AllowNull]
         public DateTime dtmDateLastModified { get; set; }
+
+        // Relations
+        public ICollection<ComplaintVoters> Voters { get; set; }
     }
 }
