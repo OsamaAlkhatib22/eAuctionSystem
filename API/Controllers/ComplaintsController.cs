@@ -16,7 +16,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")] // .../api/complaints/...
-        public async Task<ActionResult<Complaint>> GetComplaintById(int id)
+        public async Task<IActionResult> GetComplaintById(int id)
         {
             return HandleResult(await Mediator.Send(new GetComplaintByIdQuery(id)));
         }
@@ -30,11 +30,11 @@ namespace API.Controllers
 
             complaintDTO.strUserName = jwtToken.Claims.First(c => c.Type == "username").Value;
 
-            return Ok(await Mediator.Send(new InsertComplaintCommand(complaintDTO)));
+            return HandleResult(await Mediator.Send(new InsertComplaintCommand(complaintDTO)));
         }
 
         [HttpGet("user/{userId}")] // .../api/complaints/user/..
-        public async Task<ActionResult<UserDTO>> GetComplaintByUserId(int userId)
+        public async Task<IActionResult> GetComplaintByUserId(int userId)
         {
             return HandleResult(await Mediator.Send(new GetComplaintByUserIdQuery(userId)));
         }
