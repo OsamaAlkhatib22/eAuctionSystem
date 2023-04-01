@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Domain.DataModels.User;
 using Domain.DataModels.Complaints;
+using Domain.DataModels.Intersections;
+using Domain.DataModels.Tasks;
 
 namespace Persistence
 {
@@ -92,9 +94,9 @@ namespace Persistence
                 .Ignore(q => q.TwoFactorEnabled)
                 .Ignore(q => q.LockoutEnabled);
 
-            // Complaints Table
-            builder.Entity<Complaint>().Property(q => q.decLat).HasPrecision(8, 6);
-            builder.Entity<Complaint>().Property(q => q.decLng).HasPrecision(8, 6);
+            // Complaints Attchments Table
+            builder.Entity<ComplaintAttachment>().Property(q => q.decLat).HasPrecision(8, 6);
+            builder.Entity<ComplaintAttachment>().Property(q => q.decLng).HasPrecision(8, 6);
 
             // Complaint_Voters intersection table
             builder.Entity<ComplaintVoters>(
@@ -110,18 +112,47 @@ namespace Persistence
                 .HasOne(q => q.Complaint)
                 .WithMany(q => q.Voters)
                 .HasForeignKey(q => q.intComplaintId);
+
+            // Complaint_Attachment table
+            builder.Entity<ComplaintAttachment>(
+                q => q.HasKey(q => new { q.intComplaintId, q.strMediaRef })
+            );
+
+            // Tasks_Attachments table
+            builder.Entity<WorkTaskAttachment>(
+                q => q.HasKey(q => new { q.intTaskId, q.strMediaRef })
+            );
+
+            // Task_Members intersection table
+            builder.Entity<WorkTaskMembers>(q => q.HasKey(q => new { q.intWrokerId, q.intTaskId }));
+            builder
+                .Entity<WorkTaskMembers>()
+                .HasOne(q => q.Task)
+                .WithMany(q => q.Workers)
+                .HasForeignKey(q => q.intTaskId);
+            builder
+                .Entity<WorkTaskMembers>()
+                .HasOne(q => q.Worker)
+                .WithMany(q => q.Tasks)
+                .HasForeignKey(q => q.intWrokerId);
         }
 
         // Complaints DataSets
         public DbSet<Complaint> Complaints { get; set; }
-        public DbSet<ComplaintVoters> ComplaintVoters { get; set; }
         public DbSet<ComplaintStatus> ComplaintStatus { get; set; }
         public DbSet<ComplaintPrivacy> ComplaintPrivacy { get; set; }
         public DbSet<ComplaintType> ComplaintTypes { get; set; }
+        public DbSet<ComplaintVoters> ComplaintVoters { get; set; }
+        public DbSet<ComplaintAttachment> ComplaintAttachments { get; set; }
 
         // Users DataSets
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<UserInfo> UserInfos { get; set; }
         public DbSet<UserType> UserTypes { get; set; }
+
+        // Tasks DataSets
+        public DbSet<WorkTask> Tasks { get; set; }
+        public DbSet<WorkTaskStatus> TaskStatus { get; set; }
+        public DbSet<WorkTaskType> TaskTypes { get; set; }
     }
 }
