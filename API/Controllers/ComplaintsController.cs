@@ -38,5 +38,11 @@ namespace API.Controllers
         {
             return HandleResult(await Mediator.Send(new GetComplaintByUserIdQuery(userId)));
         }
+
+        [HttpGet("types")] // .../api/complaints/types
+        public async Task<IActionResult> GetComplaintTypes()
+        {
+            return HandleResult(await Mediator.Send(new GetComplaintTypesListQuery()));
+        }
     }
 }
