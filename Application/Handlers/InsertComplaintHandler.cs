@@ -2,7 +2,9 @@
 using Domain.ClientDTOs.Complaint;
 using Domain.DataModels.Complaints;
 using Domain.DataModels.Intersections;
+using Domain.DataModels.User;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Persistence;
 
@@ -13,11 +15,17 @@ namespace Application.Handlers
     {
         private readonly DataContext _context;
         private readonly IConfiguration _configuration;
+        public readonly UserManager<ApplicationUser> _userManager;
 
-        public InsertComplaintHandler(DataContext context, IConfiguration configuration)
+        public InsertComplaintHandler(
+            DataContext context,
+            IConfiguration configuration,
+            UserManager<ApplicationUser> userManager
+        )
         {
             _context = context;
             _configuration = configuration;
+            _userManager = userManager;
         }
 
         public async Task<Result<ComplaintDTO>> Handle(
@@ -27,20 +35,22 @@ namespace Application.Handlers
         {
             var complaintDTO = request.ComplaintDTO;
             var lstMedia = complaintDTO.lstMedia;
+            var user = await _userManager.FindByNameAsync(complaintDTO.strUserName);
+            int userId = user.Id;
 
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
                 var complaint = new Complaint
                 {
-                    intUserID = complaintDTO.intUserId,
+                    intUserID = userId,
                     intTypeId = complaintDTO.intTypeId,
                     intStatusId = 1,
                     strComment = complaintDTO?.strComment,
                     intReminder = 1,
                     dtmDateCreated = DateTime.Now,
                     dtmDateLastReminded = DateTime.Now,
-                    intLastModifiedBy = complaintDTO.intUserId,
+                    intLastModifiedBy = userId,
                     dtmDateLastModified = DateTime.Now,
                 };
                 var complaintEntity = await _context.Complaints.AddAsync(complaint);
@@ -99,7 +109,7 @@ namespace Application.Handlers
                         decLng = (decimal)complaintDTO.decLng,
                         blnIsVideo = complaintDTO.blnIsVideo,
                         dtmDateCreated = DateTime.Now,
-                        intCreatedBy = complaintDTO.intUserId
+                        intCreatedBy = userId
                     };
                     await _context.ComplaintAttachments.AddAsync(complaintAttachment);
                 }

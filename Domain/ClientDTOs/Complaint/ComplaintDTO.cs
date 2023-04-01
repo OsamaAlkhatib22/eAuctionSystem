@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System.Text.Json.Serialization;
 
 namespace Domain.ClientDTOs.Complaint
 {
     public class ComplaintDTO
     {
-        public int intUserId { get; set; }
+        [JsonIgnore]
+        public string strUserName { get; set; }
         public int intTypeId { get; set; }
         public IFormFileCollection lstMedia { get; set; }
         public float decLat { get; set; }
