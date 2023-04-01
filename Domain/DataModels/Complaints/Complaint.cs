@@ -57,5 +57,6 @@ namespace Domain.DataModels.Complaints
         // Relations
         public ICollection<ComplaintVoters> Voters { get; set; }
         public ICollection<ComplaintAttachment> Attachments { get; set; }
+        public ICollection<WorkTaskComplaints> Tasks { get; set; }
     }
 }

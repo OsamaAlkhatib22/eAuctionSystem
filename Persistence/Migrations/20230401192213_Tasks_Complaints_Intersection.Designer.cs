@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
 
@@ -10,9 +11,11 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230401192213_Tasks_Complaints_Intersection")]
+    partial class Tasks_Complaints_Intersection
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -273,10 +276,6 @@ namespace Persistence.Migrations
                         .HasColumnType("int")
                         .HasColumnName("TASK_ID");
 
-                    b.Property<bool>("blnIsLeader")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("IS_LEADER");
-
                     b.HasKey("intWrokerId", "intTaskId");
 
                     b.HasIndex("intTaskId");
@@ -339,6 +338,10 @@ namespace Persistence.Migrations
                         .HasColumnType("int")
                         .HasColumnName("STATUS_ID");
 
+                    b.Property<int>("intTeamLeaderId")
+                        .HasColumnType("int")
+                        .HasColumnName("TEAM_LEADER_ID");
+
                     b.Property<int>("intTypeId")
                         .HasColumnType("int")
                         .HasColumnName("TYPE_ID");
@@ -352,6 +355,8 @@ namespace Persistence.Migrations
                     b.HasIndex("intAdminId");
 
                     b.HasIndex("intStatusId");
+
+                    b.HasIndex("intTeamLeaderId");
 
                     b.HasIndex("intTypeId");
 
@@ -828,6 +833,12 @@ namespace Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Domain.DataModels.User.ApplicationUser", "TeamLeader")
+                        .WithMany()
+                        .HasForeignKey("intTeamLeaderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Domain.DataModels.Tasks.WorkTaskType", "TaskType")
                         .WithMany()
                         .HasForeignKey("intTypeId")
@@ -839,6 +850,8 @@ namespace Persistence.Migrations
                     b.Navigation("Status");
 
                     b.Navigation("TaskType");
+
+                    b.Navigation("TeamLeader");
                 });
 
             modelBuilder.Entity("Domain.DataModels.User.ApplicationUser", b =>

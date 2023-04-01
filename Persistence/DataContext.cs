@@ -135,6 +135,21 @@ namespace Persistence
                 .HasOne(q => q.Worker)
                 .WithMany(q => q.Tasks)
                 .HasForeignKey(q => q.intWrokerId);
+
+            // Task_Complaint intersection table
+            builder.Entity<WorkTaskComplaints>(
+                q => q.HasKey(q => new { q.intTaskId, q.intComplaintId })
+            );
+            builder
+                .Entity<WorkTaskComplaints>()
+                .HasOne(q => q.Task)
+                .WithMany(q => q.Complaints)
+                .HasForeignKey(q => q.intTaskId);
+            builder
+                .Entity<WorkTaskComplaints>()
+                .HasOne(q => q.Complaint)
+                .WithMany(q => q.Tasks)
+                .HasForeignKey(q => q.intComplaintId);
         }
 
         // Complaints DataSets
@@ -154,5 +169,7 @@ namespace Persistence
         public DbSet<WorkTask> Tasks { get; set; }
         public DbSet<WorkTaskStatus> TaskStatus { get; set; }
         public DbSet<WorkTaskType> TaskTypes { get; set; }
+        public DbSet<WorkTaskMembers> TaskMembers { get; set; }
+        public DbSet<WorkTaskComplaints> TasksComplaints { get; set; }
     }
 }

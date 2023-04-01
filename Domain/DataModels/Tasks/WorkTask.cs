@@ -19,12 +19,6 @@ namespace Domain.DataModels.Tasks
         public int intAdminId { get; set; }
         public ApplicationUser Admin { get; set; }
 
-        [Column("TEAM_LEADER_ID")]
-        [ForeignKey("TeamLeader")]
-        [Required]
-        public int intTeamLeaderId { get; set; }
-        public ApplicationUser TeamLeader { get; set; }
-
         [Column("STATUS_ID")]
         [ForeignKey("Status")]
         [Required]
@@ -86,5 +80,6 @@ namespace Domain.DataModels.Tasks
         public ICollection<WorkTaskMembers> Workers { get; set; }
 
         public ICollection<WorkTaskAttachment> Attachments { get; set; }
+        public ICollection<WorkTaskComplaints> Complaints { get; set; }
     }
 }
