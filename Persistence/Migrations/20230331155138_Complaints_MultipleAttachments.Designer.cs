@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
 
@@ -10,9 +11,11 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230331155138_Complaints_MultipleAttachments")]
+    partial class Complaints_MultipleAttachments
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -167,10 +170,6 @@ namespace Persistence.Migrations
                         .HasColumnType("int")
                         .HasColumnName("COMPLAINT_ID");
 
-                    b.Property<string>("strMediaRef")
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("MEDIA_REF");
-
                     b.Property<bool>("blnIsVideo")
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("IS_VIDEO");
@@ -185,15 +184,12 @@ namespace Persistence.Migrations
                         .HasColumnType("decimal(8,6)")
                         .HasColumnName("LNG");
 
-                    b.Property<DateTime>("dtmDateCreated")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("DATE_CREATED");
+                    b.Property<string>("strMediaRef")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("MEDIA_REF");
 
-                    b.Property<int>("intCreatedBy")
-                        .HasColumnType("int")
-                        .HasColumnName("CREATED_BY");
-
-                    b.HasKey("intComplaintId", "strMediaRef");
+                    b.HasKey("intComplaintId");
 
                     b.ToTable("complaints_attachments");
                 });
@@ -217,193 +213,6 @@ namespace Persistence.Migrations
                     b.HasIndex("intComplaintId");
 
                     b.ToTable("complaints_voters");
-                });
-
-            modelBuilder.Entity("Domain.DataModels.Intersections.WorkTaskAttachment", b =>
-                {
-                    b.Property<int>("intTaskId")
-                        .HasColumnType("int")
-                        .HasColumnName("TASK_ID");
-
-                    b.Property<string>("strMediaRef")
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("MEDIA_REF");
-
-                    b.Property<bool>("blnIsVideo")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("IS_VIDEO");
-
-                    b.Property<DateTime>("dtmDateCreated")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("DATE_CREATED");
-
-                    b.Property<int>("intCreatedBy")
-                        .HasColumnType("int")
-                        .HasColumnName("CREATED_BY");
-
-                    b.HasKey("intTaskId", "strMediaRef");
-
-                    b.ToTable("tasks_attachments");
-                });
-
-            modelBuilder.Entity("Domain.DataModels.Intersections.WorkTaskMembers", b =>
-                {
-                    b.Property<int>("intWrokerId")
-                        .HasColumnType("int")
-                        .HasColumnName("USER_ID");
-
-                    b.Property<int>("intTaskId")
-                        .HasColumnType("int")
-                        .HasColumnName("TASK_ID");
-
-                    b.HasKey("intWrokerId", "intTaskId");
-
-                    b.HasIndex("intTaskId");
-
-                    b.ToTable("tasks_members");
-                });
-
-            modelBuilder.Entity("Domain.DataModels.Tasks.WorkTask", b =>
-                {
-                    b.Property<int>("intId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("ID");
-
-                    b.Property<bool>("blnIsDeleted")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("IS_DELETED");
-
-                    b.Property<decimal>("decCost")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("COST");
-
-                    b.Property<decimal>("decRating")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("RATING");
-
-                    b.Property<DateTime>("dtmDateActivated")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("DATE_ACTIVATED");
-
-                    b.Property<DateTime>("dtmDateCreated")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("DATE_CREATED");
-
-                    b.Property<DateTime>("dtmDateDeadline")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("DATE_DEADLINE");
-
-                    b.Property<DateTime>("dtmDateFinished")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("DATE_FINISHED");
-
-                    b.Property<DateTime>("dtmDateLastModified")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("DATE_LAST_MODIFIED");
-
-                    b.Property<DateTime>("dtmDateScheduled")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("DATE_SCHEDULED");
-
-                    b.Property<int>("intAdminId")
-                        .HasColumnType("int")
-                        .HasColumnName("ADMIN_ID");
-
-                    b.Property<int>("intLastModifiedBy")
-                        .HasColumnType("int")
-                        .HasColumnName("LAST_MODIFIED_BY");
-
-                    b.Property<int>("intStatusId")
-                        .HasColumnType("int")
-                        .HasColumnName("STATUS_ID");
-
-                    b.Property<int>("intTeamLeaderId")
-                        .HasColumnType("int")
-                        .HasColumnName("TEAM_LEADER_ID");
-
-                    b.Property<int>("intTypeId")
-                        .HasColumnType("int")
-                        .HasColumnName("TYPE_ID");
-
-                    b.Property<string>("strComment")
-                        .HasColumnType("longtext")
-                        .HasColumnName("COMMENT");
-
-                    b.HasKey("intId");
-
-                    b.HasIndex("intAdminId");
-
-                    b.HasIndex("intStatusId");
-
-                    b.HasIndex("intTeamLeaderId");
-
-                    b.HasIndex("intTypeId");
-
-                    b.ToTable("tasks");
-                });
-
-            modelBuilder.Entity("Domain.DataModels.Tasks.WorkTaskStatus", b =>
-                {
-                    b.Property<int>("intId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("ID");
-
-                    b.Property<string>("strName")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("NAME");
-
-                    b.HasKey("intId");
-
-                    b.ToTable("tasks_status");
-                });
-
-            modelBuilder.Entity("Domain.DataModels.Tasks.WorkTaskType", b =>
-                {
-                    b.Property<int>("intId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("ID");
-
-                    b.Property<bool>("blnIsDeleted")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("IS_DELETED");
-
-                    b.Property<DateTime>("dtmDateCreated")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("DATE_CREATED");
-
-                    b.Property<DateTime>("dtmDateLastModified")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("DATE_LAST_MODIFIED");
-
-                    b.Property<int>("intCreatedBy")
-                        .HasColumnType("int")
-                        .HasColumnName("CREATED_BY");
-
-                    b.Property<int>("intDepartmentId")
-                        .HasColumnType("int")
-                        .HasColumnName("DEPARTMENT_ID");
-
-                    b.Property<int>("intLastModifiedBy")
-                        .HasColumnType("int")
-                        .HasColumnName("LAST_MODIFIED_BY");
-
-                    b.Property<string>("strNameAr")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("NAME_AR");
-
-                    b.Property<string>("strNameEn")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("NAME_EN");
-
-                    b.HasKey("intId");
-
-                    b.ToTable("tasks_types");
                 });
 
             modelBuilder.Entity("Domain.DataModels.User.ApplicationUser", b =>
@@ -750,71 +559,6 @@ namespace Persistence.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Domain.DataModels.Intersections.WorkTaskAttachment", b =>
-                {
-                    b.HasOne("Domain.DataModels.Tasks.WorkTask", "Task")
-                        .WithMany("Attachments")
-                        .HasForeignKey("intTaskId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Task");
-                });
-
-            modelBuilder.Entity("Domain.DataModels.Intersections.WorkTaskMembers", b =>
-                {
-                    b.HasOne("Domain.DataModels.Tasks.WorkTask", "Task")
-                        .WithMany("Workers")
-                        .HasForeignKey("intTaskId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.DataModels.User.ApplicationUser", "Worker")
-                        .WithMany("Tasks")
-                        .HasForeignKey("intWrokerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Task");
-
-                    b.Navigation("Worker");
-                });
-
-            modelBuilder.Entity("Domain.DataModels.Tasks.WorkTask", b =>
-                {
-                    b.HasOne("Domain.DataModels.User.ApplicationUser", "Admin")
-                        .WithMany()
-                        .HasForeignKey("intAdminId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.DataModels.Tasks.WorkTaskStatus", "Status")
-                        .WithMany()
-                        .HasForeignKey("intStatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.DataModels.User.ApplicationUser", "TeamLeader")
-                        .WithMany()
-                        .HasForeignKey("intTeamLeaderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.DataModels.Tasks.WorkTaskType", "TaskType")
-                        .WithMany()
-                        .HasForeignKey("intTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Admin");
-
-                    b.Navigation("Status");
-
-                    b.Navigation("TaskType");
-
-                    b.Navigation("TeamLeader");
-                });
-
             modelBuilder.Entity("Domain.DataModels.User.ApplicationUser", b =>
                 {
                     b.HasOne("Domain.DataModels.User.UserInfo", "UserInfo")
@@ -892,18 +636,9 @@ namespace Persistence.Migrations
                     b.Navigation("Voters");
                 });
 
-            modelBuilder.Entity("Domain.DataModels.Tasks.WorkTask", b =>
-                {
-                    b.Navigation("Attachments");
-
-                    b.Navigation("Workers");
-                });
-
             modelBuilder.Entity("Domain.DataModels.User.ApplicationUser", b =>
                 {
                     b.Navigation("Complaints");
-
-                    b.Navigation("Tasks");
                 });
 
             modelBuilder.Entity("Domain.DataModels.User.UserInfo", b =>

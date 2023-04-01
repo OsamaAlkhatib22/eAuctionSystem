@@ -1,7 +1,8 @@
-﻿using Domain.DataModels.User;
+﻿using Domain.DataModels.Complaints;
+using Domain.DataModels.User;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Domain.DataModels.Complaints
+namespace Domain.DataModels.Intersections
 {
     [Table("complaints_voters")]
     public class ComplaintVoters
@@ -17,6 +18,6 @@ namespace Domain.DataModels.Complaints
         public Complaint Complaint { get; set; }
 
         [Column("IS_HOST")]
-        public Boolean blnIsHost { get; set; }
+        public bool blnIsHost { get; set; }
     }
 }

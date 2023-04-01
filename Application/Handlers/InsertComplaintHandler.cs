@@ -1,7 +1,10 @@
 ﻿using Application.Core;
 using Domain.ClientDTOs.Complaint;
 using Domain.DataModels.Complaints;
+using Domain.DataModels.Intersections;
+using Domain.DataModels.User;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Persistence;
 
@@ -12,11 +15,17 @@ namespace Application.Handlers
     {
         private readonly DataContext _context;
         private readonly IConfiguration _configuration;
+        public readonly UserManager<ApplicationUser> _userManager;
 
-        public InsertComplaintHandler(DataContext context, IConfiguration configuration)
+        public InsertComplaintHandler(
+            DataContext context,
+            IConfiguration configuration,
+            UserManager<ApplicationUser> userManager
+        )
         {
             _context = context;
             _configuration = configuration;
+            _userManager = userManager;
         }
 
         public async Task<Result<ComplaintDTO>> Handle(
@@ -25,51 +34,94 @@ namespace Application.Handlers
         )
         {
             var complaintDTO = request.ComplaintDTO;
-            var fileImage = complaintDTO.fileImage;
+            var lstMedia = complaintDTO.lstMedia;
+            var user = await _userManager.FindByNameAsync(complaintDTO.strUserName);
+            int userId = user.Id;
 
-            if (fileImage == null || fileImage.Length == 0)
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
             {
-                return Result<ComplaintDTO>.Failure("No file was Uploaded.");
+                var complaint = new Complaint
+                {
+                    intUserID = userId,
+                    intTypeId = complaintDTO.intTypeId,
+                    intStatusId = 1,
+                    strComment = complaintDTO?.strComment,
+                    intReminder = 1,
+                    dtmDateCreated = DateTime.Now,
+                    dtmDateLastReminded = DateTime.Now,
+                    intLastModifiedBy = userId,
+                    dtmDateLastModified = DateTime.Now,
+                };
+                var complaintEntity = await _context.Complaints.AddAsync(complaint);
+                await _context.SaveChangesAsync(cancellationToken);
+
+                List<string> filesPaths = new List<string>();
+                try
+                {
+                    if (lstMedia == null || lstMedia.Count == 0)
+                    {
+                        await transaction.RollbackAsync();
+                        return Result<ComplaintDTO>.Failure("No file was Uploaded.");
+                    }
+
+                    foreach (var media in lstMedia)
+                    {
+                        string extension = Path.GetExtension(media.FileName);
+                        string fileName = $"{DateTime.UtcNow.Ticks}{extension}";
+                        string directory = _configuration["FilesPath"];
+                        string path =
+                            @$"{DateTime.Now.Year}\{DateTime.Now.Month}\{DateTime.Now.Day}\{complaintEntity.Entity.intId}\";
+                        string filePath = Path.Combine(directory, path, fileName);
+
+                        // Create directory if it doesn't exist
+                        string directoryPath = Path.Combine(directory, path);
+                        if (!Directory.Exists(Path.GetDirectoryName(directoryPath)))
+                        {
+                            Directory.CreateDirectory(Path.GetDirectoryName(directoryPath));
+                        }
+
+                        // Create file
+                        filesPaths.Add(filePath);
+                        using var stream = File.Create(filePath);
+                        await media.CopyToAsync(stream, cancellationToken);
+                    }
+                }
+                catch (Exception)
+                {
+                    await transaction.RollbackAsync();
+                    return Result<ComplaintDTO>.Failure("Unknown Error");
+                }
+
+                if (filesPaths.Count == 0)
+                {
+                    await transaction.RollbackAsync();
+                    return Result<ComplaintDTO>.Failure("Unknown Error");
+                }
+
+                foreach (var filePath in filesPaths)
+                {
+                    var complaintAttachment = new ComplaintAttachment
+                    {
+                        intComplaintId = complaintEntity.Entity.intId,
+                        strMediaRef = filePath,
+                        decLat = (decimal)complaintDTO.decLat,
+                        decLng = (decimal)complaintDTO.decLng,
+                        blnIsVideo = complaintDTO.blnIsVideo,
+                        dtmDateCreated = DateTime.Now,
+                        intCreatedBy = userId
+                    };
+                    await _context.ComplaintAttachments.AddAsync(complaintAttachment);
+                }
+
+                await _context.SaveChangesAsync(cancellationToken);
+                await transaction.CommitAsync();
             }
-
-            string extension = Path.GetExtension(fileImage.FileName);
-            string fileName =
-                $"{DateTime.UtcNow.Hour}-{DateTime.UtcNow.Minute}-{DateTime.UtcNow.Second}-{DateTime.UtcNow.Millisecond}{extension}";
-            string directory = _configuration["FilesPath"];
-            string path =
-                @$"{DateTime.Now.Year}\{DateTime.Now.Month}\{DateTime.Now.Day}\{complaintDTO.intUserId}\";
-            string filePath = Path.Combine(directory, path, fileName);
-
-            // Create directory if it doesn't exist
-            string directoryPath = Path.Combine(directory, path);
-            if (!Directory.Exists(Path.GetDirectoryName(directoryPath)))
+            catch (Exception)
             {
-                Directory.CreateDirectory(Path.GetDirectoryName(directoryPath));
+                await transaction.RollbackAsync();
+                return Result<ComplaintDTO>.Failure("Unknown Error");
             }
-
-            // Create file
-            using (var stream = File.Create(filePath))
-            {
-                await fileImage.CopyToAsync(stream, cancellationToken);
-            }
-
-            var complaint = new Complaint
-            {
-                intUserID = complaintDTO.intUserId,
-                intTypeId = complaintDTO.intTypeId,
-                intStatusId = 1,
-                strImageRef = filePath,
-                decLat = (decimal)complaintDTO.decLat,
-                decLng = (decimal)complaintDTO.decLng,
-                strComment = complaintDTO?.strComment,
-                intReminder = 1,
-                dtmDateCreated = DateTime.Now,
-                dtmDateLastReminded = DateTime.Now,
-                intLastModifiedBy = complaintDTO.intUserId,
-                dtmDateLastModified = DateTime.Now,
-            };
-            _context.Complaints.Add(complaint);
-            await _context.SaveChangesAsync(cancellationToken);
 
             return Result<ComplaintDTO>.Success(complaintDTO);
         }

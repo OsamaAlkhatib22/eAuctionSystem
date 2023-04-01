@@ -1,3 +1,4 @@
+using Domain.DataModels.Intersections;
 using Domain.DataModels.User;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -12,12 +13,11 @@ namespace Domain.DataModels.Complaints
         [Key]
         public int intId { get; set; }
 
-        [Required]
         [Column("USER_ID")]
+        [Required]
         public int intUserID { get; set; }
 
         [Column("TYPE_ID")]
-        [Required]
         [ForeignKey("ComplaintType")]
         public int intTypeId { get; set; }
         public ComplaintType ComplaintType { get; set; }
@@ -27,18 +27,6 @@ namespace Domain.DataModels.Complaints
         [ForeignKey("Status")]
         public int intStatusId { get; set; }
         public ComplaintStatus Status { get; set; }
-
-        [Column("IMAGE_REF")]
-        [Required]
-        public string strImageRef { get; set; }
-
-        [Column("LAT")]
-        [Required]
-        public decimal decLat { get; set; }
-
-        [Column("LNG")]
-        [Required]
-        public decimal decLng { get; set; }
 
         [Column("COMMENT")]
         [AllowNull]
@@ -68,5 +56,6 @@ namespace Domain.DataModels.Complaints
 
         // Relations
         public ICollection<ComplaintVoters> Voters { get; set; }
+        public ICollection<ComplaintAttachment> Attachments { get; set; }
     }
 }

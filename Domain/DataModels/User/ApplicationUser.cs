@@ -1,4 +1,4 @@
-﻿using Domain.DataModels.Complaints;
+﻿using Domain.DataModels.Intersections;
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -34,5 +34,6 @@ namespace Domain.DataModels.User
 
         // Relations
         public ICollection<ComplaintVoters> Complaints { get; set; }
+        public ICollection<WorkTaskMembers> Tasks { get; set; }
     }
 }
