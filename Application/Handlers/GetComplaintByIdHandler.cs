@@ -48,7 +48,8 @@ namespace Application.Handlers
                     dtmDateCreated = c.Complaint.Complaint.dtmDateCreated,
                     strComplaintTypeEn = c.ComplaintType.strNameEn,
                     strComplaintTypeAr = c.ComplaintType.strNameAr,
-                    strMediaRef = c.ComplaintAttachment.strMediaRef
+                    strMediaRef = c.ComplaintAttachment.strMediaRef,
+                    blnIsVideo = c.ComplaintAttachment.blnIsVideo
                 })
                 .FirstOrDefaultAsync();
 
