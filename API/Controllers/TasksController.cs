@@ -8,6 +8,12 @@ namespace API.Controllers
 {
     public class TasksController : BaseApiController
     {
+        [HttpGet] // .../api/tasks
+        public async Task<IActionResult> GetTasksList()
+        {
+            return HandleResult(await Mediator.Send(new GetTasksListQuery()));
+        }
+
         [HttpGet("users")] // .../api/tasks/users
         public async Task<IActionResult> GetWorkersList()
         {
