@@ -138,7 +138,7 @@ namespace API.Controllers
                 return BadRequest("Username is already used.");
             }
 
-            if (await _userManager.Users.AnyAsync(q => q.PhoneNumber == register.strPhonenumber))
+            if (await _context.UserInfos.AnyAsync(q => q.strPhoneNumber == register.strPhonenumber))
             {
                 return BadRequest("Phonenumber is already used.");
             }
