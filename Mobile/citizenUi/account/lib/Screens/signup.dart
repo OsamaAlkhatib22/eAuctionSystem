@@ -1,12 +1,15 @@
 // ignore_for_file: non_constant_identifier_names
 
-import 'package:account/login.dart';
+import 'package:account/Screens/login.dart';
 import 'package:flutter/material.dart';
-import 'package:account/emailValidation.dart' as a;
+import 'package:account/Validation/emailValidation.dart' as a;
 import 'package:flutter/services.dart';
-import 'signRequest.dart';
-  
+import '../API/signRequest.dart';
+
+  TextEditingController email = TextEditingController();
+ TextEditingController password= TextEditingController();
  var ab=a.sendKey();
+ var key2=a.sendKey2();
   enum natonality { jordanian ,notJordanian ,none}
   enum idInfo{nationalID,registrationNumber,none}
 
@@ -20,8 +23,7 @@ class _SignupPageState extends State<SignupPage> {
  // create a GlobalKey for the form
  natonality _nationality = natonality.jordanian;
  idInfo selectedOption=idInfo.none;
- TextEditingController email = TextEditingController();
- TextEditingController password= TextEditingController();
+
  TextEditingController nationalid = TextEditingController();
  TextEditingController passportNum = TextEditingController();
  TextEditingController firstName = TextEditingController();
@@ -161,10 +163,11 @@ class _SignupPageState extends State<SignupPage> {
                  
                  inputFile(label: " الهاتف", obscureText: false,myController: phone,limit: 10,type1: TextInputType.phone),
                  a.emaile(), 
-                 // inputFile(label: " البريد الالكتروني", obscureText: false,myController: email,type1: TextInputType.emailAddress),         
+                       
                   inputFile(label: " اسم المستخدم", obscureText: false,myController: username),
-                   inputFile(label: " كلمة المرور", obscureText: true,myController: password),
-                     inputFile(label: " تأكيد كلمة المرور", obscureText: true),
+                  a.passowrd(),
+                 // inputFile(label: " كلمة المرور", obscureText: true,myController: password),
+                  inputFile(label: " تأكيد كلمة المرور", obscureText: true),
                 ],
                ) ),
               Container(
@@ -188,12 +191,14 @@ class _SignupPageState extends State<SignupPage> {
                   height: 50,
                   onPressed: () {
               
-                   if (a.sendKey().currentState!.validate()) {}
+                   if (a.sendKey().currentState!.validate()  ){}
                    User user= User();
                    user.signup(username.text,phone.text,password.text,
                    firstName.text,famileName.text,email.text,
                    nationalid.text,passportNum.text,registrationNumber.text+registrationNumber2.text,nationalIdNumber.text,
                     );
+
+                    
 
                   },
                   color: const Color(0xff0095FF),
