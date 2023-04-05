@@ -3,6 +3,9 @@ using Application;
 using Domain.DataModels.Tasks;
 using Domain.ClientDTOs.User;
 using System.IdentityModel.Tokens.Jwt;
+using Domain.ClientDTOs.Complaint;
+using Domain.ClientDTOs.Task;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
@@ -19,6 +22,31 @@ namespace API.Controllers
         {
             return HandleResult(await Mediator.Send(new GetWorkersListQuery()));
         }
+
+        [HttpPost("types")] // .../api/tasks/types
+        public async Task<IActionResult> InsertTaskType([FromForm] TaskTypeDTO taskTypeDTO)
+        {
+            string authHeader = Request.Headers["Authorization"];
+            JwtSecurityTokenHandler tokenHandler = new();
+            JwtSecurityToken jwtToken = tokenHandler.ReadJwtToken(authHeader[7..]);
+
+            taskTypeDTO.strUserName = jwtToken.Claims.First(c => c.Type == "username").Value;
+
+            return HandleResult(await Mediator.Send(new InsertTaskTypeCommand(taskTypeDTO)));
+        }
+        [HttpPost("{id}")] // .../api/tasks
+        public async Task<IActionResult> InsertTaskStats([FromForm] TaskDTO taskDTO, int id) // Create task for selected complaint
+        {
+            string authHeader = Request.Headers["Authorization"];
+            JwtSecurityTokenHandler tokenHandler = new();
+            JwtSecurityToken jwtToken = tokenHandler.ReadJwtToken(authHeader[7..]);
+
+            taskDTO.strUserName = jwtToken.Claims.First(c => c.Type == "username").Value;
+
+            return HandleResult(await Mediator.Send(new InsertTaskCommand(taskDTO, id)));
+        }
+
+
 
     }
 }
