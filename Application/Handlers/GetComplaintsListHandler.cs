@@ -28,21 +28,21 @@ namespace Application.Handlers
          c => c.intUserID,
          u => u.Id,
          (c, u) => new { Complaint = c, User = u }
-     )
+          )
      .Join(
          _context.ComplaintTypes,
          c => c.Complaint.intTypeId,
          ct => ct.intId,
-         (c, ct) => new ComplaintListDTO
-         {
-             intComplaintId = c.Complaint.intId,
-             strUserName = c.User.UserName,
-             dateCreated = c.Complaint.dtmDateCreated,
-             complaintTypeEn = ct.strNameEn,
-             complaintTypeAr = ct.strNameAr
-         }
-     )
-     .ToListAsync();
+            (c, ct) => new ComplaintListDTO
+               {
+                intComplaintId = c.Complaint.intId,
+                strUserName = c.User.UserName,
+                dtmDateCreated = c.Complaint.dtmDateCreated,
+                strComplaintTypeEn = ct.strNameEn,
+                strComplaintTypeAr= ct.strNameAr
+               }
+            )
+         .ToListAsync();
 
 
             return Result<List<ComplaintListDTO>>.Success(result);
