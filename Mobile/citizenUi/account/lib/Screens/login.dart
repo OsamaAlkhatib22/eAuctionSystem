@@ -1,10 +1,14 @@
-import 'package:account/signRequest.dart';
-import 'package:account/signup.dart';
-import 'package:account/emailValidation.dart' as a;
+import 'package:account/API/signRequest.dart';
+import 'package:account/Screens/signup.dart';
+import 'package:account/Validation/emailValidation.dart' as a;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'fileComplaint.dart';
+
  final _formKey = GlobalKey<FormState>();
-  String? _email;
+ String? _email;
+
+ 
 class LoginPgae extends StatefulWidget {
   const LoginPgae({super.key});
 
@@ -94,9 +98,11 @@ class _LoginState extends State<LoginPgae> {
                         minWidth: double.infinity,
                         height: 60,
                         onPressed: () {
-                        if (a.sendKey().currentState!.validate()) {}
+                        if (a.sendKey().currentState!.validate() ) {}
                           User user=User();
                           user.login(emailController.text.toString(),passwordController.text.toString());
+                          Navigator.push(context,MaterialPageRoute(builder: (context) => const SO()));
+  
                         },
                         color: const Color(0xff0095FF),
                         elevation: 0,
@@ -116,7 +122,6 @@ class _LoginState extends State<LoginPgae> {
                       ),
                     ),
                   ),
-
 
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
