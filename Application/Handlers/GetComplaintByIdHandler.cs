@@ -39,7 +39,7 @@ namespace Application.Handlers
                     _context.ComplaintAttachments,
                     c => c.Complaint.Complaint.intId,
                     ca => ca.intComplaintId,
-                    (c, ca) => new { Complaint = c.Complaint, ComplaintType = c.ComplaintType, ComplaintAttachment = ca }
+                    (c, ca) => new { c.Complaint, c.ComplaintType, ComplaintAttachment = ca }
                 )
                 .Select(c => new ComplaintViewDTO
                 {
@@ -48,7 +48,7 @@ namespace Application.Handlers
                     dtmDateCreated = c.Complaint.Complaint.dtmDateCreated,
                     strComplaintTypeEn = c.ComplaintType.strNameEn,
                     strComplaintTypeAr = c.ComplaintType.strNameAr,
-                    strMediaRef = c.ComplaintAttachment.strMediaRef,
+                    strMediaRef = c.ComplaintAttachment.strMediaRef,        // base 64 instead of image path
                     blnIsVideo = c.ComplaintAttachment.blnIsVideo
                 })
                 .FirstOrDefaultAsync();
