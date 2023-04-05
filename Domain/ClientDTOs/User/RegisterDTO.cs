@@ -60,7 +60,7 @@ namespace Domain.ClientDTOs.User
 
         [AllowNull]
         [RegularExpression(
-            "@^[A-Z]{3}\\d{5}$",
+            @"^[A-Z]{3}\d{5}$",
             ErrorMessage = "Invalid Id number, must be \"AAA00000\""
         )]
         public string strNationalIdNumber { get; set; }
