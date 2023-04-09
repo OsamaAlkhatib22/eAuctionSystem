@@ -5,11 +5,9 @@ import Layout from "../Layouts";
 import Loadable from "../Utils/Loadable";
 
 // Views Routing
-const Login = Loadable(
-  lazy(() => import("../../Views/Authentication/Components/Login"))
-);
+const Login = Loadable(lazy(() => import("../../Views/Authentication/Login")));
 const Register = Loadable(
-  lazy(() => import("../../Views/Authentication/Components/Register"))
+  lazy(() => import("../../Views/Authentication/Register"))
 );
 const Dashboard = Loadable(lazy(() => import("../../Views/Dashboard")));
 
@@ -18,16 +16,16 @@ const MainRoutes = {
   element: <Layout />,
   children: [
     {
-      path: "dashboard",
-      element: <Dashboard />,
-    },
-    {
       path: "/",
       element: <Login />,
     },
     {
       path: "register",
       element: <Register />,
+    },
+    {
+      path: "dashboard",
+      element: <Dashboard />,
     },
   ],
 };

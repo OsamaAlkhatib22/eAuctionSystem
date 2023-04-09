@@ -1,33 +1,24 @@
-import React from "react";
+import { Grid, Paper, Typography } from "@mui/material";
 
-// Mui
-import { Paper, Stack, Typography } from "@mui/material";
-
-// Project Imports
-import { IdentityHelper } from "../../Common/Utils/IdentityHelper";
-
-const Dashboard = () => {
-  const userData = IdentityHelper.UserData;
+function Dashboard() {
   return (
-    <div>
-      <Paper
-        sx={{
-          width: "17rem",
-          height: "7.5rem",
-          margin: "auto",
-          padding: "1.5rem",
-        }}
-      >
-        <Stack spacing={1}>
-          <Typography variant="h5">Username: {userData.username}</Typography>
-          <Typography variant="h5">
-            Phonenumber: {userData.phonenumber}
-          </Typography>
-          <Typography variant="h5">User Type: {userData.usertype}</Typography>
-        </Stack>
-      </Paper>
-    </div>
+    <>
+      <Typography variant="h4" component="h1" gutterBottom>
+        Dashboard Content
+      </Typography>
+      <Grid container spacing={3}>
+        <Grid item xs={12}>
+          <Paper>Chart goes here</Paper>
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <Paper>Widget goes here</Paper>
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <Paper>Widget goes here</Paper>
+        </Grid>
+      </Grid>
+    </>
   );
-};
+}
 
 export default Dashboard;
