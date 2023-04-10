@@ -1,7 +1,7 @@
 import React, { lazy } from "react";
 
 // Project imports
-import Layout from "../Layouts";
+import Layout from "../Layouts/MainLayout";
 import Loadable from "../Utils/Loadable";
 
 // Views Routing
