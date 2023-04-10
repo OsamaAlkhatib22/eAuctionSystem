@@ -1,93 +1,67 @@
-import React from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+// Mui
 import {
   Box,
-  Divider,
-  Drawer,
-  IconButton,
   List,
+  Typography,
+  Divider,
+  IconButton,
   ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Typography,
-  useTheme,
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import {
+  ChevronRightOutlined,
   SettingsOutlined,
   ChevronLeft,
-  ChevronRightOutlined,
+  ChevronRight,
 } from "@mui/icons-material";
-import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
 
 // Project Imports
 import { FlexBetween } from "../Utils/FlexBetween";
 import { SideBarMenus } from "../Utils/SideBarMenus";
 
-const Sidebar = ({
-  drawerWidth,
-  isSidebarOpen,
-  setIsSidebarOpen,
-  isNonMobile,
-}) => {
-  const { pathname } = useLocation();
+import { DrawerHeader, Drawer } from "../Utils/SideBarHelpers";
+
+const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, children }) => {
+  const theme = useTheme();
   const [active, setActive] = useState("");
   const navigate = useNavigate();
-  const theme = useTheme();
-
-  useEffect(() => {
-    setActive(pathname.substring(1));
-  }, [pathname]);
 
   return (
-    <Box component="nav">
-      {isSidebarOpen && (
-        <Drawer
-          open={isSidebarOpen}
-          onClose={() => setIsSidebarOpen(false)}
-          variant="persistent"
-          anchor="left"
-          sx={{
-            width: `${drawerWidth}rem`,
-            "& .MuiDrawer-paper": {
-              color: theme.palette.secondary[200],
-              backgroundColor: theme.palette.background.alt,
-              boxSixing: "border-box",
-              borderWidth: isNonMobile ? 0 : "2px",
-              width: `${drawerWidth}rem`,
-            },
-          }}
-        >
-          <Box width="100%">
-            <Box m="1.5rem 2rem 2rem 3rem">
-              <FlexBetween color={theme.palette.secondary.main}>
-                <Box display="flex" alignItems="center" gap="0.5rem">
-                  <Typography variant="h4" fontWeight="bold">
-                    Road Damage
-                  </Typography>
-                </Box>
-                {!isNonMobile && (
-                  <IconButton onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
-                    <ChevronLeft />
-                  </IconButton>
-                )}
-              </FlexBetween>
-            </Box>
+    <Box sx={{ display: "flex" }}>
+      <Drawer variant="permanent" open={isSidebarOpen}>
+        <DrawerHeader>
+          <FlexBetween gap="1.5rem">
+            <Typography variant="h4" fontWeight="bold">
+              Road Damage
+            </Typography>
+            <IconButton onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+              {!isSidebarOpen ? <ChevronRight /> : <ChevronLeft />}
+            </IconButton>
+          </FlexBetween>
+        </DrawerHeader>
+        {/* SIDEBAR OPEN STATUS */}
+        {isSidebarOpen ? (
+          <>
             <List>
               {SideBarMenus.map(({ text, icon }) => {
                 if (!icon) {
                   return (
-                    <>
+                    <React.Fragment key={text}>
                       <Divider />
                       <Typography
                         variant="h4"
                         fontWeight="regular"
-                        key={text}
                         sx={{ m: "2.25rem 0 1rem 3rem" }}
                       >
                         {text}
                       </Typography>
-                    </>
+                    </React.Fragment>
                   );
                 }
                 const lcText = text.toLowerCase();
@@ -121,7 +95,7 @@ const Sidebar = ({
                       >
                         {icon}
                       </ListItemIcon>
-                      <ListItemText primary={text} />
+                      <ListItemText primary={text} key={text + "Text"} />
                       {active === lcText && (
                         <ChevronRightOutlined sx={{ ml: "auto" }} />
                       )}
@@ -130,36 +104,133 @@ const Sidebar = ({
                 );
               })}
             </List>
-          </Box>
+            <Box width={"100%"} position="absolute" bottom="2rem">
+              <Divider variant="middle" />
+              <FlexBetween
+                textTransform="none"
+                gap="1rem"
+                m="1.5rem 2rem 0 3rem"
+              >
+                <Box textAlign="left">
+                  <Typography
+                    fontWeight="bold"
+                    fontSize="0.9rem"
+                    sx={{ color: theme.palette.secondary[100] }}
+                  >
+                    Full Name
+                  </Typography>
+                  <Typography
+                    fontSize="0.8rem"
+                    sx={{ color: theme.palette.secondary[200] }}
+                  >
+                    User Type
+                  </Typography>
+                </Box>
+                <ListItemButton
+                  onClick={() => {
+                    navigate("/account");
+                    setActive("account");
+                  }}
+                  sx={{
+                    backgroundColor:
+                      active === "account"
+                        ? theme.palette.secondary[300]
+                        : "transparent",
+                    color:
+                      active === "account"
+                        ? theme.palette.primary[600]
+                        : theme.palette.secondary[100],
+                  }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      ml: "2rem",
+                      color:
+                        active === "account"
+                          ? theme.palette.primary[600]
+                          : theme.palette.secondary[200],
+                    }}
+                  >
+                    <SettingsOutlined />
+                  </ListItemIcon>
+                </ListItemButton>
+              </FlexBetween>
+            </Box>
+          </>
+        ) : (
+          <>
+            <List>
+              {/* SIDEBAR OPEN STATUS */}
+              {SideBarMenus.map(({ text, icon }) => {
+                const lcText = text.toLowerCase();
+                if (!icon) return <Divider key={text} />;
 
-          <Box position="absolute" bottom="2rem">
-            <Divider />
-            <FlexBetween textTransform="none" gap="1rem" m="1.5rem 2rem 0 3rem">
-              <Box textAlign="left">
-                <Typography
-                  fontWeight="bold"
-                  fontSize="0.9rem"
-                  sx={{ color: theme.palette.secondary[100] }}
-                >
-                  Full Name
-                </Typography>
-                <Typography
-                  fontSize="0.8rem"
-                  sx={{ color: theme.palette.secondary[200] }}
-                >
-                  User Type
-                </Typography>
-              </Box>
-              <SettingsOutlined
-                sx={{
-                  color: theme.palette.secondary[300],
-                  fontSize: "25px ",
+                return (
+                  <ListItem key={text} disablePadding sx={{ display: "block" }}>
+                    <ListItemButton
+                      onClick={() => {
+                        navigate(`/${lcText}`);
+                        setActive(lcText);
+                      }}
+                      sx={{
+                        minHeight: 48,
+                        justifyContent: isSidebarOpen ? "initial" : "center",
+                        px: 2.5,
+                      }}
+                    >
+                      <ListItemIcon
+                        sx={{
+                          minWidth: 0,
+                          mr: isSidebarOpen ? 3 : "auto",
+                          justifyContent: "center",
+                          color:
+                            active === lcText
+                              ? theme.palette.primary[600]
+                              : theme.palette.secondary[200],
+                        }}
+                      >
+                        {icon}
+                      </ListItemIcon>
+                    </ListItemButton>
+                  </ListItem>
+                );
+              })}
+            </List>
+            <Box width={"100%"} position="absolute" bottom="2rem">
+              <Divider variant="middle" />
+              <ListItemButton
+                onClick={() => {
+                  navigate(`/account`);
+                  setActive("account");
                 }}
-              />
-            </FlexBetween>
-          </Box>
-        </Drawer>
-      )}
+                sx={{
+                  minHeight: 48,
+                  justifyContent: isSidebarOpen ? "initial" : "center",
+                  px: 2.5,
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: isSidebarOpen ? 3 : "auto",
+                    justifyContent: "center",
+                    color:
+                      active === "account"
+                        ? theme.palette.primary[600]
+                        : theme.palette.secondary[200],
+                  }}
+                >
+                  <SettingsOutlined />
+                </ListItemIcon>
+              </ListItemButton>
+            </Box>
+          </>
+        )}
+        <Divider />
+      </Drawer>
+      <Box component="div" sx={{ flex: "1 1 auto" }}>
+        {children}
+      </Box>
     </Box>
   );
 };

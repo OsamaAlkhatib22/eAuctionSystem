@@ -10,6 +10,7 @@ const Register = Loadable(
   lazy(() => import("../../Views/Authentication/Register"))
 );
 const Dashboard = Loadable(lazy(() => import("../../Views/Dashboard")));
+const NotFound = Loadable(lazy(() => import("../../Views/NotFound")));
 
 const MainRoutes = {
   path: "/",
@@ -26,6 +27,10 @@ const MainRoutes = {
     {
       path: "dashboard",
       element: <Dashboard />,
+    },
+    {
+      path: "*",
+      element: <NotFound />,
     },
   ],
 };
