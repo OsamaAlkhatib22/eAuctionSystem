@@ -13,7 +13,9 @@ const Register = Loadable(
 );
 const Dashboard = Loadable(lazy(() => import("../../Views/Dashboard")));
 const NotFound = Loadable(lazy(() => import("../../Views/NotFound")));
-const ViewComplaints = Loadable(lazy(() => import("../../Views/complaints/index")));
+const ViewComplaints = Loadable(
+  lazy(() => import("../../Views/complaints/index"))
+);
 const CreateTask = Loadable(lazy(() => import("../../Views/createTask/index")));
 
 const MainRoutes = {
@@ -25,7 +27,7 @@ const MainRoutes = {
       element: <Dashboard />,
     },
     {
-      path: "view-complaints",
+      path: "complaints",
       element: <ViewComplaints />,
     },
     {

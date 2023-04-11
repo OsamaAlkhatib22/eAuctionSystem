@@ -10,13 +10,16 @@ const ViewComplaints = () => {
   useEffect(() => {
     const fetchComplaints = async () => {
       try {
-        const response = await axios.get("api/complaints");
-        setComplaints(response.data);
+        return await axios.get("api/complaints");
       } catch (error) {
         console.error(error);
       }
     };
-    fetchComplaints();
+    const setComplaintsView = async () => {
+      var response = await fetchComplaints();
+      setComplaints(response.data);
+    };
+    setComplaintsView();
   }, []);
 
   const handleOpenPopup = (complaint) => {

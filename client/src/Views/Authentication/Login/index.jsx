@@ -12,6 +12,7 @@ import { Authorize } from "../Service/Auth";
 import FormTextField from "../../../Common/Components/UI/FormFields/FormTextField";
 import Colors from "../../../Assets/Styles/_themes-vars.module.scss";
 import Logo from "../../../Assets/Images/AmmanLogo.png";
+import { IdentityHelper } from "../../../Common/Utils/IdentityHelper";
 
 // Schema
 import { LoginSchema as schema } from "../Utils/Schemas";
@@ -37,9 +38,10 @@ function Login() {
     };
     await Authorize.Login(request);
 
-    navigate({
-      pathname: "/dashboard",
-    });
+    if (IdentityHelper.isTokenValid())
+      navigate({
+        pathname: "/dashboard",
+      });
   };
 
   return (

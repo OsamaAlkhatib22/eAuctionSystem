@@ -6,8 +6,8 @@ import CustomizedHook from "../../Common/Components/UI/FormFields/CustomizedHook
 import { Button, TextField, Snackbar } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useParams } from "react-router-dom";
-import axios from "C:\\Users\\otaku\\source\\repos\\ComplaintSystem\\client\\src\\Common\\Utils\\AxiosAgent.js";
-import FormTextField from "C:\\Users\\otaku\\source\\repos\\ComplaintSystem\\client\\src\\Common\\Components\\UI\\FormFields\\FormTextField.jsx";
+import axios from "../../Common/Utils/AxiosAgent";
+import FormTextField from "../../Common/Components/UI/FormFields/FormTextField";
 
 const CreateTask = (complaint) => {
   const { intComplaintId } = useParams();
