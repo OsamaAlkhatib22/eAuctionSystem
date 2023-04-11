@@ -1,6 +1,6 @@
 export default function ThemeTypography(theme) {
   return {
-    fontFamily: `'Poppins', sans-serif`,
+    fontFamily: `'Poppins', 'Inter', sans-serif`,
     h6: {
       fontWeight: 500,
       color: theme.heading,

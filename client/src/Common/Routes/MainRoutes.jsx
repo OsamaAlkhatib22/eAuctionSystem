@@ -2,6 +2,7 @@ import React, { lazy } from "react";
 
 // Project imports
 import Layout from "../Layouts/MainLayout";
+import MinimalLayout from "../Layouts/MinimalLayout";
 import Loadable from "../Utils/Loadable";
 
 // Views Routing
@@ -17,16 +18,27 @@ const MainRoutes = {
   element: <Layout />,
   children: [
     {
-      path: "/",
+      path: "dashboard",
+      element: <Dashboard />,
+    },
+    {
+      path: "*",
+      element: <NotFound />,
+    },
+  ],
+};
+
+export const AuthRoutes = {
+  path: "/Auth",
+  element: <MinimalLayout />,
+  children: [
+    {
+      path: "",
       element: <Login />,
     },
     {
       path: "register",
       element: <Register />,
-    },
-    {
-      path: "dashboard",
-      element: <Dashboard />,
     },
     {
       path: "*",
