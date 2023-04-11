@@ -38,6 +38,7 @@ const FormDatePicker = (props) => {
                 {...params}
                 error={error ? true : false}
                 helperText={error ? error.message : null}
+                sx={{ width: "100%" }}
               />
             )}
           />

@@ -1,0 +1,23 @@
+.App{
+    text-align: center;
+
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 800px; /* optional, adjust to your liking */
+    margin: 0 auto; /* optional, center the table horizontally */
+  }
+  
+  th, td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+  }
+  

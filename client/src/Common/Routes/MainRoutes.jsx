@@ -5,13 +5,17 @@ import Layout from "../Layouts";
 import Loadable from "../Utils/Loadable";
 
 // Views Routing
-const Login = Loadable(
-  lazy(() => import("../../Views/Authentication/Components/Login"))
-);
-const Register = Loadable(
-  lazy(() => import("../../Views/Authentication/Components/Register"))
+const LoginForm = Loadable(
+  lazy(() => import("../../Views/Authentication/Component/Login"))
 );
 const Dashboard = Loadable(lazy(() => import("../../Views/Dashboard")));
+const Register = Loadable(
+  lazy(() => import("../../Views/Authentication/Component/Register"))
+);
+const ViewComplaints = Loadable(lazy(() => import("../../Views/complaints/index")));
+const CreateTask = Loadable(lazy(() => import("../../Views/createTask/index")));
+
+
 
 const MainRoutes = {
   path: "/",
@@ -23,11 +27,19 @@ const MainRoutes = {
     },
     {
       path: "/",
-      element: <Login />,
+      element: <LoginForm />,
     },
     {
       path: "register",
       element: <Register />,
+    },
+    {
+      path: "view-complaints",
+      element: <ViewComplaints />,
+    },
+    {
+      path: "/create-task/:intComplaintId",
+      element: <CreateTask />,
     },
   ],
 };
