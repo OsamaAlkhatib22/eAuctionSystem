@@ -19,6 +19,7 @@ const FormTextField = (props) => {
         formState,
       }) => (
         <TextField
+        fullWidth
           label={props.label}
           onChange={onChange}
           value={value || ""}

@@ -1,0 +1,19 @@
+.App{
+    box-sizing: border-box;
+    text-align: center;
+}
+
+button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    background-color: #4caf50;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    display: grid;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
