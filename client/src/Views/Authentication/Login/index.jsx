@@ -1,8 +1,8 @@
-import { useNavigate, Link } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import { FormProvider, useForm } from "react-hook-form";
 
 // Mui
-import { Typography, Button, Stack, Paper } from "@mui/material";
+import { Typography, Button, Stack, Box } from "@mui/material";
 
 // Third Party
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -11,12 +11,15 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Authorize } from "../Service/Auth";
 import FormTextField from "../../../Common/Components/UI/FormFields/FormTextField";
 import Colors from "../../../Assets/Styles/_themes-vars.module.scss";
+import Logo from "../../../Assets/Images/AmmanLogo.png";
 
 // Schema
 import { LoginSchema as schema } from "../Utils/Schemas";
 
 function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
+
   const methods = useForm({
     resolver: yupResolver(schema),
   });
@@ -40,40 +43,47 @@ function Login() {
   };
 
   return (
-    <div style={{ textAlign: "center" }}>
+    <div>
       <FormProvider {...methods}>
-        <Paper
-          sx={{
-            width: "20%",
-            minWidth: "25rem",
-            margin: "auto",
-            padding: "2rem",
-          }}
-        >
-          <Stack spacing={2}>
-            <Typography variant="h2">ادخل بياناتك</Typography>
-            <FormTextField name="login" label="Username/Phonenumber" />
-            <FormTextField name="password" label="Password" type="password" />
+        <Stack spacing={2} sx={{ width: "25vw" }}>
+          <Box position="absolute" right="3rem" top="3rem">
+            <img
+              src={Logo}
+              style={{
+                width: "5rem",
+              }}
+              alt="Logo"
+            />
+          </Box>
 
-            <Button
-              onClick={handleSubmit(onSubmit, onInvalid)}
-              color="primary"
-              variant="contained"
-              sx={{ borderRadius: "1rem" }}
+          <Typography variant="h2">Log in</Typography>
+          <Typography style={{ color: Colors.grey500 }}>
+            Don't have an account?{" "}
+            <Link
+              style={{ textDecoration: "none", color: Colors.primary800 }}
+              to={location.pathname + "/register"}
             >
-              Sign in
-            </Button>
-            <Typography>
-              Don't have an account?{" "}
-              <Link
-                style={{ textDecoration: "none", color: Colors.primary800 }}
-                to={"/Register"}
-              >
-                Register
-              </Link>
-            </Typography>
-          </Stack>
-        </Paper>
+              Register
+            </Link>
+          </Typography>
+          <FormTextField name="login" label="Username/Phonenumber" />
+          <FormTextField name="password" label="Password" type="password" />
+
+          <Button
+            onClick={handleSubmit(onSubmit, onInvalid)}
+            color="primary"
+            variant="contained"
+            sx={{ borderRadius: "1rem" }}
+          >
+            Continue
+          </Button>
+          <Link
+            style={{ textDecoration: "none", color: Colors.primary800 }}
+            to={location.pathname + ""}
+          >
+            Forgot password?
+          </Link>
+        </Stack>
       </FormProvider>
     </div>
   );
