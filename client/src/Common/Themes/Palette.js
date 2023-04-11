@@ -66,6 +66,7 @@ const ThemePalette = (theme) => {
           background: {
             paper: theme.paper,
             default: theme.backgroundDefault,
+            image: theme.backgroundGradient,
           },
         }
       : {

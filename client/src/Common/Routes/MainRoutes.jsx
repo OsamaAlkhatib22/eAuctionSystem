@@ -1,37 +1,35 @@
 import React, { lazy } from "react";
 
 // Project imports
-import Layout from "../Layouts";
+import Layout from "../Layouts/MainLayout";
 import Loadable from "../Utils/Loadable";
 
 // Views Routing
-const LoginForm = Loadable(
-  lazy(() => import("../../Views/Authentication/Component/Login"))
+
+const Login = Loadable(lazy(() => import("../../Views/Authentication/Login")));
+const Register = Loadable(
+  lazy(() => import("../../Views/Authentication/Register"))
 );
 const Dashboard = Loadable(lazy(() => import("../../Views/Dashboard")));
-const Register = Loadable(
-  lazy(() => import("../../Views/Authentication/Component/Register"))
-);
+const NotFound = Loadable(lazy(() => import("../../Views/NotFound")));
 const ViewComplaints = Loadable(lazy(() => import("../../Views/complaints/index")));
 const CreateTask = Loadable(lazy(() => import("../../Views/createTask/index")));
-
-
 
 const MainRoutes = {
   path: "/",
   element: <Layout />,
   children: [
     {
-      path: "dashboard",
-      element: <Dashboard />,
-    },
-    {
       path: "/",
-      element: <LoginForm />,
+      element: <Login />,
     },
     {
       path: "register",
       element: <Register />,
+    },
+    {
+      path: "dashboard",
+      element: <Dashboard />,
     },
     {
       path: "view-complaints",
@@ -40,6 +38,10 @@ const MainRoutes = {
     {
       path: "/create-task/:intComplaintId",
       element: <CreateTask />,
+    },
+    {
+      path: "*",
+      element: <NotFound />,
     },
   ],
 };

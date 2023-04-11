@@ -17,6 +17,7 @@ export const theme = (mode) => {
     paper: color.paper,
     backgroundDefault: color.paper,
     background: color.primaryLight,
+    backgroundGradient: color.backgroundGradient,
     darkTextPrimary: color.grey700,
     darkTextSecondary: color.grey500,
     textDark: color.grey900,

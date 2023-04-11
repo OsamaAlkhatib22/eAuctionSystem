@@ -23,6 +23,7 @@ const FormTextField = (props) => {
           label={props.label}
           onChange={onChange}
           value={value || ""}
+          type={props.type || "text"}
           error={error ? true : false}
           helperText={error ? error.message : null}
           InputProps={

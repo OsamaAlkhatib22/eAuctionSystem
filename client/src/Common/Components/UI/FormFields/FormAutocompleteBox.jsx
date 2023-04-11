@@ -10,21 +10,9 @@ import { Autocomplete, TextField, IconButton } from "@mui/material";
 // Mui Icons
 import CircularProgress from "@mui/material/CircularProgress";
 
-// Static Debug data
-import { cities } from "../../../Data/CitiesData";
-
 function GetOptions(query) {
-  const citiesNames = cities.map((city) => city[0]);
-  let filteredCities = [];
-
-  if (query !== "") {
-    filteredCities = citiesNames.filter((name) => {
-      return typeof name === "string" && typeof query === "string"
-        ? name.toLowerCase().includes(query.toLowerCase())
-        : null;
-    });
-  }
-  return filteredCities;
+  if (query !== "");
+  // Fetch Data From BackEnd
 }
 
 const FormAutocompleteBox = (props) => {
