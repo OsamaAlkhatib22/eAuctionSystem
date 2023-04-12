@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
+
+// Mui
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
-import axios from "../../../Utils/AxiosAgent";
+
+import axios from "../../../Common/Utils/AxiosAgent";
 import { Controller, useFormContext } from "react-hook-form";
 
-function EmployeeSelect({ name, label }) {
+function WorkersDropDown({ name, label }) {
   const [employees, setEmployees] = useState([]);
   const [selectedEmployees, setSelectedEmployees] = useState([]);
   const { control } = useFormContext();
@@ -12,10 +15,11 @@ function EmployeeSelect({ name, label }) {
   useEffect(() => {
     axios.get("api/tasks/users").then((response) => {
       const employees = response.data.map((employee) => ({
-        id: employee.id,
-        name: employee.strFirstName,
+        id: employee.intId,
+        name: employee.strFirstName + " " + employee.strLastName,
       }));
       setEmployees(employees);
+      console.log(employees);
     });
   }, []);
   return (
@@ -42,4 +46,4 @@ function EmployeeSelect({ name, label }) {
   );
 }
 
-export default EmployeeSelect;
+export default WorkersDropDown;

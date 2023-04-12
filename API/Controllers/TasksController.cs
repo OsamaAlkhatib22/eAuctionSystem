@@ -34,6 +34,7 @@ namespace API.Controllers
 
             return HandleResult(await Mediator.Send(new InsertTaskTypeCommand(taskTypeDTO)));
         }
+
         [HttpPost("{id}")] // .../api/tasks
         public async Task<IActionResult> InsertTaskStats([FromForm] TaskDTO taskDTO, int id) // Create task for selected complaint
         {
@@ -45,8 +46,5 @@ namespace API.Controllers
 
             return HandleResult(await Mediator.Send(new InsertTaskCommand(taskDTO, id)));
         }
-
-
-
     }
 }

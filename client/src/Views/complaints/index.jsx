@@ -1,22 +1,18 @@
-import axios from "../../Common/Utils/AxiosAgent";
 import React, { useState, useEffect } from "react";
-import Popup from "../viewComplaints/Popup";
+
+// Project Imports
+import { GetComplaintsApi } from "./Service/GetComplaintsApi";
+import Popup from "./Components/ViewComplaintPopup";
 import index from "./index.css";
+
 const ViewComplaints = () => {
   const [selectedComplaint, setSelectedComplaint] = useState(null);
   const [complaints, setComplaints] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
 
   useEffect(() => {
-    const fetchComplaints = async () => {
-      try {
-        return await axios.get("api/complaints");
-      } catch (error) {
-        console.error(error);
-      }
-    };
     const setComplaintsView = async () => {
-      var response = await fetchComplaints();
+      var response = await GetComplaintsApi();
       setComplaints(response.data);
     };
     setComplaintsView();

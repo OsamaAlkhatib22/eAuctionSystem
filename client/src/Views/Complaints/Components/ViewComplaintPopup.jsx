@@ -1,9 +1,8 @@
 import { Link } from "react-router-dom";
-import axios from "../../Common/Utils/AxiosAgent";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import "./Popup.css";
 
-function Popup({ complaint, handleClose, onClose }) {
+function ViewComplaintPopup({ complaint, handleClose, onClose }) {
   return (
     <div className="popup">
       <div className="popup-content">
@@ -51,4 +50,4 @@ function Popup({ complaint, handleClose, onClose }) {
   );
 }
 
-export default Popup;
+export default ViewComplaintPopup;
