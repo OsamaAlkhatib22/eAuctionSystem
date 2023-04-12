@@ -20,7 +20,7 @@ const CreateTask = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
 
-  const onSubmit = async (data) => {
+  const onSubmit = (data) => {
     if (CreateTaskApi(data, intComplaintId)) {
       setSnackbarMessage("Task created successfully!");
       setSnackbarOpen(true);
@@ -63,7 +63,7 @@ const CreateTask = () => {
       </FormProvider>
       <Snackbar
         open={snackbarOpen}
-        autoHideDuration={6000}
+        autoHideDuration={2000}
         onClose={handleCloseSnackbar}
         message={snackbarMessage}
       />

@@ -6,7 +6,7 @@ import { Controller, useFormContext } from "react-hook-form";
 // Mui
 import { TextField, InputAdornment } from "@mui/material";
 
-const FormTextField = (props) => {
+const FormTextFieldMulti = (props) => {
   const { control } = useFormContext();
 
   return (
@@ -19,7 +19,8 @@ const FormTextField = (props) => {
         formState,
       }) => (
         <TextField
-          fullWidth
+          multiline
+          rows={4}
           label={props.label}
           onChange={onChange}
           value={value || ""}
@@ -46,4 +47,4 @@ const FormTextField = (props) => {
   );
 };
 
-export default FormTextField;
+export default FormTextFieldMulti;
