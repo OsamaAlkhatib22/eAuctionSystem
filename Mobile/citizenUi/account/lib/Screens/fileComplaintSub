@@ -1,0 +1,208 @@
+
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:geolocator_platform_interface/src/models/position.dart';
+
+
+
+
+final now = DateTime.now();
+
+class SubmissionPage extends StatefulWidget {
+  final File? image1;
+  final String dropdownvalue;
+  final String? currentAddress;
+  final Position? currentPosition;
+ 
+  const SubmissionPage(
+      {super.key,
+      this.image1,
+      required this.dropdownvalue,
+      required this.currentAddress,this.currentPosition});
+      
+
+
+  @override
+  State<SubmissionPage> createState() =>
+      _SubmissionPageState(image1, dropdownvalue, currentAddress,currentPosition);
+}
+
+
+class _SubmissionPageState extends State<SubmissionPage> {
+  File? image1;
+  String dropdownvalue;
+  String? currentAddress;
+  Position ? currentPosition;
+  var result1;
+  _LocationPageState(this.image1, this.dropdownvalue, this.currentAddress, this.currentPosition);
+  String formatter = DateFormat('d-M-y').format(now);
+
+
+
+
+// Future<File> compressFile() async {
+//   final filePath = image1!.absolute.path;
+
+//   // Create output file path
+//   // eg:- "Volume/VM/abcd_out.jpeg"
+//   final lastIndex = filePath.lastIndexOf(RegExp(r'.jp'));
+//   final splitted = filePath.substring(0, (lastIndex));
+//   final outPath = "${splitted}_out${filePath.substring(lastIndex)}";
+//     result1 = await FlutterImageCompress.compressAndGetFile(
+//     image1!.absolute.path, outPath,
+//     quality: 50,
+//   );
+
+//   print(image1!.lengthSync());
+//   print(result1!.lengthSync());
+
+//   return result1;
+//  }
+
+ 
+
+  show() {
+    
+  
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Submission'),
+          content: const Text('Your complaint was submitted successfully!'),
+          actions: [
+            TextButton(
+              onPressed: () {
+               // _navigateToNextScreen(context);
+              },
+              child: const Text(
+                'Home',
+                style: TextStyle(color: Color.fromARGB(255, 176, 63, 63)),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
+
+
+  @override
+  Widget build(BuildContext context) {
+  
+    return Scaffold(
+        backgroundColor: const Color.fromARGB(255, 230, 227, 227),
+        appBar: AppBar(
+          title: const Text(
+            "Submission",
+            textAlign: TextAlign.center,
+          ),
+          backgroundColor: const Color.fromARGB(255, 176, 63, 63),
+        ),
+        body: SafeArea(
+          child: Column(children: [
+            const SizedBox(height: 40),
+            Card(
+              elevation: 10,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)),
+              child: Column(children: [
+                const SizedBox(
+                  height: 20,
+                  width: 50,
+                ),
+                Container(
+                  alignment: Alignment.center,
+                  width: 300,
+                  height: 200,
+                  color: Colors.white,
+                 // child: FutureBuilder<File>(
+      //    future: compressFile(),
+      // builder: (BuildContext context, AsyncSnapshot<File> snapshot) {
+      //   if (snapshot.connectionState == ConnectionState.done) {
+      //     if (snapshot.hasData) {
+      //       // Use the compressed file to build the Image widget
+      //       return Image.file(snapshot.data!);
+      //     } else {
+      //       // Handle error here
+      //       return Text('Error: ${snapshot.error}');
+      //     }
+      //   } else {
+      //     // Show loading indicator while waiting for the Future to complete
+      //     return const CircularProgressIndicator();
+      //   }
+      // },
+           //)),
+                ),
+
+
+
+
+
+                const SizedBox(height: 30),
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.report_problem_outlined,
+                      color: Color.fromARGB(255, 186, 172, 42),
+                    ),
+                    Text(
+                      'Complaint type:$dropdownvalue',
+                      textAlign: TextAlign.start,
+                    ),
+                  ],
+                ),
+
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.location_on_sharp,
+                      color: Colors.red,
+                    ),
+                    Text(
+                      '$currentAddress ',
+                      softWrap: true,
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.calendar_month_outlined,
+                      color: Colors.red,
+                    ),
+                    Text('Complaint date : $formatter'),
+                  ],
+                ),
+
+              
+
+                const SizedBox(height: 20),
+              ]),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                foregroundColor: const Color.fromARGB(255, 202, 112, 105),
+                backgroundColor: Colors.white,
+              ),
+              onPressed: () {
+                show();
+                          
+            
+              },
+              child: const Text("submit"),
+            ),
+          ]),
+        ));
+  }
+}
+
+// void _navigateToNextScreen(BuildContext context) {
+//   Navigator.of(context)
+//       .push(MaterialPageRoute(builder: (context) => const HomePage1()));
+// }
+

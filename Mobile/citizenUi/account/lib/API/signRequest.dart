@@ -1,80 +1,89 @@
 // ignore_for_file: file_names, avoid_print
 import 'dart:convert';
+
 import 'dart:io';
 
+
+import 'package:account/Screens/fileComplaint.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../Screens/dashboardPage.dart';
+late String token2;
+
 class User {
   
- Future<void> login(String email, password) async {
-   
- 
 
-    try{
-       HttpOverrides.global = new MyHttpOverrides();
-       Response response = await post(
-        Uri.parse('https://10.0.2.2:5000/api/account/login/'),
-       
-      headers: <String, String> {
-         "Content-type": "application/json",
-          "Accept": "application/json",
+  Future<void> login(String email, String password,BuildContext context) async {
 
+    print(email);
+    print(password);
+  try {
+    HttpOverrides.global = new MyHttpOverrides();
+    Response response = await post(
+      Uri.parse('https://10.0.2.2:5000/api/account/login/'),
+      headers: <String, String>{
+        "Content-type": "application/json",
+        "Accept": "application/json",
       },
+      body: jsonEncode({
+        "strLogin":"aburummann" ,
+        "strPassword": password,
+      }),
+    );
+    print(response.body);
+    print(response.statusCode);
+    print(response.headers);
 
-        body:jsonEncode({
-         "strLogin": email,
-        "strPassword": password
-        }),
-        
+    if (response.statusCode == 200) {
+      token2 = jsonDecode(response.body)['strToken'];
+      print(token2);
+      print('Login successful');
+
+      // Save the token in shared preferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('token', token2);
+
+       Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const HomePage1(),
+        ),
       );
-      
 
-      if(response.statusCode == 200){
-       
-       final token = jsonDecode(response.body)['token'];
-        print(token);
-        print('Login successfully');
-
-         // Save the token in shared preferences
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('token', token);
-        
-        final userData =await fetchUserData(token);
-        print(userData);
-
-      }
-      else {
-        print('Login failed');
-      }
-    }catch(e){
-      print(e.toString());
+      final userData = await fetchUserData(token2);
+      print(userData);
+    } else {
+      print('Login failed');
     }
- }
-
- // allowing subsequent authentication
-  Future<Map<String, dynamic>> fetchUserData(String token) async {
-    try {
-      final response = await http.get(
-        Uri.parse(''),
-        headers: {
-          'Authorization': 'Bearer $token',
-        },
-      );
-     
-      if (response.statusCode == 200) {
-        var data = jsonDecode(response.body);
-        return data;
-      
-      } else {
-         throw Exception('Failed to fetch user data');
-      }
-    } catch (e) {
-       throw Exception(e.toString());
-    }
-
+  } catch (e) {
+    print(e.toString());
+  }
 }
+
+// Fetching user data using the token
+Future<Map<String, dynamic>> fetchUserData(String token) async {
+  try {
+    final response = await http.get(
+      Uri.parse('https://10.0.2.2:5000/api/account/userdata/'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      return data;
+    } else {
+      throw Exception('Failed to fetch user data');
+    }
+  } catch (e) {
+    throw Exception(e.toString());
+  }
+}
+  
+ 
 void signup(String username,String phone,String password,
 String firstName,String lastName,String email,String  nationalId,String passportNumber,
 String registrationNumber,String nationalIdNumber) async {
@@ -119,7 +128,7 @@ String registrationNumber,String nationalIdNumber) async {
     print(response.body);
 
     var userName = jsonResponse['strUserName'];
-     var token1 = jsonResponse['strToken'];
+    var token1 = jsonResponse['strToken'];
     var Fname = jsonResponse['strFirstName'];
     var Lname = jsonResponse['strLastName'];
     print('Signup successful. Welcome, $Fname $Lname!');
