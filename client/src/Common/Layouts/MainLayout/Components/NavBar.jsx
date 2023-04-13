@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 
 // Project Imports
-import { FlexBetween } from "../Utils/FlexBetween";
+import { FlexBetween } from "../../../Components/FlexBetween";
 
 // Context
 import AppContext from "../../../Context/AppContext";

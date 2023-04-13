@@ -6,6 +6,7 @@ export const GetTaskDetailsApi = async () => {
   // {
   //   id: int,
   //   type: string,
+  //   address: string,
   //   cost: float,
   //   dateActivated: date,
   //   dateFinished: date,

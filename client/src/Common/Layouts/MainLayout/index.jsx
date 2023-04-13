@@ -6,9 +6,14 @@ import { Outlet } from "react-router-dom";
 import { Box, CssBaseline, useTheme } from "@mui/material";
 import { styled } from "@mui/system";
 
+// Third Party
+import PerfectScrollbar from "react-perfect-scrollbar";
+import "react-perfect-scrollbar/dist/css/styles.css";
+
 // Project imports
 import Navbar from "./Components/NavBar";
 import Sidebar from "./Components/SideBar";
+import ScrollableContent from "../../Components/ScrollableContent";
 
 const Main = styled(Box)({
   display: "flex",
@@ -17,15 +22,15 @@ const Main = styled(Box)({
   width: "100vw",
 });
 
+const MainContent = styled("main")(({ theme }) => ({
+  backgroundImage: theme?.palette?.background.image,
+  height: `calc(100vh - 4rem)`,
+  flex: "1 1 auto",
+  overflow: "hidden",
+}));
+
 function Layout() {
   const theme = useTheme();
-
-  const MainContent = styled("main")({
-    backgroundImage: theme?.palette?.background.image,
-    height: `calc(100vh - 4rem)`,
-    padding: "3rem",
-    flex: "1 1 auto",
-  });
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
@@ -42,7 +47,9 @@ function Layout() {
         setIsSidebarOpen={setIsSidebarOpen}
       >
         <MainContent>
-          <Outlet />
+          <ScrollableContent>
+            <Outlet />
+          </ScrollableContent>
         </MainContent>
       </Sidebar>
     </Main>
