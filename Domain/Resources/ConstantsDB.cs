@@ -28,6 +28,16 @@
             public const string ReFiled = "re-filed";
         }
 
+        public static class TaskStatusTypes
+        {
+            public const string Inactive = "inactive";
+            public const string InProgress = "in progress";
+            public const string WaitingEvaluation = "waiting evaluation";
+            public const string Failed = "failed";
+            public const string Incomplete = "incomplete";
+            public const string Completed = "completed";
+        }
+
         public static class ComplaintTypes
         {
             public struct ComplaintType
@@ -55,13 +65,13 @@
                 new("مطبات اسمنتية عشوائية", "Random cement speed bumps");
 
             public readonly static ComplaintType ViolatingSpeedBumps =
-                new("مطبات نظامية مخالفة", "Violating Speed Bumps");
+                new("مطبات نظامية مخالفة", "Violating speed bumps");
 
             public readonly static ComplaintType WaterPools =
                 new("تجمعات المياه(لا يوجد تصريف) ", "Water pools (no drainage)");
 
             public readonly static ComplaintType BrokenWaterPipe =
-                new("خط مياه مكسور/معطل", "Broken/Non-Functional water pipe");
+                new("خط مياه مكسور/معطل", "Broken/Non-functional water pipe");
 
             public readonly static ComplaintType StreetCracks =
                 new("تصدعات في الشارع", "Street Cracks");
@@ -69,16 +79,16 @@
             public readonly static ComplaintType Potholes = new("حفر في الشارع", "Street potholes");
 
             public readonly static ComplaintType SideSafetyRails =
-                new("سكك امان جانبية للشوارع", "Side Safety Rails");
+                new("سكك امان جانبية للشوارع", "Side safety rails");
 
             public readonly static ComplaintType MissingManholes =
-                new("مناهل مفقودة", "Missing Manholes");
+                new("مناهل مفقودة", "Missing manholes");
 
             public readonly static ComplaintType LowerManholes =
                 new("مناهل منخفضة عن مستوى الشارع", "Manholes lower than street level");
 
             public readonly static ComplaintType HigherManholes =
-                new("مناهل مرتفعة عن مستوى الشارع", "Manholes Higher Than Street Level");
+                new("مناهل مرتفعة عن مستوى الشارع", "Manholes higher than street level");
 
             public readonly static ComplaintType IllegalSigns =
                 new("شواخص إعلانية غير قانونية", "Illegal advertising signs");
