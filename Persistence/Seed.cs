@@ -87,8 +87,12 @@ namespace Persistence
                     await SeedDefaults.CreateTaskLookUpTables(context);
                     await context.SaveChangesAsync();
 
-                    for (int i = 0; i < _tasks; i++) { }
+                    for (int i = 0; i < _tasks; i++)
+                    {
+                        await SeedTask.SeedTasks(context);
+                    }
                 }
+
                 await transaction.CommitAsync();
             }
             catch (Exception)

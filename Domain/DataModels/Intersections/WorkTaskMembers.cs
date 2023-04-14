@@ -10,7 +10,7 @@ namespace Domain.DataModels.Intersections
     {
         [ForeignKey("User")]
         [Column("USER_ID")]
-        public int intWrokerId { get; set; }
+        public int intWorkerId { get; set; }
         public ApplicationUser Worker { get; set; }
 
         [Column("TASK_ID")]

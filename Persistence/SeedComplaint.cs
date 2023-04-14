@@ -9,16 +9,14 @@ namespace Persistence
         {
             Random random = new Random();
             var userType = context.UserTypes.Where(q => q.strName == "user").FirstOrDefault();
-            var usersTableCount = context.Users
-                .Where(q => q.intUserTypeId == userType.intId)
-                .Count();
-            var complaintsTypesTableCount = context.ComplaintTypes.Count();
+            var usersCount = context.Users.Where(q => q.intUserTypeId == userType.intId).Count();
+            var complaintsTypesCount = context.ComplaintTypes.Count();
 
-            var userRand = random.Next(3, usersTableCount + 1);
+            var userRand = random.Next(1, usersCount + 1);
+            var complaintRand = random.Next(1, complaintsTypesCount + 1);
 
             DateTime startDate = new DateTime(2022, 4, 14);
             int rangeDate = (DateTime.Today - startDate).Days;
-            var complaintRand = random.Next(1, complaintsTypesTableCount + 1);
 
             var user = context.Users
                 .Where(q => q.intUserTypeId == userType.intId)
