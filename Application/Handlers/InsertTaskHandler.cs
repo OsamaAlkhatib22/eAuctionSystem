@@ -12,8 +12,7 @@ using Domain.ClientDTOs.Complaint;
 
 namespace Application.Handlers
 {
-    public class InsertTasktHandler
-        : IRequestHandler<InsertTaskCommand, Result<TaskDTO>>
+    public class InsertTasktHandler : IRequestHandler<InsertTaskCommand, Result<TaskDTO>>
     {
         private readonly DataContext _context;
         private readonly IConfiguration _configuration;
@@ -42,12 +41,13 @@ namespace Application.Handlers
             int userId = user.Id;
             int taskType = await _context.Complaints
                 .Where(q => q.intId == request.Id)
-                .Select(q => q.intTypeId).FirstOrDefaultAsync();
+                .Select(q => q.intTypeId)
+                .FirstOrDefaultAsync();
 
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                var task = new WorkTask         //Date Activated and Date Finished should be null
+                var task = new WorkTask //Date Activated and Date Finished should be null
                 {
                     intAdminId = userId,
                     intStatusId = 1,
@@ -83,7 +83,7 @@ namespace Application.Handlers
 
                         var taskWorker = new WorkTaskMembers
                         {
-                            intWrokerId = worker.intId,
+                            intWorkerId = worker.intId,
                             intTaskId = taskEntity.Entity.intId,
                             blnIsLeader = worker.isLeader
                         };
@@ -94,14 +94,12 @@ namespace Application.Handlers
                             leaderCount++;
                     }
 
-
-
                     if (leaderCount == 0)
                     {
                         await transaction.RollbackAsync();
                         return Result<TaskDTO>.Failure("No leader was selected");
                     }
-                    if (leaderCount>1)
+                    if (leaderCount > 1)
                     {
                         await transaction.RollbackAsync();
                         return Result<TaskDTO>.Failure("More than one leader was selected");
@@ -120,8 +118,6 @@ namespace Application.Handlers
                     await transaction.RollbackAsync();
                     return Result<TaskDTO>.Failure("Unknown Error");
                 }
-
-               
 
                 await _context.SaveChangesAsync(cancellationToken);
                 await transaction.CommitAsync();

@@ -124,7 +124,7 @@ namespace Persistence
             );
 
             // Task_Members intersection table
-            builder.Entity<WorkTaskMembers>(q => q.HasKey(q => new { q.intWrokerId, q.intTaskId }));
+            builder.Entity<WorkTaskMembers>(q => q.HasKey(q => new { q.intWorkerId, q.intTaskId }));
             builder
                 .Entity<WorkTaskMembers>()
                 .HasOne(q => q.Task)
@@ -134,7 +134,7 @@ namespace Persistence
                 .Entity<WorkTaskMembers>()
                 .HasOne(q => q.Worker)
                 .WithMany(q => q.Tasks)
-                .HasForeignKey(q => q.intWrokerId);
+                .HasForeignKey(q => q.intWorkerId);
 
             // Task_Complaint intersection table
             builder.Entity<WorkTaskComplaints>(
@@ -171,5 +171,6 @@ namespace Persistence
         public DbSet<WorkTaskType> TaskTypes { get; set; }
         public DbSet<WorkTaskMembers> TaskMembers { get; set; }
         public DbSet<WorkTaskComplaints> TasksComplaints { get; set; }
+        public DbSet<WorkTaskAttachment> TaskAttachments { get; set; }
     }
 }
