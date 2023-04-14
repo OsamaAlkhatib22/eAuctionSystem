@@ -22,8 +22,8 @@ import {
 } from "@mui/icons-material";
 
 // Project Imports
-import { FlexBetween } from "../Utils/FlexBetween";
 import { SideBarMenus } from "../Utils/SideBarMenus";
+import { FlexBetween } from "../../../Components/FlexBetween";
 
 import { DrawerHeader, Drawer } from "../Utils/SideBarHelpers";
 

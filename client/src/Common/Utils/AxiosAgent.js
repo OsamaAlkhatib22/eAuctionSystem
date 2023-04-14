@@ -30,22 +30,22 @@ axios.interceptors.response.use(
     }
 
     return response;
-  },
+  }
 
   // NOT IMPLEMENTED YET
-  (error) => {
-    if (error?.response?.status === 401) {
-      IdentityHelper.removeToken();
+  // (error) => {
+  //   if (error?.response?.status === 401) {
+  //     IdentityHelper.removeToken();
 
-      window.location.reload();
+  //     window.location.reload();
 
-      return Promise.reject(error);
-    }
+  //     return Promise.reject(error);
+  //   }
 
-    console.error(error);
+  //   console.error(error);
 
-    return Promise.resolve({ code: 0, strMessage: "" });
-  }
+  //   return Promise.resolve({ code: 0, strMessage: "" });
+  // }
 );
 
 export default axios;

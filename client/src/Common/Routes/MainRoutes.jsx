@@ -15,6 +15,7 @@ const Dashboard = Loadable(lazy(() => import("../../Views/Dashboard")));
 const NotFound = Loadable(lazy(() => import("../../Views/NotFound")));
 const ViewComplaints = Loadable(lazy(() => import("../../Views/Complaints")));
 const CreateTask = Loadable(lazy(() => import("../../Views/TaskCreation")));
+const EvaluateTask = Loadable(lazy(() => import("../../Views/TaskEvaluation")));
 
 const MainRoutes = {
   path: "/",
@@ -31,6 +32,10 @@ const MainRoutes = {
     {
       path: "/create-task/:intComplaintId",
       element: <CreateTask />,
+    },
+    {
+      path: "/tasks",
+      element: <EvaluateTask />,
     },
     {
       path: "*",
