@@ -2,8 +2,11 @@
 using Domain.ClientDTOs.Complaint;
 using Domain.DataModels.Complaints;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
+using System.IO;
+
 
 namespace Application.Handlers
 {
@@ -20,6 +23,7 @@ namespace Application.Handlers
         GetComplaintByIdQuery request,
         CancellationToken cancellationToken
     )
+
         {
             var result = await _context.Complaints
                 .Where(q => q.intId == request.Id)
@@ -48,8 +52,9 @@ namespace Application.Handlers
                     dtmDateCreated = c.Complaint.Complaint.dtmDateCreated,
                     strComplaintTypeEn = c.ComplaintType.strNameEn,
                     strComplaintTypeAr = c.ComplaintType.strNameAr,
-                    strMediaRef = c.ComplaintAttachment.strMediaRef,        // base 64 instead of image path
+                    lstMedia = c.Complaint.Complaint.Attachments.Select(a => Convert.ToBase64String(File.ReadAllBytes(a.strMediaRef))).ToList(),
                     blnIsVideo = c.ComplaintAttachment.blnIsVideo
+
                 })
                 .FirstOrDefaultAsync();
 
