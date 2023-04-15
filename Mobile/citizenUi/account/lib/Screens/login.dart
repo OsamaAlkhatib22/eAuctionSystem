@@ -1,11 +1,12 @@
-import 'package:account/API/signRequest.dart';
+// ignore_for_file: unused_element
+
+import 'package:account/API/sign_in_up_request.dart';
 import 'package:account/Screens/signup.dart';
-import 'package:account/Validation/emailValidation.dart' as a;
+import 'package:account/Validation/email_validation.dart' as a;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'dashboardPage.dart';
 
- final _formKey = GlobalKey<FormState>();
+
  String? _email;
 
  

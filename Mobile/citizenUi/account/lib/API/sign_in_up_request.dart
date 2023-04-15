@@ -1,16 +1,15 @@
-// ignore_for_file: file_names, avoid_print
+// ignore_for_file: file_names, avoid_print, use_build_context_synchronously, unused_local_variable
 import 'dart:convert';
 
 import 'dart:io';
 
 
-import 'package:account/Screens/fileComplaint.dart';
+import 'package:account/Screens/file_complaint.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../Screens/dashboardPage.dart';
 late String token2;
 
 class User {
@@ -21,7 +20,7 @@ class User {
     print(email);
     print(password);
   try {
-    HttpOverrides.global = new MyHttpOverrides();
+    HttpOverrides.global = MyHttpOverrides();
     Response response = await post(
       Uri.parse('https://10.0.2.2:5000/api/account/login/'),
       headers: <String, String>{
@@ -129,9 +128,9 @@ String registrationNumber,String nationalIdNumber) async {
 
     var userName = jsonResponse['strUserName'];
     var token1 = jsonResponse['strToken'];
-    var Fname = jsonResponse['strFirstName'];
-    var Lname = jsonResponse['strLastName'];
-    print('Signup successful. Welcome, $Fname $Lname!');
+    var fName = jsonResponse['strFirstName'];
+    var lName = jsonResponse['strLastName'];
+    print('Signup successful. Welcome, $fName $lName!');
 
   } else {
     print('Signup failed. Status code: ${response.statusCode}');
