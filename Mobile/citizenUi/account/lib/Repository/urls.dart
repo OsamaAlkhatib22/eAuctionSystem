@@ -4,5 +4,5 @@ class AppUrl {
   static const String login = baseURL + "/";
   static const String register = baseURL + "/";
   //static const String forgotPassword = baseURL + "/forgot-password";
-  int DBPassword=159632478;
+  int dbPassword=159632478;
 }

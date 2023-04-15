@@ -1,16 +1,17 @@
 
-// ignore_for_file: library_private_types_in_public_api
+// ignore_for_file: library_private_types_in_public_api, avoid_print, use_build_context_synchronously, duplicate_ignore
 
 import 'dart:async';
 import 'dart:convert';
+import 'package:account/Screens/filecomplaintsub.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
-import '../API/signRequest.dart';
-import 'package:account/Screens/fileComplaintSub';
+import '../API/sign_in_up_request.dart';
+import 'package:account/Screens/filecomplaintsub.dart';
 
 
 
@@ -28,6 +29,7 @@ class _HomePageState extends State<HomePage1> {
   final _picker = ImagePicker();
   TextEditingController textArea = TextEditingController();
   String? dropdownvalue;
+  late int intType;
  
 
   // Implementing the image picker
@@ -35,14 +37,8 @@ class _HomePageState extends State<HomePage1> {
 
     final pickedFile = await _picker.pickMultiImage(
         imageQuality: 50, 
-     // maxHeight: 1000, // To set maxheight of images that you want in your app
-     // maxWidth: 1000
       ); 
     List<XFile> xfilePick = pickedFile;
- 
-         // if atleast 1 images is selected it will add
-        // all images in selectedImages
-        // variable so that we can easily show them in UI
         if (xfilePick.isNotEmpty) {
           for (var i = 0; i < xfilePick.length; i++) {
             
@@ -120,6 +116,8 @@ class _HomePageState extends State<HomePage1> {
   }
 
   Future<void> _getCurrentPosition() async {
+
+   
     final hasPermission = await _handleLocationPermission();
 
     if (!hasPermission) return;
@@ -130,6 +128,7 @@ class _HomePageState extends State<HomePage1> {
     }).catchError((e) {
       debugPrint(e);
     });
+    
   }
 
   Future<void> _getAddressFromLatLng(Position position) async {
@@ -198,6 +197,7 @@ class _HomePageState extends State<HomePage1> {
         onChanged: (newValue) {
           setState(() {
             dropdownvalue = newValue as String?;
+           
           });
         },
       );
@@ -239,7 +239,8 @@ class _HomePageState extends State<HomePage1> {
                   backgroundColor: Colors.white,
                 ),
                 onPressed: () {
-                // _getCurrentPosition();
+
+                 _getCurrentPosition();
                 if(selectedImages.length<=3){
                 getImages();
                 }
@@ -280,8 +281,10 @@ class _HomePageState extends State<HomePage1> {
                 ),
               
                 onPressed:() {
-               Navigator.of(context).push(MaterialPageRoute(builder: (context) => SubmissionPage(currentPosition: _currentPosition,
-                currentAddress: currentAddress,dropdownvalue: dropdownvalue!,)));
+              
+
+               Navigator.of(context).push(MaterialPageRoute(builder: (context) => SubmissionPage(currentAddress: currentAddress,currentPosition:_currentPosition!
+               ,dropdownvalue: dropdownvalue!,comment:textArea.text,selectedImages:selectedImages)));
                   
                 },
                   
@@ -301,8 +304,7 @@ class _HomePageState extends State<HomePage1> {
     ));
   }
   
-  
-  }
+}
  
 class MyHttpOverrides extends HttpOverrides{
   @override

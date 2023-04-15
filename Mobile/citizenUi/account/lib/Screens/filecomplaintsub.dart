@@ -1,9 +1,13 @@
 
-import 'dart:io';
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:geolocator_platform_interface/src/models/position.dart';
+// ignore_for_file: depend_on_referenced_packages, implementation_imports, no_logic_in_create_state, unnecessary_null_comparison
 
+import 'dart:io';
+import 'package:account/API/file_complaint_request.dart';
+import 'package:flutter/material.dart';
+import 'package:geolocator_platform_interface/src/models/position.dart';
+import 'package:intl/intl.dart';
+
+import 'file_complaint.dart';
 
 
 
@@ -14,18 +18,22 @@ class SubmissionPage extends StatefulWidget {
   final String dropdownvalue;
   final String? currentAddress;
   final Position? currentPosition;
+  final String? comment;
+  final  List<File> selectedImages ;
+  
+  
  
-  const SubmissionPage(
+   const SubmissionPage(
       {super.key,
       this.image1,
       required this.dropdownvalue,
-      required this.currentAddress,this.currentPosition});
+      required this.currentAddress,this.currentPosition,required this.comment,required this.selectedImages});
       
 
 
   @override
   State<SubmissionPage> createState() =>
-      _SubmissionPageState(image1, dropdownvalue, currentAddress,currentPosition);
+      _SubmissionPageState(image1, dropdownvalue, currentAddress,currentPosition,comment,selectedImages);
 }
 
 
@@ -34,33 +42,14 @@ class _SubmissionPageState extends State<SubmissionPage> {
   String dropdownvalue;
   String? currentAddress;
   Position ? currentPosition;
-  var result1;
-  _LocationPageState(this.image1, this.dropdownvalue, this.currentAddress, this.currentPosition);
+  String ?comment;
+ final  List<File> selectedImages;
+
+  _SubmissionPageState(this.image1, this.dropdownvalue, this.currentAddress, this.currentPosition,this.comment,this.selectedImages);
   String formatter = DateFormat('d-M-y').format(now);
 
 
 
-
-// Future<File> compressFile() async {
-//   final filePath = image1!.absolute.path;
-
-//   // Create output file path
-//   // eg:- "Volume/VM/abcd_out.jpeg"
-//   final lastIndex = filePath.lastIndexOf(RegExp(r'.jp'));
-//   final splitted = filePath.substring(0, (lastIndex));
-//   final outPath = "${splitted}_out${filePath.substring(lastIndex)}";
-//     result1 = await FlutterImageCompress.compressAndGetFile(
-//     image1!.absolute.path, outPath,
-//     quality: 50,
-//   );
-
-//   print(image1!.lengthSync());
-//   print(result1!.lengthSync());
-
-//   return result1;
-//  }
-
- 
 
   show() {
     
@@ -74,7 +63,7 @@ class _SubmissionPageState extends State<SubmissionPage> {
           actions: [
             TextButton(
               onPressed: () {
-               // _navigateToNextScreen(context);
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => const HomePage1()));
               },
               child: const Text(
                 'Home',
@@ -114,33 +103,24 @@ class _SubmissionPageState extends State<SubmissionPage> {
                   height: 20,
                   width: 50,
                 ),
-                Container(
-                  alignment: Alignment.center,
-                  width: 300,
-                  height: 200,
-                  color: Colors.white,
-                 // child: FutureBuilder<File>(
-      //    future: compressFile(),
-      // builder: (BuildContext context, AsyncSnapshot<File> snapshot) {
-      //   if (snapshot.connectionState == ConnectionState.done) {
-      //     if (snapshot.hasData) {
-      //       // Use the compressed file to build the Image widget
-      //       return Image.file(snapshot.data!);
-      //     } else {
-      //       // Handle error here
-      //       return Text('Error: ${snapshot.error}');
-      //     }
-      //   } else {
-      //     // Show loading indicator while waiting for the Future to complete
-      //     return const CircularProgressIndicator();
-      //   }
-      // },
-           //)),
-                ),
+                
+                 
+                  const Text("Picked Files:"),
+                  const Divider(),
 
-
-
-
+                  selectedImages != null?Wrap(
+                     children: selectedImages.map((imageone){
+                        return Card( 
+                           child: SizedBox(
+                              height: 100, width:100,
+                              child: Image.file(File(imageone.path)),
+                           ),
+                        );
+                     }).toList(),
+                  ):Container()
+               ],
+             ),
+            ),
 
                 const SizedBox(height: 30),
                 Row(
@@ -181,8 +161,8 @@ class _SubmissionPageState extends State<SubmissionPage> {
               
 
                 const SizedBox(height: 20),
-              ]),
-            ),
+             
+            
             const SizedBox(height: 20),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -190,19 +170,19 @@ class _SubmissionPageState extends State<SubmissionPage> {
                 backgroundColor: Colors.white,
               ),
               onPressed: () {
+                Complaint complaint=Complaint();
+                complaint.fileComplaint(1,selectedImages,currentPosition?.latitude as double,currentPosition?.longitude as double,comment!);
                 show();
-                          
+            
+
+                           
             
               },
               child: const Text("submit"),
-            ),
-          ]),
-        ));
+            ), ]),));
+    
+        
   }
 }
 
-// void _navigateToNextScreen(BuildContext context) {
-//   Navigator.of(context)
-//       .push(MaterialPageRoute(builder: (context) => const HomePage1()));
-// }
 
