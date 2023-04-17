@@ -77,7 +77,7 @@ const MediaGallery = ({
               <CarouselImage
                 src={item.media}
                 alt={item.title}
-                style={{ borderRadius: { borderRadius } }}
+                style={{ borderRadius: borderRadius }}
               />
             )}
             <div

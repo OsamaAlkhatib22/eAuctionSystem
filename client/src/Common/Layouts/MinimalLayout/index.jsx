@@ -6,7 +6,7 @@ import { Box, CssBaseline, Stack, Typography, useTheme } from "@mui/material";
 import { styled } from "@mui/system";
 
 // Project Imports
-import MediaGallery from "../../Components/PhotoGallery";
+import MediaGallery from "../../Components/MediaGallery";
 
 // Assets
 import Amman1 from "../../../Assets/Images/Amman1.jpg";

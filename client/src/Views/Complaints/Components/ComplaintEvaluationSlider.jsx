@@ -6,13 +6,18 @@ import { Button, Stack, Box } from "@mui/material";
 // Project Imports
 import ComplaintDetails from "./ComplaintDetails";
 import ScrollableContent from "../../../Common/Components/ScrollableContent";
-import PhotoGallery from "../../../Common/Components/PhotoGallery";
+import MediaGallery from "../../../Common/Components/MediaGallery";
 
 const ComplaintEvaluationSlider = ({ photos, theme, complaint, setNext }) => {
   return (
     <ScrollableContent>
       <Stack spacing={2} width="22.5vw">
-        <PhotoGallery items={photos} height="25rem" width="auto" />
+        <MediaGallery
+          items={photos}
+          height="25rem"
+          width="auto"
+          borderRadius="1rem"
+        />
         <ComplaintDetails theme={theme} complaint={complaint} />
         <Box display="flex" gap="1rem" justifyContent="center">
           <Button

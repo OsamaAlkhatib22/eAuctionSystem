@@ -15,7 +15,7 @@ import {
 import { EvaluateTaskApi } from "./Service/EvaluateTaskApi";
 import { GetTaskDetailsApi } from "./Service/GetTaskDetailsApi";
 import TaskDetails from "./Components/TaskDetails";
-import PhotoGallery from "../../Common/Components/PhotoGallery";
+import MediaGallery from "../../Common/Components/MediaGallery";
 import FormTextFieldMulti from "../../Common/Components/UI/FormFields/FormTextFieldMulti";
 import FormRatingGroup from "../../Common/Components/UI/FormFields/FormRatingGroup";
 import FormRowRadioGroup from "../../Common/Components/UI/FormFields/FormRadioGroup";
@@ -89,7 +89,12 @@ const CreateTask = () => {
           <FormProvider {...methods}>
             <form onSubmit={methods.handleSubmit(onSubmit)}>
               <Stack spacing={2} width="22.5vw">
-                <PhotoGallery items={task} height="25rem" width="auto" />
+                <MediaGallery
+                  items={task}
+                  height="25rem"
+                  width="auto"
+                  borderRadius="1rem"
+                />
                 <TaskDetails theme={theme} taskId={taskId} />
                 <FormRatingGroup name="rating" />
                 <FormTextFieldMulti label="Comment" name="comment" />

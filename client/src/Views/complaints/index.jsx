@@ -27,7 +27,7 @@ const ViewComplaints = () => {
   }, []);
 
   const photos = complaint.lstMedia.map((media) => ({
-    image: `data:image/jpg;base64, ${media}`,
+    media: `data:image/jpg;base64, ${media}`,
     title: complaint.intComplaintId,
   }));
 
