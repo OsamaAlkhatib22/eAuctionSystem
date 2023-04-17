@@ -24,15 +24,15 @@ import ScrollableContent from "../../Common/Components/ScrollableContent";
 
 const testPhotos = [
   {
-    image: "https://picsum.photos/id/10/800",
+    media: "https://picsum.photos/id/10/800",
     title: "Test 1",
   },
   {
-    image: "https://picsum.photos/id/13/800",
+    media: "https://picsum.photos/id/13/800",
     title: "Test 2",
   },
   {
-    image: "https://picsum.photos/id/14/800",
+    media: "https://picsum.photos/id/14/800",
     title: "Test 3",
   },
 ];
@@ -88,7 +88,7 @@ const CreateTask = () => {
         <ScrollableContent>
           <FormProvider {...methods}>
             <form onSubmit={methods.handleSubmit(onSubmit)}>
-              <Stack spacing={2} width="22.5vw">
+              <Stack spacing={2} width="32.5vw">
                 <MediaGallery
                   items={task}
                   height="25rem"
@@ -103,7 +103,14 @@ const CreateTask = () => {
                   radioLabel="Status"
                   labels={radioOptions}
                 />
-                <Button type="submit">Next</Button>
+                <Button
+                  type="submit"
+                  color="primary"
+                  variant="contained"
+                  sx={{ borderRadius: "1rem" }}
+                >
+                  Next
+                </Button>
               </Stack>
             </form>
           </FormProvider>

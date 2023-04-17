@@ -14,7 +14,7 @@ import {
   IconButton,
   Box,
 } from "@mui/material";
-import { AddCircleOutline } from "@mui/icons-material/";
+import { AddCircleOutline, RemoveCircleOutline } from "@mui/icons-material/";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 // Project Imports
@@ -34,6 +34,7 @@ const TaskCreationSlider = ({ complaint }) => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
 
   const [workers, setWorkers] = useState([]);
+  const [members, setMembers] = useState([]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
 
@@ -70,7 +71,10 @@ const TaskCreationSlider = ({ complaint }) => {
                 complaint={complaint}
                 isNonMobile={isNonMobile}
                 methods={methods}
+                setWorkers={setWorkers}
                 workers={workers}
+                members={members}
+                setMembers={setMembers}
               />
               <FiledsInput
                 complaint={complaint}
@@ -137,10 +141,18 @@ const FiledsInput = ({ complaint, isNonMobile, methods, workers }) => {
   );
 };
 
-const VisualInputs = ({ complaint, isNonMobile, methods, workers }) => {
+const VisualInputs = ({
+  complaint,
+  isNonMobile,
+  methods,
+  workers,
+  setWorkers,
+  members,
+  setMembers,
+}) => {
   return (
-    <Stack spacing={2} width="31.5vw">
-      <Box width="35rem" height="25rem">
+    <Stack spacing={2} width="35.5vw">
+      <Stack spacing={2} width="35rem" height="45rem">
         <DataGrid
           sx={{
             "& .MuiDataGrid-virtualScroller::-webkit-scrollbar": {
@@ -170,7 +182,17 @@ const VisualInputs = ({ complaint, isNonMobile, methods, workers }) => {
                 <IconButton
                   variant="contained"
                   color="primary"
-                  onClick={() => params.row.strName}
+                  onClick={() =>
+                    setWorkers(
+                      workers.filter((worker) => {
+                        if (worker.intId === params.row.intId) {
+                          setMembers([...members, worker]);
+                          return false;
+                        }
+                        return true;
+                      })
+                    )
+                  }
                 >
                   <AddCircleOutline />
                 </IconButton>
@@ -182,7 +204,58 @@ const VisualInputs = ({ complaint, isNonMobile, methods, workers }) => {
           getRowId={(row) => row.intId}
           density="compact"
         />
-      </Box>
+        <DataGrid
+          sx={{
+            "& .MuiDataGrid-virtualScroller::-webkit-scrollbar": {
+              width: "0.4rem",
+              borderRadius: "0.4rem",
+            },
+            "& .MuiDataGrid-virtualScroller::-webkit-scrollbar-track": {
+              background: "#f1f1f1",
+              borderRadius: "0.4rem",
+            },
+            "& .MuiDataGrid-virtualScroller::-webkit-scrollbar-thumb": {
+              backgroundColor: "#888",
+              borderRadius: "0.4rem",
+            },
+            "& .MuiDataGrid-virtualScroller::-webkit-scrollbar-thumb:hover": {
+              background: "#555",
+              borderRadius: "0.4rem",
+            },
+          }}
+          rows={members}
+          columns={[
+            {
+              field: "button",
+              headerName: "Remove",
+              flex: 0.2,
+              renderCell: (params) => (
+                <IconButton
+                  variant="contained"
+                  color="primary"
+                  onClick={() =>
+                    setMembers(
+                      members.filter((member) => {
+                        if (member.intId === params.row.intId) {
+                          setWorkers([member, ...workers]);
+                          return false;
+                        }
+                        return true;
+                      })
+                    )
+                  }
+                >
+                  <RemoveCircleOutline />
+                </IconButton>
+              ),
+            },
+            { field: "intId", headerName: "ID", flex: 0.15 },
+            { field: "strName", headerName: "Full Name", flex: 0.65 },
+          ]}
+          getRowId={(row) => row.intId}
+          density="compact"
+        />
+      </Stack>
     </Stack>
   );
 };

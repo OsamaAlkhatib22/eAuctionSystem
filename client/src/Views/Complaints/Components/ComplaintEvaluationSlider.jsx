@@ -11,7 +11,7 @@ import MediaGallery from "../../../Common/Components/MediaGallery";
 const ComplaintEvaluationSlider = ({ photos, theme, complaint, setNext }) => {
   return (
     <ScrollableContent>
-      <Stack spacing={2} width="22.5vw">
+      <Stack spacing={2} width="32.5vw">
         <MediaGallery
           items={photos}
           height="25rem"
