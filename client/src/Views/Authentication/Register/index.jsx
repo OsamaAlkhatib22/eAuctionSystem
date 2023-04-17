@@ -15,6 +15,7 @@ import RegistrationStepThree from "./Components/RegistrationStepThree";
 
 const Register = ({ setNewUser }) => {
   const navigate = useNavigate();
+  const [step, setStep] = useState(1);
   const [options, setOptions] = useState({
     nationality: null,
     document: null,
@@ -32,7 +33,6 @@ const Register = ({ setNewUser }) => {
     strNationalIdNumber: null,
   });
   const [selectedOption, setSelectedOption] = useState("Jordanian");
-  const [step, setStep] = useState(1);
 
   const onSubmit = async () => {
     if (await Authorize.Register(request))

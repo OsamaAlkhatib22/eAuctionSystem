@@ -51,10 +51,12 @@ export const RegisterStepTwoJo = yup
       .required(),
     registrationNumber: yup
       .string()
-      .matches(/^000\/000$/, 'Invalid Registration Number, must be "000/000"'),
+      .matches(/^000\/000$/, 'Invalid Registration Number, must be "000/000"')
+      .nullable(),
     nationalIdNumber: yup
       .string()
-      .matches(/^[A-Z]{3}\d{5}$/, 'Invalid Id number, must be "AAA00000"'),
+      .matches(/^[A-Z]{3}\d{5}$/, 'Invalid Id number, must be "AAA00000"')
+      .nullable(),
   })
   .test("registrationNumberFilled", function (values) {
     const { registrationNumber, nationalIdNumber } = values;
