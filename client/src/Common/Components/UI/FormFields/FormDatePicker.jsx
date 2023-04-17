@@ -4,20 +4,19 @@ import React from "react";
 import { Controller, useFormContext } from "react-hook-form";
 
 // Mui
-import { TextField } from "@mui/material";
+import { InputAdornment } from "@mui/material";
+import InsertInvitationOutlinedIcon from "@mui/icons-material/InsertInvitationOutlined";
 
 // Date picker
-import dayjs from "dayjs";
-import { LocalizationProvider, DesktopDatePicker } from "@mui/x-date-pickers";
+import { LocalizationProvider, MobileDatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
-const FormDatePicker = (props) => {
+const FormDatePicker = ({ name, label, minDate, maxDate }) => {
   const { control } = useFormContext();
-  const [date, setDate] = React.useState(null);
 
   return (
     <Controller
-      name={props.name}
+      name={name}
       control={control}
       render={({
         field: { onChange, value },
@@ -25,22 +24,27 @@ const FormDatePicker = (props) => {
         formState,
       }) => (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DesktopDatePicker
-            label={props.label}
-            value={date}
-            minDate={dayjs()}
-            onChange={(newDate) => {
-              onChange(newDate);
-              setDate(newDate);
+          <MobileDatePicker
+            label={label}
+            value={value || null}
+            minDate={minDate}
+            maxDate={maxDate}
+            onChange={(newDate) => onChange(newDate)}
+            format="DD-MM-YYYY"
+            slotProps={{
+              textField: {
+                error: error ? true : false,
+                helperText: error ? error.message : null,
+                readOnly: true,
+                InputProps: {
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <InsertInvitationOutlinedIcon />
+                    </InputAdornment>
+                  ),
+                },
+              },
             }}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                error={error ? true : false}
-                helperText={error ? error.message : null}
-                sx={{ width: "100%" }}
-              />
-            )}
           />
         </LocalizationProvider>
       )}

@@ -1,42 +1,20 @@
 import React, { useState, useEffect } from "react";
 
 // Mui
-import {
-  useTheme,
-  Button,
-  Stack,
-  Typography,
-  Box,
-  SwipeableDrawer,
-} from "@mui/material";
+import { useTheme, Typography, SwipeableDrawer } from "@mui/material";
 
 // Project Imports
 import { GetComplaintsApi } from "./Service/GetComplaintsApi";
-import ComplaintDetails from "./Components/ComplaintDetails";
 import ComplaintsDataGrid from "./Components/ComplaintsDataGrid";
-import ScrollableContent from "../../Common/Components/ScrollableContent";
-import PhotoGallery from "../../Common/Components/UI/PhotoGallery";
 import { GetComplaintByidApi } from "./Service/GetComplaintByidApi";
-
-const testPhotos = [
-  {
-    image: "https://picsum.photos/id/10/800",
-    title: "Test 1",
-  },
-  {
-    image: "https://picsum.photos/id/13/800",
-    title: "Test 2",
-  },
-  {
-    image: "https://picsum.photos/id/14/800",
-    title: "Test 3",
-  },
-];
+import ComplaintEvaluationSlider from "./Components/ComplaintEvaluationSlider";
+import TaskCreationSlider from "./Components/TaskCreationSlider";
 
 const ViewComplaints = () => {
   const theme = useTheme();
-  const [complaint, setComplaint] = useState({});
+  const [complaint, setComplaint] = useState({ lstMedia: [] });
   const [complaints, setComplaints] = useState([]);
+  const [next, setNext] = useState(false);
 
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -47,6 +25,11 @@ const ViewComplaints = () => {
     };
     setComplaintsView();
   }, []);
+
+  const photos = complaint.lstMedia.map((media) => ({
+    image: `data:image/jpg;base64, ${media}`,
+    title: complaint.intComplaintId,
+  }));
 
   return (
     <div>
@@ -62,34 +45,22 @@ const ViewComplaints = () => {
       <SwipeableDrawer
         anchor="right"
         open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
+        onClose={() => {
+          setDrawerOpen(false);
+          setNext(false);
+        }}
         onOpen={() => setDrawerOpen(true)}
       >
-        <ScrollableContent>
-          <Stack spacing={2} width="22.5vw">
-            <PhotoGallery items={testPhotos} height="25rem" width="auto" />
-            <ComplaintDetails theme={theme} complaint={complaint} />
-            <Box display="flex" gap="1rem" justifyContent="center">
-              <Button
-                variant="outlined"
-                color="error"
-                sx={{
-                  borderRadius: "0.75rem",
-                }}
-              >
-                Reject
-              </Button>
-              <Button
-                type="submit"
-                variant="outlined"
-                color="success"
-                sx={{ borderRadius: "0.75rem" }}
-              >
-                Approve
-              </Button>
-            </Box>
-          </Stack>
-        </ScrollableContent>
+        {next ? (
+          <TaskCreationSlider complaint={complaint} />
+        ) : (
+          <ComplaintEvaluationSlider
+            photos={photos}
+            theme={theme}
+            complaint={complaint}
+            setNext={setNext}
+          />
+        )}
       </SwipeableDrawer>
     </div>
   );

@@ -15,7 +15,7 @@ import {
 import { EvaluateTaskApi } from "./Service/EvaluateTaskApi";
 import { GetTaskDetailsApi } from "./Service/GetTaskDetailsApi";
 import TaskDetails from "./Components/TaskDetails";
-import PhotoGallery from "../../Common/Components/UI/PhotoGallery";
+import PhotoGallery from "../../Common/Components/PhotoGallery";
 import FormTextFieldMulti from "../../Common/Components/UI/FormFields/FormTextFieldMulti";
 import FormRatingGroup from "../../Common/Components/UI/FormFields/FormRatingGroup";
 import FormRowRadioGroup from "../../Common/Components/UI/FormFields/FormRadioGroup";
