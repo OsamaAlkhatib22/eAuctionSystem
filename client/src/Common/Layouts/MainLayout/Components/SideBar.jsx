@@ -24,13 +24,15 @@ import {
 // Project Imports
 import { SideBarMenus } from "../Utils/SideBarMenus";
 import { FlexBetween } from "../../../Components/FlexBetween";
-
 import { DrawerHeader, Drawer } from "../Utils/SideBarHelpers";
+import { IdentityHelper } from "../../../Utils/IdentityHelper";
+import CapitalizeFirstLetter from "../../../Utils/CapitalizeFirstLetter";
 
 const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, children }) => {
   const theme = useTheme();
   const [active, setActive] = useState("");
   const navigate = useNavigate();
+  const user = IdentityHelper.UserData;
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -70,7 +72,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, children }) => {
                   <ListItem key={text} disablePadding>
                     <ListItemButton
                       onClick={() => {
-                        navigate(`/${lcText}`);
+                        navigate(`/auth/${lcText}`);
                         setActive(lcText);
                       }}
                       sx={{
@@ -117,13 +119,15 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, children }) => {
                     fontSize="0.9rem"
                     sx={{ color: theme.palette.secondary[100] }}
                   >
-                    Full Name
+                    {CapitalizeFirstLetter(user.firstName) +
+                      " " +
+                      CapitalizeFirstLetter(user.lastName)}
                   </Typography>
                   <Typography
                     fontSize="0.8rem"
                     sx={{ color: theme.palette.secondary[200] }}
                   >
-                    User Type
+                    {CapitalizeFirstLetter(user.userType)}
                   </Typography>
                 </Box>
                 <ListItemButton

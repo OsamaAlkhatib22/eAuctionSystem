@@ -1,144 +1,109 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { FormProvider, useForm } from "react-hook-form";
+import { useNavigate, Link } from "react-router-dom";
 
 // Mui
-import {
-  Typography,
-  Button,
-  Stack,
-  Paper,
-  FormLabel,
-  FormControl,
-  FormControlLabel,
-  RadioGroup,
-  Radio,
-  Box,
-} from "@mui/material";
-
-// Third Party
-import { yupResolver } from "@hookform/resolvers/yup";
+import { Typography, Stack, IconButton } from "@mui/material";
+import { ChevronLeftOutlined } from "@mui/icons-material";
 
 // Project Imports
 import { Authorize } from "../Service/Auth";
-import FormTextField from "../../../Common/Components/UI/FormFields/FormTextField";
+import Colors from "../../../Assets/Styles/_themes-vars.module.scss";
+import NotFoundPage from "../../NotFound";
+import RegistrationStepOne from "./Components/RegistrationStepOne";
+import RegistrationStepTwo from "./Components/RegistrationStepTwo";
+import RegistrationStepThree from "./Components/RegistrationStepThree";
 
-import {
-  RegisterJoSchema as schemaJo,
-  RegisterNonJoSchema as schemaNonJo,
-} from "../Utils/Schemas";
-
-const Register = () => {
+const Register = ({ setNewUser }) => {
   const navigate = useNavigate();
-  const [selectedOption, setSelectedOption] = useState("Jordanian");
-
-  const schema = selectedOption === "Jordanian" ? schemaJo : schemaNonJo;
-
-  const methods = useForm({
-    resolver: yupResolver(schema),
+  const [options, setOptions] = useState({
+    nationality: null,
+    document: null,
   });
-  const { handleSubmit } = methods;
+  const [request, setRequest] = useState({
+    strFirstName: null,
+    strLastName: null,
+    strUsername: null,
+    strPassword: null,
+    strPhonenumber: null,
+    strEmail: null,
+    strNationalId: null,
+    strPassportNumber: null,
+    strRegistrationNumber: null,
+    strNationalIdNumber: null,
+  });
+  const [selectedOption, setSelectedOption] = useState("Jordanian");
+  const [step, setStep] = useState(1);
 
-  const onInvalid = (errors) => {
-    console.log(errors);
+  const onSubmit = async () => {
+    if (await Authorize.Register(request))
+      navigate({
+        pathname: "/auth/dashboard",
+      });
   };
-
-  const onSubmit = async (data) => {
-    const request = {
-      strUsername: data.username,
-      strPhonenumber: data.phone,
-      strFirstName: data.password,
-      strLastName: data.firstname,
-      strPassword: data.lastname,
-      strEmail: data.email,
-      strNationalId: data.national,
-      strPassportNumber: data.passport,
-      strRegistrationNumber: data.registrationnumber,
-      strNationalIdNumber: data.NationalIdNumber,
-    };
-    await Authorize.Register(request);
-
-    navigate({
-      pathname: "/dashboard",
-    });
-  };
-
-  //<Typography variant="h1">Login Page (prototype)</Typography>
-  function getInputs(selectedOption) {
-    if (selectedOption === "Jordanian") {
-      return (
-        <>
-          <FormTextField name="national" label="National ID" />
-          <FormTextField
-            name="registrationnumber"
-            label="Registration Number"
-          />
-          <FormTextField name="NationalIdNumber" label="National ID Number" />
-        </>
-      );
-    } else if (selectedOption === "Non-Jordanian") {
-      return (
-        <>
-          <FormTextField name="passport" label="Passport" />
-        </>
-      );
-    }
-  }
 
   return (
-    <FormProvider {...methods}>
-      <Paper
-        sx={{
-          width: "25%",
-          minWidth: "30rem",
-          margin: "auto",
-          padding: "2rem",
-        }}
+    <Stack spacing={2} sx={{ width: "25vw" }}>
+      <Typography
+        variant="h2"
+        sx={{ display: "flex", alignItems: "center", gap: "1rem" }}
       >
-        <Stack spacing={2}>
-          <FormControl>
-            <FormLabel>Nationality</FormLabel>
-            <RadioGroup
-              row
-              value={selectedOption}
-              onChange={(event) => setSelectedOption(event.target.value)}
-            >
-              <FormControlLabel
-                value="Jordanian"
-                control={<Radio />}
-                label="Jordanian"
+        {step > 1 && (
+          <IconButton onClick={() => setStep(step - 1)}>
+            <ChevronLeftOutlined />
+          </IconButton>
+        )}
+        Register
+      </Typography>
+      <Typography style={{ color: Colors.grey500 }}>
+        Already have an account?{" "}
+        <Link
+          style={{ textDecoration: "none", color: Colors.primary800 }}
+          onClick={() => setNewUser(false)}
+        >
+          Login
+        </Link>
+      </Typography>
+      {(() => {
+        switch (step) {
+          case 1:
+            return (
+              <RegistrationStepOne
+                selectedOption={selectedOption}
+                setSelectedOption={setSelectedOption}
+                setRequest={setRequest}
+                request={request}
+                setStep={setStep}
               />
-              <FormControlLabel
-                value="Non-Jordanian"
-                control={<Radio />}
-                label="Non-Jordanian"
+            );
+          case 2:
+            return (
+              <RegistrationStepTwo
+                selectedOption={selectedOption}
+                setRequest={setRequest}
+                request={request}
+                setOptions={setOptions}
+                setStep={setStep}
               />
-            </RadioGroup>
-          </FormControl>
-          <Stack direction="row" spacing={2}>
-            <Stack spacing={2}>
-              <FormTextField name="username" label="Username" />
-              <FormTextField name="phone" label="Phonenumber" />
-              <FormTextField name="password" label="Password" type="password" />
-              <FormTextField name="firstname" label="First Name" />
-              <FormTextField name="lastname" label="Last Name" />
-              <FormTextField name="email" label="Email" />
-            </Stack>
-            <Stack spacing={2}>{getInputs(selectedOption)}</Stack>
-          </Stack>
-          <Box display="flex" justifyContent="end" mt="20px">
-            <Button
-              onClick={handleSubmit(onSubmit, onInvalid)}
-              color="primary"
-              variant="contained"
-              sx={{ borderRadius: "1rem" }}
-            >
-              Create New User
-            </Button>
-          </Box>
-        </Stack>
-      </Paper>
-    </FormProvider>
+            );
+          case 3:
+            return (
+              <RegistrationStepThree
+                request={request}
+                onSubmit={onSubmit}
+                options={options}
+              />
+            );
+          default:
+            return <NotFoundPage />;
+        }
+      })()}
+      <Link
+        style={{ textDecoration: "none", color: Colors.primary800 }}
+        to={"/contact"}
+      >
+        Having a problem?
+      </Link>
+    </Stack>
   );
 };
 

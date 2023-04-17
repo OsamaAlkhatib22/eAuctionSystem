@@ -2,7 +2,7 @@ import { useLocation, useNavigate, Link } from "react-router-dom";
 import { FormProvider, useForm } from "react-hook-form";
 
 // Mui
-import { Typography, Button, Stack, Box } from "@mui/material";
+import { Typography, Button, Stack } from "@mui/material";
 
 // Third Party
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -11,13 +11,11 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Authorize } from "../Service/Auth";
 import FormTextField from "../../../Common/Components/UI/FormFields/FormTextField";
 import Colors from "../../../Assets/Styles/_themes-vars.module.scss";
-import Logo from "../../../Assets/Images/AmmanLogo.png";
-import { IdentityHelper } from "../../../Common/Utils/IdentityHelper";
 
 // Schema
 import { LoginSchema as schema } from "../Utils/Schemas";
 
-function Login() {
+function Login({ setNewUser }) {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -36,11 +34,9 @@ function Login() {
       strLogin: data.login,
       strPassword: data.password,
     };
-    await Authorize.Login(request);
-
-    if (IdentityHelper.isTokenValid())
+    if (await Authorize.Login(request))
       navigate({
-        pathname: "/dashboard",
+        pathname: "/auth/dashboard",
       });
   };
 
@@ -48,22 +44,12 @@ function Login() {
     <div>
       <FormProvider {...methods}>
         <Stack spacing={2} sx={{ width: "25vw" }}>
-          <Box position="absolute" right="3rem" top="3rem">
-            <img
-              src={Logo}
-              style={{
-                width: "5rem",
-              }}
-              alt="Logo"
-            />
-          </Box>
-
           <Typography variant="h2">Log in</Typography>
           <Typography style={{ color: Colors.grey500 }}>
             Don't have an account?{" "}
             <Link
               style={{ textDecoration: "none", color: Colors.primary800 }}
-              to={location.pathname + "/register"}
+              onClick={() => setNewUser(true)}
             >
               Register
             </Link>

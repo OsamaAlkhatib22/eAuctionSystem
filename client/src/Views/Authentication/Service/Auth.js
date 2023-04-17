@@ -6,21 +6,24 @@ export const Authorize = {
     try {
       const response = await axios.post("/api/account/login", LoginRequest);
 
-      const { strToken } = response.data;
-      IdentityHelper.token = strToken;
+      IdentityHelper.token = response.data;
+      return IdentityHelper.isTokenValid();
     } catch (error) {
-      console.error(error);
+      return false;
     }
   },
-  
+
   Register: async (registrationRequest) => {
     try {
-      const response = await axios.post("/api/account/register", registrationRequest);
+      const response = await axios.post(
+        "/api/account/register",
+        registrationRequest
+      );
 
-      const { strToken } = response.data;
-      IdentityHelper.token = strToken;
+      IdentityHelper.token = response.data;
+      return IdentityHelper.isTokenValid();
     } catch (error) {
-      console.error(error);
+      return false;
     }
   },
 };

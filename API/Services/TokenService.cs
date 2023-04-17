@@ -11,6 +11,7 @@ namespace API.Services
     {
         private readonly IConfiguration _configuration;
         private readonly DataContext _context;
+        private readonly int _tokenDuration = 30; // In days.
 
         public TokenService(IConfiguration configuration, DataContext context)
         {
@@ -24,13 +25,27 @@ namespace API.Services
             {
                 new Claim("username", user.UserName),
                 new Claim(
-                    "phonenumber",
+                    "firstName",
                     _context.UserInfos
-                        .Where(q => q.intId == user.Id)
+                        .Where(q => q.intId == user.intUserInfoId)
+                        .Select(p => p.strFirstName)
+                        .FirstOrDefault()
+                ),
+                new Claim(
+                    "lastName",
+                    _context.UserInfos
+                        .Where(q => q.intId == user.intUserInfoId)
+                        .Select(p => p.strLastName)
+                        .FirstOrDefault()
+                ),
+                new Claim(
+                    "phoneNumber",
+                    _context.UserInfos
+                        .Where(q => q.intId == user.intUserInfoId)
                         .Select(p => p.strPhoneNumber)
                         .FirstOrDefault()
                 ),
-                new Claim("usertype", _context.UserTypes.Find(user.intUserTypeId).strName),
+                new Claim("userType", _context.UserTypes.Find(user.intUserTypeId).strName),
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["TokenKey"]));
@@ -38,7 +53,7 @@ namespace API.Services
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddDays(1),
+                Expires = DateTime.UtcNow.AddDays(_tokenDuration),
                 SigningCredentials = creds
             };
             var tokenHandler = new JwtSecurityTokenHandler();

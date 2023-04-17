@@ -13,7 +13,15 @@ export const IdentityHelper = {
   },
 
   get UserData() {
-    return this.isTokenValid() ? jwtDecode(this.token) : null;
+    const user = this.isTokenValid() ? jwtDecode(this.token) : null;
+    return user
+      ? {
+          firstName: user.firstName,
+          lastName: user.lastName,
+          phoneNumber: user.phoneNumber,
+          userType: user.userType,
+        }
+      : null;
   },
 
   get isAuthorized() {
