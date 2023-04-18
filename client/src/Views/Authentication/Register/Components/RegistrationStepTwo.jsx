@@ -96,8 +96,8 @@ const NationalityInputs = (
             row
             value={selectedDocument}
             onChange={(event) => {
-              setValue("registrationNumber", "");
-              setValue("nationalIdNumber", "");
+              setValue("registrationNumber", null);
+              setValue("nationalIdNumber", null);
               setSelectedDocument(event.target.value);
             }}
           >

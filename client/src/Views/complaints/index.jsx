@@ -52,7 +52,7 @@ const ViewComplaints = () => {
         onOpen={() => setDrawerOpen(true)}
       >
         {next ? (
-          <TaskCreationSlider complaint={complaint} />
+          <TaskCreationSlider photos={photos} complaint={complaint} />
         ) : (
           <ComplaintEvaluationSlider
             photos={photos}

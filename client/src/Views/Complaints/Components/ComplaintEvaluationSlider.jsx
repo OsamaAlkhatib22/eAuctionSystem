@@ -1,7 +1,8 @@
 import React from "react";
 
 // Mui
-import { Button, Stack, Box } from "@mui/material";
+import { Button, Stack, Box, Typography, IconButton } from "@mui/material";
+import { ChevronLeftOutlined } from "@mui/icons-material/";
 
 // Project Imports
 import ComplaintDetails from "./ComplaintDetails";
@@ -12,6 +13,15 @@ const ComplaintEvaluationSlider = ({ photos, theme, complaint, setNext }) => {
   return (
     <ScrollableContent>
       <Stack spacing={2} width="32.5vw">
+        <Typography
+          variant="h2"
+          sx={{ display: "flex", alignItems: "center", gap: "1rem" }}
+        >
+          <IconButton>
+            <ChevronLeftOutlined />
+          </IconButton>
+          Evaluate Complaint
+        </Typography>
         <MediaGallery
           items={photos}
           height="25rem"
@@ -19,25 +29,29 @@ const ComplaintEvaluationSlider = ({ photos, theme, complaint, setNext }) => {
           borderRadius="1rem"
         />
         <ComplaintDetails theme={theme} complaint={complaint} />
-        <Box display="flex" gap="1rem" justifyContent="center">
+        <Stack direction="row" spacing={2}>
           <Button
             variant="outlined"
             color="error"
             sx={{
-              borderRadius: "0.75rem",
+              flex: "1 1 auto",
+              borderRadius: "1rem",
             }}
           >
             Reject
           </Button>
           <Button
             onClick={setNext}
-            variant="outlined"
+            variant="contained"
             color="success"
-            sx={{ borderRadius: "0.75rem" }}
+            sx={{
+              flex: "1 1 auto",
+              borderRadius: "1rem",
+            }}
           >
             Next
           </Button>
-        </Box>
+        </Stack>
       </Stack>
     </ScrollableContent>
   );
