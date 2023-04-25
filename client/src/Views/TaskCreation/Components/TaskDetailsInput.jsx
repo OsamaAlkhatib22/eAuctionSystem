@@ -23,7 +23,7 @@ import TaskCreationContext from "../Context/TaskCreationContext";
 // schemas
 import { TaskSchema } from "../Utils/Schemas";
 
-const TaskDetailsInput = ({ photos, complaint, setNext }) => {
+const TaskDetailsInput = ({ photos, complaint, NextStep }) => {
   const [taskTypes, setTaskTypes] = useState([]);
   const { task, setTask } = useContext(TaskCreationContext);
 
@@ -58,12 +58,12 @@ const TaskDetailsInput = ({ photos, complaint, setNext }) => {
           onSubmit={methods.handleSubmit((data) => {
             setTask({
               ...task,
-              // startDate: dayjs(task.startDate),
-              // dueDate: dayjs(task.dueDate),
+              startDate: dayjs(data.startDate),
+              dueDate: dayjs(data.dueDate),
               taskType: data.taskType,
               comment: data.comment,
             });
-            setNext(true);
+            NextStep();
           })}
         >
           <Stack spacing={2}>

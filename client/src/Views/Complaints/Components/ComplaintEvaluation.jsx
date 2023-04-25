@@ -16,9 +16,6 @@ const ComplaintEvaluation = ({ photos, complaint, setApproved }) => {
         variant="h2"
         sx={{ display: "flex", alignItems: "center", gap: "1rem" }}
       >
-        <IconButton>
-          <ChevronLeftOutlined />
-        </IconButton>
         Evaluate Complaint
       </Typography>
       <MediaGallery

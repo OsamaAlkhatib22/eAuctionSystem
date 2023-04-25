@@ -9,6 +9,14 @@ export const TaskCreationProvider = ({ children }) => {
   const [leader, setLeader] = useState(null);
   const [members, setMembers] = useState([]);
 
+  const fullTeam =
+    members.length > 0
+      ? members.map((member) => ({
+          intId: member.intId,
+          isLeader: member.intId === leader?.intId,
+        }))
+      : null;
+
   // Task state
   const [task, setTask] = useState({
     id: "--",
@@ -16,7 +24,7 @@ export const TaskCreationProvider = ({ children }) => {
     startDate: null,
     dueDate: null,
     taskType: null,
-    comment: null,
+    comment: "",
   });
 
   // Shipped states
@@ -24,6 +32,7 @@ export const TaskCreationProvider = ({ children }) => {
     workers,
     setWorkers,
     leader,
+    fullTeam,
     setLeader,
     members,
     setMembers,

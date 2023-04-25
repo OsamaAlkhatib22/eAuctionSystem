@@ -9,6 +9,7 @@ import ComplaintsDataGrid from "./Components/ComplaintsDataGrid";
 import { GetComplaintByidApi } from "./Service/GetComplaintByidApi";
 import ComplaintEvaluation from "./Components/ComplaintEvaluation";
 import TaskCreation from "../TaskCreation";
+import ScrollableContent from "../../Common/Components/ScrollableContent";
 
 const ViewComplaints = () => {
   const [complaint, setComplaint] = useState({ lstMedia: [] });
@@ -49,11 +50,17 @@ const ViewComplaints = () => {
         onOpen={() => setDrawerOpen(true)}
         PaperProps={{ style: { width: "65%" } }}
       >
-        {approved ? (
-          <TaskCreation />
-        ) : (
-          <ComplaintEvaluation setApproved={setApproved} />
-        )}
+        <ScrollableContent>
+          {approved ? (
+            <TaskCreation photos={photos} complaint={complaint} />
+          ) : (
+            <ComplaintEvaluation
+              photos={photos}
+              complaint={complaint}
+              setApproved={setApproved}
+            />
+          )}
+        </ScrollableContent>
       </SwipeableDrawer>
     </div>
   );

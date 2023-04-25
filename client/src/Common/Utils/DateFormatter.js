@@ -1,8 +1,5 @@
 export const DateFormatterEn = (value) => {
-  if (!value) {
-    return "";
-  }
-  const date = new Date(value);
+  const date = value ? new Date(value) : new Date();
   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const months = [
     "Jan",

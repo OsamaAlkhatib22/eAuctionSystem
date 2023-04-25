@@ -11,7 +11,7 @@ import { GetWorkersApi } from "../../../Common/Services/GetWorkersApi";
 // Context
 import TaskCreationContext from "../Context/TaskCreationContext";
 
-const TaskTeamInput = ({ step, setStep }) => {
+const TaskTeamInput = ({ NextStep }) => {
   const { workers, setWorkers, leader, setLeader, members, setMembers } =
     useContext(TaskCreationContext);
 
@@ -20,9 +20,7 @@ const TaskTeamInput = ({ step, setStep }) => {
       setWorkers(await GetWorkersApi());
     };
     GetWorkers();
-    setLeader(null);
-    setMembers([]);
-  }, [setWorkers, setLeader, setMembers]);
+  }, []);
 
   useEffect(() => {
     if (!leader && members.length > 0) {
@@ -154,7 +152,7 @@ const TaskTeamInput = ({ step, setStep }) => {
         variant="contained"
         color="primary"
         sx={{ borderRadius: "1rem" }}
-        onClick={() => setStep(3)}
+        onClick={NextStep}
       >
         Next
       </Button>

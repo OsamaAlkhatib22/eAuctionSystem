@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 
 // Mui
 import {
@@ -18,10 +18,12 @@ import { styled } from "@mui/system";
 
 // Project Imports
 import { FlexBetween } from "../../../Common/Components/FlexBetween";
+import { CreateTaskApi } from "../Service/CreateTaskApi";
 
 // Context
 import TaskCreationContext from "../Context/TaskCreationContext";
 import { DateFormatterEn } from "../../../Common/Utils/DateFormatter";
+import ResultPopup from "../../../Common/Components/ResultPopup";
 
 const MuiAvatarGroup = styled(AvatarGroup)(({ theme }) => ({
   "& .MuiAvatar-root": {
@@ -32,10 +34,29 @@ const MuiAvatarGroup = styled(AvatarGroup)(({ theme }) => ({
   },
 }));
 
-const TaskCreationDetails = ({ setStep }) => {
+const TaskCreationDetails = ({ ResetStep, complaint }) => {
   const theme = useTheme();
-  const { task, members, leader } = useContext(TaskCreationContext);
-  return (
+  const { task, members, leader, fullTeam } = useContext(TaskCreationContext);
+  const [result, setResult] = useState(null);
+
+  const CreateTask = async () => {
+    const data = {
+      cost: 0.0,
+      startDate: task.startDate,
+      endDate: task.dueDate,
+      comment: task.comment,
+      team: fullTeam,
+    };
+    setResult(await CreateTaskApi(data, complaint.intComplaintId));
+  };
+
+  return result !== null ? (
+    <ResultPopup
+      type={result}
+      successMessage={`Task has been created successfully at ${DateFormatterEn()}`}
+      failMessage={`Task creation failed, UNKNOWN ERROR at ${DateFormatterEn()}`}
+    />
+  ) : (
     <Box>
       <Stack spacing={2}>
         <Box width="25rem">
@@ -120,7 +141,7 @@ const TaskCreationDetails = ({ setStep }) => {
         />
         <Stack direction="row" spacing={2}>
           <Button
-            onClick={() => setStep(2)}
+            onClick={ResetStep}
             variant="outlined"
             color="warning"
             sx={{
@@ -131,6 +152,7 @@ const TaskCreationDetails = ({ setStep }) => {
             Edit
           </Button>
           <Button
+            onClick={CreateTask}
             variant="contained"
             color="success"
             sx={{
