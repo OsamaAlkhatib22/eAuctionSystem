@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Application;
-using Domain.DataModels.Tasks;
-using Domain.ClientDTOs.User;
 using System.IdentityModel.Tokens.Jwt;
-using Domain.ClientDTOs.Complaint;
 using Domain.ClientDTOs.Task;
-using Microsoft.EntityFrameworkCore;
+using Application.Queries.Tasks;
+using Application.Queries.Users;
 
 namespace API.Controllers
 {
@@ -33,6 +31,12 @@ namespace API.Controllers
             taskTypeDTO.strUserName = jwtToken.Claims.First(c => c.Type == "username").Value;
 
             return HandleResult(await Mediator.Send(new InsertTaskTypeCommand(taskTypeDTO)));
+        }
+
+        [HttpGet("types")] //.../api/tasks/types
+        public async Task<IActionResult> GetTasksTypesList()
+        {
+            return HandleResult(await Mediator.Send(new GetTaskTypesListQuery()));
         }
 
         [HttpPost("{id}")] // .../api/tasks

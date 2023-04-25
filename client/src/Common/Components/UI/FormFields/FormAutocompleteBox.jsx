@@ -23,7 +23,7 @@ const FormAutocompleteBox = ({
   const options = items ? items : [];
 
   const handleOptionChange = (event, value) => {
-    if (options.includes(value)) {
+    if (options?.includes(value)) {
       setValue(name, value);
     } else {
       setValue(name, options[0]);

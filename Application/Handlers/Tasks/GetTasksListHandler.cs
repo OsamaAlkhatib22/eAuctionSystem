@@ -1,13 +1,13 @@
 ﻿using Application.Core;
+using Application.Queries.Tasks;
 using Domain.DataModels.Tasks;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
-namespace Application.Handlers
+namespace Application.Handlers.Tasks
 {
-    public class GetTasksListHandler
-        : IRequestHandler<GetTasksListQuery, Result<List<WorkTask>>>
+    public class GetTasksListHandler : IRequestHandler<GetTasksListQuery, Result<List<WorkTask>>>
     {
         private readonly DataContext _context;
 

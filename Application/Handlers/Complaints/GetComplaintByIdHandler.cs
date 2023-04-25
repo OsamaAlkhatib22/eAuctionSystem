@@ -1,4 +1,5 @@
 ﻿using Application.Core;
+using Application.Queries.Complaints;
 using Domain.ClientDTOs.Complaint;
 using Domain.DataModels.Complaints;
 using MediatR;
@@ -7,10 +8,10 @@ using Microsoft.EntityFrameworkCore;
 using Persistence;
 using System.IO;
 
-
-namespace Application.Handlers
+namespace Application.Handlers.Complaints
 {
-    public class GetComplaintByIdHandler : IRequestHandler<GetComplaintByIdQuery, Result<ComplaintViewDTO>>
+    public class GetComplaintByIdHandler
+        : IRequestHandler<GetComplaintByIdQuery, Result<ComplaintViewDTO>>
     {
         private readonly DataContext _context;
 
@@ -20,10 +21,9 @@ namespace Application.Handlers
         }
 
         public async Task<Result<ComplaintViewDTO>> Handle(
-        GetComplaintByIdQuery request,
-        CancellationToken cancellationToken
-    )
-
+            GetComplaintByIdQuery request,
+            CancellationToken cancellationToken
+        )
         {
             var result = await _context.Complaints
                 .Where(q => q.intId == request.Id)
@@ -43,19 +43,31 @@ namespace Application.Handlers
                     _context.ComplaintAttachments,
                     c => c.Complaint.Complaint.intId,
                     ca => ca.intComplaintId,
-                    (c, ca) => new { c.Complaint, c.ComplaintType, ComplaintAttachment = ca }
+                    (c, ca) =>
+                        new
+                        {
+                            c.Complaint,
+                            c.ComplaintType,
+                            ComplaintAttachment = ca
+                        }
                 )
-                .Select(c => new ComplaintViewDTO
-                {
-                    intComplaintId = c.Complaint.Complaint.intId,
-                    strUserName = c.Complaint.User.UserName,
-                    dtmDateCreated = c.Complaint.Complaint.dtmDateCreated,
-                    strComplaintTypeEn = c.ComplaintType.strNameEn,
-                    strComplaintTypeAr = c.ComplaintType.strNameAr,
-                    lstMedia = c.Complaint.Complaint.Attachments.Select(a => Convert.ToBase64String(File.ReadAllBytes(a.strMediaRef))).ToList(),
-                    blnIsVideo = c.ComplaintAttachment.blnIsVideo
-
-                })
+                .Select(
+                    c =>
+                        new ComplaintViewDTO
+                        {
+                            intComplaintId = c.Complaint.Complaint.intId,
+                            strUserName = c.Complaint.User.UserName,
+                            dtmDateCreated = c.Complaint.Complaint.dtmDateCreated,
+                            strComplaintTypeEn = c.ComplaintType.strNameEn,
+                            strComplaintTypeAr = c.ComplaintType.strNameAr,
+                            lstMedia = c.Complaint.Complaint.Attachments
+                                .Select(
+                                    a => Convert.ToBase64String(File.ReadAllBytes(a.strMediaRef))
+                                )
+                                .ToList(),
+                            blnIsVideo = c.ComplaintAttachment.blnIsVideo
+                        }
+                )
                 .FirstOrDefaultAsync();
 
             if (result == null)
@@ -65,6 +77,5 @@ namespace Application.Handlers
 
             return Result<ComplaintViewDTO>.Success(result);
         }
-
     }
 }

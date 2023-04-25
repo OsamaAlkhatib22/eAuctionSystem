@@ -3,7 +3,7 @@ using Domain.ClientDTOs.Complaint;
 using Domain.DataModels.Complaints;
 using MediatR;
 
-namespace Application
+namespace Application.Queries.Complaints
 {
     public record GetComplaintByIdQuery(int Id) : IRequest<Result<ComplaintViewDTO>>;
 }

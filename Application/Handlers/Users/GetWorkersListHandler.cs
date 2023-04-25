@@ -1,11 +1,12 @@
 ﻿using Application.Core;
+using Application.Queries.Users;
 using Domain.ClientDTOs.User;
 using Domain.DataModels.User;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
-namespace Application.Handlers
+namespace Application.Handlers.Users
 {
     public class GetWorkersListHandler
         : IRequestHandler<GetWorkersListQuery, Result<List<WorkerDTO>>>
@@ -23,21 +24,22 @@ namespace Application.Handlers
         )
         {
             List<WorkerDTO> result = await _context.Users
-                 .Where(q => q.intUserTypeId == 2)
-       .Join(
-           _context.UserInfos,
-           u => u.Id,
-           ui => ui.intId,
-           (u, ui) => new WorkerDTO{ 
-           intId = u.Id,
-           strFirstName = ui.strFirstName,
-           strLastName = ui.strLastName,
-           strPhoneNumber = ui.strPhoneNumber
-           
-           })
-       .ToListAsync();
+                .Where(q => q.intUserTypeId == 2)
+                .Join(
+                    _context.UserInfos,
+                    u => u.Id,
+                    ui => ui.intId,
+                    (u, ui) =>
+                        new WorkerDTO
+                        {
+                            intId = u.Id,
+                            strFirstName = ui.strFirstName,
+                            strLastName = ui.strLastName,
+                            strPhoneNumber = ui.strPhoneNumber
+                        }
+                )
+                .ToListAsync();
             return Result<List<WorkerDTO>>.Success(result);
-
         }
     }
 }

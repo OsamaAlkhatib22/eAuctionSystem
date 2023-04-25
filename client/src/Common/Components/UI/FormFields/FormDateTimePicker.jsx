@@ -46,6 +46,7 @@ const FormDateTimePicker = ({ name, label, minDateTime, maxDateTime }) => {
 
 const textFieldProps = (theme, error) => ({
   sx: {
+    width: "50%",
     borderRadius: "1rem",
     color: theme.palette.primary.main,
     boxShadow: "none",

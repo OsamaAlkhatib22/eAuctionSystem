@@ -1,11 +1,12 @@
 ﻿using Application.Core;
+using Application.Queries.Complaints;
 using Domain.ClientDTOs.Complaint;
 using Domain.DataModels.Complaints;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
-namespace Application.Handlers
+namespace Application.Handlers.Complaints
 {
     public class GetComplaintTypesListHandler
         : IRequestHandler<GetComplaintTypesListQuery, Result<List<ComplaintTypeDTO>>>

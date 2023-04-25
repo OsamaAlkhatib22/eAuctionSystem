@@ -1,21 +1,20 @@
 import React, { useState, useEffect } from "react";
 
 // Mui
-import { useTheme, Typography, SwipeableDrawer } from "@mui/material";
+import { Typography, SwipeableDrawer } from "@mui/material";
 
 // Project Imports
 import { GetComplaintsApi } from "./Service/GetComplaintsApi";
 import ComplaintsDataGrid from "./Components/ComplaintsDataGrid";
 import { GetComplaintByidApi } from "./Service/GetComplaintByidApi";
-import ComplaintEvaluationSlider from "./Components/ComplaintEvaluationSlider";
-import TaskCreationSlider from "./Components/TaskCreationSlider";
+import ComplaintEvaluation from "./Components/ComplaintEvaluation";
+import TaskCreation from "../TaskCreation";
 
 const ViewComplaints = () => {
-  const theme = useTheme();
   const [complaint, setComplaint] = useState({ lstMedia: [] });
   const [complaints, setComplaints] = useState([]);
-  const [next, setNext] = useState(false);
 
+  const [approved, setApproved] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => {
@@ -26,9 +25,9 @@ const ViewComplaints = () => {
     setComplaintsView();
   }, []);
 
-  const photos = complaint.lstMedia.map((media) => ({
+  const photos = complaint.lstMedia.map((media, index) => ({
     media: `data:image/jpg;base64, ${media}`,
-    title: complaint.intComplaintId,
+    title: complaint.intComplaintId + "-" + index,
   }));
 
   return (
@@ -39,27 +38,21 @@ const ViewComplaints = () => {
         AddComplaint={async (params) => {
           const response = await GetComplaintByidApi(params);
           setComplaint(response.data);
+          setApproved(false);
           setDrawerOpen(true);
         }}
       />
       <SwipeableDrawer
         anchor="right"
         open={drawerOpen}
-        onClose={() => {
-          setDrawerOpen(false);
-          setNext(false);
-        }}
+        onClose={() => setDrawerOpen(false)}
         onOpen={() => setDrawerOpen(true)}
+        PaperProps={{ style: { width: "65%" } }}
       >
-        {next ? (
-          <TaskCreationSlider photos={photos} complaint={complaint} />
+        {approved ? (
+          <TaskCreation />
         ) : (
-          <ComplaintEvaluationSlider
-            photos={photos}
-            theme={theme}
-            complaint={complaint}
-            setNext={setNext}
-          />
+          <ComplaintEvaluation setApproved={setApproved} />
         )}
       </SwipeableDrawer>
     </div>

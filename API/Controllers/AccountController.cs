@@ -106,7 +106,7 @@ namespace API.Controllers
                 await transaction.RollbackAsync();
                 return BadRequest(result.Errors);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 await transaction.RollbackAsync();
                 // Display error

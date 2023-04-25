@@ -10,7 +10,7 @@ using Persistence;
 using Microsoft.EntityFrameworkCore;
 using Domain.ClientDTOs.Complaint;
 
-namespace Application.Handlers
+namespace Application.Handlers.Tasks
 {
     public class InsertTasktHandler : IRequestHandler<InsertTaskCommand, Result<TaskDTO>>
     {

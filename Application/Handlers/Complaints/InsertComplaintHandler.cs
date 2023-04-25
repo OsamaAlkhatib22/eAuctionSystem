@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Persistence;
 
-namespace Application.Handlers
+namespace Application.Handlers.Complaints
 {
     public class InsertComplaintHandler
         : IRequestHandler<InsertComplaintCommand, Result<ComplaintDTO>>
