@@ -34,7 +34,7 @@ const MuiAvatarGroup = styled(AvatarGroup)(({ theme }) => ({
   },
 }));
 
-const TaskCreationDetails = ({ ResetStep, complaint }) => {
+const TaskCreationDetails = ({ ResetStep, complaint, CloseDrawer }) => {
   const theme = useTheme();
   const { task, members, leader, fullTeam } = useContext(TaskCreationContext);
   const [result, setResult] = useState(null);
@@ -55,6 +55,7 @@ const TaskCreationDetails = ({ ResetStep, complaint }) => {
       type={result}
       successMessage={`Task has been created successfully at ${DateFormatterEn()}`}
       failMessage={`Task creation failed, UNKNOWN ERROR at ${DateFormatterEn()}`}
+      onClick={CloseDrawer}
     />
   ) : (
     <Box>

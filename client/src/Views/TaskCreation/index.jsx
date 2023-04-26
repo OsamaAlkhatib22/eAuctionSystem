@@ -11,7 +11,7 @@ import { TaskCreationProvider } from "./Context/TaskCreationContext";
 import TaskCreationDetails from "./Components/TaskCreationDetails";
 import NotFoundPage from "../NotFound";
 
-const TaskCreation = ({ photos, complaint }) => {
+const TaskCreation = ({ photos, complaint, CloseDrawer }) => {
   const [step, setStep] = useState(1);
   const [title, setTitle] = useState("Date Selection");
   const ResetStep = () => setStep(1);
@@ -35,7 +35,11 @@ const TaskCreation = ({ photos, complaint }) => {
       case 3:
         if (title !== "Task Details") setTitle("Task Details");
         return (
-          <TaskCreationDetails ResetStep={ResetStep} complaint={complaint} />
+          <TaskCreationDetails
+            ResetStep={ResetStep}
+            complaint={complaint}
+            CloseDrawer={CloseDrawer}
+          />
         );
 
       default:

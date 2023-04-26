@@ -6,7 +6,7 @@ import { Stack, Typography, Button } from "@mui/material";
 // Assets
 import { CheckCircleOutline, ErrorOutline } from "@mui/icons-material";
 
-const ResultPopup = ({ type, successMessage, failMessage }) => {
+const ResultPopup = ({ type, successMessage, failMessage, onClick }) => {
   return (
     <Stack spacing={2} justifyContent="center" alignItems="center">
       {type ? (
@@ -25,6 +25,7 @@ const ResultPopup = ({ type, successMessage, failMessage }) => {
         {type ? successMessage : failMessage}
       </Typography>
       <Button
+        onClick={onClick}
         variant="contained"
         color="primary"
         sx={{

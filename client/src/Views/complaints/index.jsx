@@ -52,7 +52,11 @@ const ViewComplaints = () => {
       >
         <ScrollableContent>
           {approved ? (
-            <TaskCreation photos={photos} complaint={complaint} />
+            <TaskCreation
+              photos={photos}
+              complaint={complaint}
+              CloseDrawer={() => setDrawerOpen(false)}
+            />
           ) : (
             <ComplaintEvaluation
               photos={photos}

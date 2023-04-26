@@ -1,7 +1,14 @@
-import React, { useEffect, useContext } from "react";
+import React, { useEffect, useContext, useState } from "react";
 
 // Mui
-import { Stack, IconButton, Button, Switch } from "@mui/material";
+import {
+  Stack,
+  IconButton,
+  Button,
+  Switch,
+  Snackbar,
+  Alert,
+} from "@mui/material";
 import { AddCircleOutline, RemoveCircleOutline } from "@mui/icons-material/";
 import { DataGrid } from "@mui/x-data-grid";
 
@@ -14,10 +21,17 @@ import TaskCreationContext from "../Context/TaskCreationContext";
 const TaskTeamInput = ({ NextStep }) => {
   const { workers, setWorkers, leader, setLeader, members, setMembers } =
     useContext(TaskCreationContext);
+  const [snackBar, setSnackBar] = useState(false);
 
   useEffect(() => {
     const GetWorkers = async () => {
-      setWorkers(await GetWorkersApi());
+      const list = await GetWorkersApi();
+      if (members.length > 0) {
+        const membersIds = members.map((member) => member.intId);
+        setWorkers(list.filter((item) => !membersIds.includes(item.intId)));
+      } else {
+        setWorkers(list);
+      }
     };
     GetWorkers();
   }, []);
@@ -27,6 +41,15 @@ const TaskTeamInput = ({ NextStep }) => {
       setLeader(members[0]);
     }
   }, [leader, members, setLeader]);
+
+  const Validate = () => {
+    if (leader && members.length > 0) NextStep();
+    else setSnackBar(true);
+  };
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") return;
+    setSnackBar(false);
+  };
 
   const gridStyle = {
     "& .MuiDataGrid-virtualScroller::-webkit-scrollbar": {
@@ -81,6 +104,7 @@ const TaskTeamInput = ({ NextStep }) => {
       field: "button",
       headerName: "Remove",
       flex: 0.2,
+      description: "Enter the full name of the worker",
       renderCell: (params) => (
         <IconButton
           variant="contained"
@@ -152,10 +176,15 @@ const TaskTeamInput = ({ NextStep }) => {
         variant="contained"
         color="primary"
         sx={{ borderRadius: "1rem" }}
-        onClick={NextStep}
+        onClick={Validate}
       >
         Next
       </Button>
+      <Snackbar open={snackBar} autoHideDuration={2000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="error" sx={{ width: "100%" }}>
+          Members table can NOT be empty!
+        </Alert>
+      </Snackbar>
     </Stack>
   );
 };
