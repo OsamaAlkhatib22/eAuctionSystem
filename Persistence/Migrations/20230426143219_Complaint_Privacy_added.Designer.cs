@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
 
@@ -10,9 +11,11 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230426143219_Complaint_Privacy_added")]
+    partial class Complaint_Privacy_added
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -225,40 +228,6 @@ namespace Persistence.Migrations
                     b.ToTable("complaints_voters");
                 });
 
-            modelBuilder.Entity("Domain.DataModels.Intersections.DepartmentUsers", b =>
-                {
-                    b.Property<int>("intUserId")
-                        .HasColumnType("int")
-                        .HasColumnName("USER_ID");
-
-                    b.Property<int>("intDepartmentId")
-                        .HasColumnType("int")
-                        .HasColumnName("DEPARTMENT_ID");
-
-                    b.HasKey("intUserId", "intDepartmentId");
-
-                    b.HasIndex("intDepartmentId");
-
-                    b.ToTable("department_users");
-                });
-
-            modelBuilder.Entity("Domain.DataModels.Intersections.ProfessionUsers", b =>
-                {
-                    b.Property<int>("intUserId")
-                        .HasColumnType("int")
-                        .HasColumnName("USER_ID");
-
-                    b.Property<int>("intProfessionId")
-                        .HasColumnType("int")
-                        .HasColumnName("PROFESSION_ID");
-
-                    b.HasKey("intUserId", "intProfessionId");
-
-                    b.HasIndex("intProfessionId");
-
-                    b.ToTable("profession_users");
-                });
-
             modelBuilder.Entity("Domain.DataModels.Intersections.WorkTaskAttachment", b =>
                 {
                     b.Property<int>("intTaskId")
@@ -322,90 +291,6 @@ namespace Persistence.Migrations
                     b.HasIndex("intTaskId");
 
                     b.ToTable("tasks_members");
-                });
-
-            modelBuilder.Entity("Domain.DataModels.LookUps.Department", b =>
-                {
-                    b.Property<int>("intId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("ID");
-
-                    b.Property<bool>("blnIsDeleted")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("IS_DELETED");
-
-                    b.Property<DateTime>("dtmDateCreated")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("DATE_CREATED");
-
-                    b.Property<DateTime>("dtmDateLastModified")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("DATE_LAST_MODIFIED");
-
-                    b.Property<int>("intCreatedBy")
-                        .HasColumnType("int")
-                        .HasColumnName("CREATED_BY");
-
-                    b.Property<int>("intLastModifiedBy")
-                        .HasColumnType("int")
-                        .HasColumnName("LAST_MODIFIED_BY");
-
-                    b.Property<string>("strNameAr")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("NAME_AR");
-
-                    b.Property<string>("strNameEn")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("NAME_EN");
-
-                    b.HasKey("intId");
-
-                    b.ToTable("departments");
-                });
-
-            modelBuilder.Entity("Domain.DataModels.LookUps.Profession", b =>
-                {
-                    b.Property<int>("intId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("ID");
-
-                    b.Property<bool>("blnIsDeleted")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("IS_DELETED");
-
-                    b.Property<DateTime>("dtmDateCreated")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("DATE_CREATED");
-
-                    b.Property<DateTime>("dtmDateLastModified")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("DATE_LAST_MODIFIED");
-
-                    b.Property<int>("intCreatedBy")
-                        .HasColumnType("int")
-                        .HasColumnName("CREATED_BY");
-
-                    b.Property<int>("intLastModifiedBy")
-                        .HasColumnType("int")
-                        .HasColumnName("LAST_MODIFIED_BY");
-
-                    b.Property<string>("strNameAr")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("NAME_AR");
-
-                    b.Property<string>("strNameEn")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("NAME_EN");
-
-                    b.HasKey("intId");
-
-                    b.ToTable("Professions");
                 });
 
             modelBuilder.Entity("Domain.DataModels.Tasks.WorkTask", b =>
@@ -897,44 +782,6 @@ namespace Persistence.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Domain.DataModels.Intersections.DepartmentUsers", b =>
-                {
-                    b.HasOne("Domain.DataModels.LookUps.Department", "Department")
-                        .WithMany("Users")
-                        .HasForeignKey("intDepartmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.DataModels.User.ApplicationUser", "User")
-                        .WithMany("Departments")
-                        .HasForeignKey("intUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Department");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Domain.DataModels.Intersections.ProfessionUsers", b =>
-                {
-                    b.HasOne("Domain.DataModels.LookUps.Profession", "Profession")
-                        .WithMany("Users")
-                        .HasForeignKey("intProfessionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.DataModels.User.ApplicationUser", "User")
-                        .WithMany("Professions")
-                        .HasForeignKey("intUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Profession");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Domain.DataModels.Intersections.WorkTaskAttachment", b =>
                 {
                     b.HasOne("Domain.DataModels.Tasks.WorkTask", "Task")
@@ -1090,16 +937,6 @@ namespace Persistence.Migrations
                     b.Navigation("Voters");
                 });
 
-            modelBuilder.Entity("Domain.DataModels.LookUps.Department", b =>
-                {
-                    b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("Domain.DataModels.LookUps.Profession", b =>
-                {
-                    b.Navigation("Users");
-                });
-
             modelBuilder.Entity("Domain.DataModels.Tasks.WorkTask", b =>
                 {
                     b.Navigation("Attachments");
@@ -1112,10 +949,6 @@ namespace Persistence.Migrations
             modelBuilder.Entity("Domain.DataModels.User.ApplicationUser", b =>
                 {
                     b.Navigation("Complaints");
-
-                    b.Navigation("Departments");
-
-                    b.Navigation("Professions");
 
                     b.Navigation("Tasks");
                 });

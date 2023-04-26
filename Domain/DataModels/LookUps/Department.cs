@@ -1,23 +1,17 @@
-﻿using Domain.DataModels.LookUps;
+﻿using Domain.DataModels.Intersections;
 using Domain.DataModels.User;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Domain.DataModels.Complaints
+namespace Domain.DataModels.LookUps
 {
-    [Table("complaints_types")]
-    public class ComplaintType
+    [Table("departments")]
+    public class Department
     {
         [Column("ID")]
         [Key]
         public int intId { get; set; }
-
-        [Column("DEPARTMENT_ID")]
-        [Required]
-        [ForeignKey("department")]
-        public int intDepartmentId { get; set; }
-        Department Department { get; set; }
 
         [Column("NAME_AR")]
         [Required]
@@ -26,16 +20,6 @@ namespace Domain.DataModels.Complaints
         [Column("NAME_EN")]
         [Required]
         public string strNameEn { get; set; }
-
-        [Column("GRADE")]
-        [Required]
-        public decimal decGrade { get; set; }
-
-        [Column("PRIVACY_ID")]
-        [Required]
-        [ForeignKey("Privacy")]
-        public int intPrivacyId { get; set; }
-        public ComplaintPrivacy Privacy { get; set; }
 
         [Column("CREATED_BY")]
         [Required]
@@ -59,5 +43,8 @@ namespace Domain.DataModels.Complaints
 
         [Column("IS_DELETED")]
         public Boolean blnIsDeleted { get; set; }
+
+        // Relations
+        public ICollection<DepartmentUsers> Users { get; set; }
     }
 }

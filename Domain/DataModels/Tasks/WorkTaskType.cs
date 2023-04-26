@@ -1,4 +1,5 @@
-﻿using Domain.DataModels.User;
+﻿using Domain.DataModels.LookUps;
+using Domain.DataModels.User;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
@@ -14,7 +15,9 @@ namespace Domain.DataModels.Tasks
 
         [Column("DEPARTMENT_ID")]
         [Required]
+        [ForeignKey("department")]
         public int intDepartmentId { get; set; }
+        Department Department { get; set; }
 
         [Column("NAME_AR")]
         [Required]
