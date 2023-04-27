@@ -1,44 +1,82 @@
 
-// ignore_for_file: library_private_types_in_public_api
+// ignore_for_file: library_private_types_in_public_api, avoid_print, use_build_context_synchronously, duplicate_ignore
 
 import 'dart:async';
+import 'dart:convert';
+import 'package:account/Screens/filecomplaintsub.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-
+import 'package:http/http.dart' as http;
+import '../API/sign_in_up_request.dart';
+import 'package:account/Screens/filecomplaintsub.dart';
 
 
 
 
 class HomePage1 extends StatefulWidget {
-  const HomePage1({Key? key}) : super(key: key);
+  const HomePage1( {Key? key}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage1> {
-  File? image1;
+  //File? image1;
+  List<File> selectedImages = [];
   final _picker = ImagePicker();
+  TextEditingController textArea = TextEditingController();
+  String? dropdownvalue;
+  late int intType;
  
 
   // Implementing the image picker
-  Future<void> _openImagePicker() async {
-    final XFile? pickedImage =
-        await _picker.pickImage(source: ImageSource.gallery);
-    if (pickedImage != null) {
-      setState(() {
-        image1 = File(pickedImage.path);
-      });
-    }
+  Future getImages() async {
+
+    final pickedFile = await _picker.pickMultiImage(
+        imageQuality: 50, 
+      ); 
+    List<XFile> xfilePick = pickedFile;
+        if (xfilePick.isNotEmpty) {
+          for (var i = 0; i < xfilePick.length; i++) {
+            
+            selectedImages.add(File(xfilePick[i].path));
+          }
+           setState(
+      () {  },
+    );
+    print(selectedImages.length);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Nothing is selected')));
+        }
   }
 
-  //Classification items
-  var items = ['Select type',"تراكم النفايات","مبعثرات حول الحاوية","مخلفات تقليم الأشجار","مطبات اسمنتية عشوائية","تجمعات المياه ","خط مياه محطم","تصدعات في الشارع","حفر في الشارع","مناهل مفقودة",'مناهل منخفضة عن مستوى الشارع', 'مناهل مرتفعة عن خط الشارع', 'شواخص إعلانية غير قانونية', ' شواخص مرورية مكسورة,محجوبة', 'انارة الشوارع التالفة',"تكسر/تصدع جدار استنادي","رسومات","الطمم"];
-  String dropdownvalue = 'Select type';
+//fetch classification
+ Future<List<Map<String, dynamic>>> getAllCategory() async {
+   HttpOverrides.global = MyHttpOverrides();
+   
+  var baseUrl = "https://10.0.2.2:5000/api/complaints/types";
+  http.Response response = await http.get(Uri.parse(baseUrl),
+   headers: {
+          'Authorization': 'Bearer $token2',
+        }
+  );
 
+
+  if (response.statusCode == 200) {
+    var jsonData = json.decode(response.body) as List;
+    return jsonData.map((element) => {
+      "intId": element["intId"],
+      "strNameAr": element["strNameAr"],
+      "strNameEn": element["strNameEn"]
+    }).toList();
+  } else {
+    throw response.statusCode;
+  }
+}
 
 
 
@@ -52,7 +90,6 @@ class _HomePageState extends State<HomePage1> {
 
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text(
               'Location services are disabled. Please enable the services')));
@@ -79,6 +116,8 @@ class _HomePageState extends State<HomePage1> {
   }
 
   Future<void> _getCurrentPosition() async {
+
+   
     final hasPermission = await _handleLocationPermission();
 
     if (!hasPermission) return;
@@ -89,6 +128,7 @@ class _HomePageState extends State<HomePage1> {
     }).catchError((e) {
       debugPrint(e);
     });
+    
   }
 
   Future<void> _getAddressFromLatLng(Position position) async {
@@ -124,7 +164,8 @@ class _HomePageState extends State<HomePage1> {
 
 
       
-      body: SafeArea(
+       body:  SingleChildScrollView(
+        child:SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20),
           child: Column(children: [
@@ -137,46 +178,48 @@ class _HomePageState extends State<HomePage1> {
             const SizedBox(height:5),
             const Text("   Choose type of complaint that you want to report",style: TextStyle(fontSize: 12,color: Color.fromARGB(255, 167, 167, 167)),),
            const SizedBox(height:20),
-      
-            DropdownButton(
-                isExpanded: true,
-                value: dropdownvalue,
-                
-         
-                // Down Arrow Icon
-                icon: const Icon(Icons.keyboard_arrow_down),
-
-                // Array list of items
-                items: items.map((String items) {
-                  return DropdownMenuItem(
-                    value: items,
-                    child: Text(items),
-                  );
-                }).toList(),
-                
-                // After selecting the desired option,it will
-                // change button value to selected value
-                onChanged: (String? newValue) {
-                  setState(() {
-                    dropdownvalue = newValue!;
-                    // insertInfo(newValue);
-                    _getCurrentPosition();
-                  });
-                },
-              ),
+           
+          
+          FutureBuilder<List<Map<String, dynamic>>>(
+          future: getAllCategory(),
+          builder: (context, snapshot) {
+          if (snapshot.hasData) {
+         var data = snapshot.data!;
+         return DropdownButton(
+        value: dropdownvalue ?? data[0]["strNameEn"],
+        icon: const Icon(Icons.keyboard_arrow_down),
+        items: data.map((item) {
+          return DropdownMenuItem(
+            value: item["strNameEn"],
+            child: Text(item["strNameEn"]),
+          );
+        }).toList(),
+        onChanged: (newValue) {
+          setState(() {
+            dropdownvalue = newValue as String?;
+           
+          });
+        },
+      );
+    } else {
+      return const CircularProgressIndicator();
+    }
+  },
+),
             
+          
              const SizedBox(height:30,),
              Row(children: const [
             Icon(Icons.info_outline,color: Colors.red,),
             Text("Complaint Information",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18),)
             ],),
-              const Text("Enable your location and import an image",style: TextStyle(fontWeight:FontWeight.w300,fontSize: 12),),
-           const SizedBox(height:20),
+            const Text("Enable your location and import an image",style: TextStyle(fontWeight:FontWeight.w300,fontSize: 12),),
+            const SizedBox(height:20),
 
 
             const Icon(
               Icons.camera_alt_outlined,
-              size: 50,
+              size: 5,
               color: Color.fromARGB(255, 146, 145, 145),
             ),
             const SizedBox(
@@ -196,9 +239,16 @@ class _HomePageState extends State<HomePage1> {
                   backgroundColor: Colors.white,
                 ),
                 onPressed: () {
+
                  _getCurrentPosition();
-                  _openImagePicker();
-                 
+                if(selectedImages.length<=3){
+                getImages();
+                }
+                else{
+                   ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('you can only 3 images capture')));
+
+                }
                  
                 },
                 child:
@@ -210,7 +260,19 @@ class _HomePageState extends State<HomePage1> {
              const SizedBox(
               height: 10,
             ),
-            
+
+             TextField(
+              controller: textArea,
+               decoration: const InputDecoration( 
+                         hintText: "add addtional information",
+                         focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(width: 1, color: Colors.redAccent)
+                         )
+                      ),
+            keyboardType: TextInputType.multiline,
+            maxLines: 1 
+            ),
+           
                ElevatedButton(
                style: ElevatedButton.styleFrom(
                   foregroundColor: const Color.fromARGB(255, 202, 112, 105),
@@ -218,14 +280,17 @@ class _HomePageState extends State<HomePage1> {
                   
                 ),
               
-                onPressed:() {}
+                onPressed:() {
+              
+
+               Navigator.of(context).push(MaterialPageRoute(builder: (context) => SubmissionPage(currentAddress: currentAddress,currentPosition:_currentPosition!
+               ,dropdownvalue: dropdownvalue!,comment:textArea.text,selectedImages:selectedImages)));
                   
-                  /*_isNextButtonEnabled==true && image1!=null && currentAddress !=null ? (){
-                     _navigateToNextScreen(context);
-                     }:
-                  null*/
+                },
+                  
+                  
                  
-               ,
+               
                 child: Row(children: const [ Text("Next",style: TextStyle(fontWeight: FontWeight.bold),textAlign:TextAlign.center ,),
                 Icon(Icons.arrow_forward),],)
                 
@@ -236,9 +301,28 @@ class _HomePageState extends State<HomePage1> {
         ),
       ),
      
-    );
-  }}
+    ));
+  }
+  
+}
  
+class MyHttpOverrides extends HttpOverrides{
+  @override
+  HttpClient createHttpClient(SecurityContext? context){
+    return super.createHttpClient(context)
+      ..badCertificateCallback = (X509Certificate cert, String host, int port)=> true;
+  }
+}
+
+
+
+
+
+
+
+
+
+
 
 
 

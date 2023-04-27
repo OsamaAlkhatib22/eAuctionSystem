@@ -1,10 +1,10 @@
-// ignore_for_file: non_constant_identifier_names
+// ignore_for_file: non_constant_identifier_names, camel_case_types, library_private_types_in_public_api, use_key_in_widget_constructors
 
 import 'package:account/Screens/login.dart';
 import 'package:flutter/material.dart';
-import 'package:account/Validation/emailValidation.dart' as a;
+import 'package:account/Validation/email_validation.dart' as a;
 import 'package:flutter/services.dart';
-import '../API/signRequest.dart';
+import '../API/sign_in_up_request.dart';
 
   TextEditingController email = TextEditingController();
  TextEditingController password= TextEditingController();
@@ -323,7 +323,7 @@ Widget registerField({label, obscureText = false, myController,myController2,lim
            ],
          ),
        ),
-      Text("/"),
+      const Text("/"),
 
        SizedBox(width: 80.0,height: 30.0,child: TextField(
            controller: myController2,

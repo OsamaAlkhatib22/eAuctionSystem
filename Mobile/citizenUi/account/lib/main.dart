@@ -59,7 +59,7 @@ class HomePage extends StatelessWidget {
                     height: 60,
                     onPressed: () {
                       Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => LoginPgae()));
+                          MaterialPageRoute(builder: (context) => const LoginPgae()));
                     },
                     // defining the shape
                     shape: RoundedRectangleBorder(

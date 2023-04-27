@@ -1,4 +1,6 @@
 
+// ignore_for_file: file_names, unused_element
+
 import 'package:flutter/material.dart';
 
 import '../Screens/signup.dart';
@@ -45,7 +47,6 @@ Widget emaile(){
             validator: (value) => validateEmail(value!),
            // autovalidateMode: AutovalidateMode.onUserInteraction,
             onSaved: (value) {
-              var _email = value;
             },
           ),
         ],
@@ -56,7 +57,7 @@ Widget emaile(){
  String? validateEmail(String value) {
     String pattern =
         r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$'; // email validation regex pattern
-    RegExp regex = new RegExp(pattern);
+    RegExp regex = RegExp(pattern);
     if (!regex.hasMatch(value)) {
       return 'Please enter a valid email address';
     } else {
@@ -117,7 +118,6 @@ Widget emaile(){
             validator: (value) => validatePassword(value!),
            // autovalidateMode: AutovalidateMode.onUserInteraction,
             onSaved: (value) {
-              var _password = value;
             },
           ),
         ],
@@ -129,7 +129,7 @@ Widget emaile(){
   String? validatePassword(String value) {
     String pattern =
        r'^(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$'; // passowrd validation regex pattern
-    RegExp regex = new RegExp(pattern);
+    RegExp regex = RegExp(pattern);
     if (!regex.hasMatch(value)) {
       return 'Please choose a strong passowrd.Try a mix of upper letters,numbers and symbols';
     } else {
