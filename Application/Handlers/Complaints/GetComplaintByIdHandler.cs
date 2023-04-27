@@ -60,11 +60,14 @@ namespace Application.Handlers.Complaints
                             dtmDateCreated = c.Complaint.Complaint.dtmDateCreated,
                             strComplaintTypeEn = c.ComplaintType.strNameEn,
                             strComplaintTypeAr = c.ComplaintType.strNameAr,
-                            lstMedia = c.Complaint.Complaint.Attachments
-                                .Select(
-                                    a => Convert.ToBase64String(File.ReadAllBytes(a.strMediaRef))
-                                )
-                                .ToList(),
+                            lstMedia = c.Complaint.Complaint.Attachments.Any()
+                                ? c.Complaint.Complaint.Attachments
+                                    .Select(
+                                        a =>
+                                            Convert.ToBase64String(File.ReadAllBytes(a.strMediaRef))
+                                    )
+                                    .ToList()
+                                : new List<string>(),
                             blnIsVideo = c.ComplaintAttachment.blnIsVideo
                         }
                 )
