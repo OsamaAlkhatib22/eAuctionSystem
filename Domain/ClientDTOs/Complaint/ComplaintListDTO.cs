@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using System.Text.Json.Serialization;
-
-namespace Domain.ClientDTOs.Complaint
+﻿namespace Domain.ClientDTOs.Complaint
 {
     public class ComplaintListDTO
     {
@@ -10,6 +7,7 @@ namespace Domain.ClientDTOs.Complaint
         public DateTime dtmDateCreated { get; set; }
         public string strComplaintTypeEn { get; set; }
         public string strComplaintTypeAr { get; set; }
-
+        public string strStatus { get; set; }
+        public Decimal decPriority { get; set; }
     }
 }

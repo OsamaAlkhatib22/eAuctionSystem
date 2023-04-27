@@ -64,7 +64,7 @@ const ComplaintsDataGrid = ({ AddComplaint, data }) => {
     },
     { field: "strComplaintTypeEn", headerName: "Type", flex: 1 },
     {
-      field: "priority",
+      field: "decPriority",
       headerName: "Priority",
       flex: 1,
       renderCell: (params) => (
@@ -81,7 +81,7 @@ const ComplaintsDataGrid = ({ AddComplaint, data }) => {
     },
     { field: "dtmDateCreated", headerName: "Date Created", flex: 1 },
     {
-      field: "status",
+      field: "strStatus",
       headerName: "Status",
       flex: 1,
       renderCell: (params) => (

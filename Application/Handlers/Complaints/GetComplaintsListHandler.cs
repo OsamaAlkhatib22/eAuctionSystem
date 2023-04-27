@@ -1,7 +1,6 @@
 ﻿using Application.Core;
 using Application.Queries.Complaints;
 using Domain.ClientDTOs.Complaint;
-using Domain.DataModels.Complaints;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
@@ -23,28 +22,62 @@ namespace Application.Handlers.Complaints
             CancellationToken cancellationToken
         )
         {
-            List<ComplaintListDTO> result = await _context.Complaints
-                .Join(
-                    _context.Users,
-                    c => c.intUserID,
-                    u => u.Id,
-                    (c, u) => new { Complaint = c, User = u }
-                )
-                .Join(
-                    _context.ComplaintTypes,
-                    c => c.Complaint.intTypeId,
-                    ct => ct.intId,
-                    (c, ct) =>
+            var query =
+                from c in _context.Complaints
+                join u in _context.Users on c.intUserID equals u.Id
+                join ct in _context.ComplaintTypes on c.intTypeId equals ct.intId
+                join cs in _context.ComplaintStatus on c.intStatusId equals cs.intId
+                select new
+                {
+                    Complaint = c,
+                    UserName = u.UserName,
+                    ComplaintTypeEn = ct.strNameEn,
+                    ComplaintTypeAr = ct.strNameAr,
+                    ComplaintGrade = ct.decGrade,
+                    Status = cs.strName
+                };
+
+            var result = await query
+                .AsNoTracking()
+                .Select(
+                    c =>
                         new ComplaintListDTO
                         {
                             intComplaintId = c.Complaint.intId,
-                            strUserName = c.User.UserName,
+                            strUserName = c.UserName,
                             dtmDateCreated = c.Complaint.dtmDateCreated,
-                            strComplaintTypeEn = ct.strNameEn,
-                            strComplaintTypeAr = ct.strNameAr
+                            strComplaintTypeEn = c.ComplaintTypeEn,
+                            strComplaintTypeAr = c.ComplaintTypeAr,
+                            strStatus = c.Status,
+                            decPriority =
+                                c.ComplaintGrade
+                                * (
+                                    (
+                                        c.Complaint.intReminder
+                                        + _context.ComplaintVoters
+                                            .AsNoTracking()
+                                            .Where(cv => cv.intComplaintId == c.Complaint.intId)
+                                            .Count()
+                                    ) + (DateTime.UtcNow.Ticks - c.Complaint.dtmDateCreated.Ticks)
+                                )
                         }
                 )
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
+
+            if (result.Count > 0)
+            {
+                decimal minPriority = result.Min(c => c.decPriority);
+                decimal maxPriority = result.Max(c => c.decPriority);
+                decimal range = maxPriority - minPriority;
+
+                if (range > 0)
+                {
+                    foreach (var complaint in result)
+                    {
+                        complaint.decPriority = (complaint.decPriority - minPriority) / range;
+                    }
+                }
+            }
 
             return Result<List<ComplaintListDTO>>.Success(result);
         }

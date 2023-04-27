@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Persistence;
 using Microsoft.EntityFrameworkCore;
 using Domain.ClientDTOs.Complaint;
+using Domain.Resources;
 
 namespace Application.Handlers.Tasks
 {
