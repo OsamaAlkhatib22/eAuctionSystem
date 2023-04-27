@@ -6,10 +6,6 @@ import { Outlet } from "react-router-dom";
 import { Box, CssBaseline, useTheme } from "@mui/material";
 import { styled } from "@mui/system";
 
-// Third Party
-import PerfectScrollbar from "react-perfect-scrollbar";
-import "react-perfect-scrollbar/dist/css/styles.css";
-
 // Project imports
 import Navbar from "./Components/NavBar";
 import Sidebar from "./Components/SideBar";
