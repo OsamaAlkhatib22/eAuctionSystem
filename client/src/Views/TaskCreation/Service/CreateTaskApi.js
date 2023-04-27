@@ -8,11 +8,7 @@ export const CreateTaskApi = async (data, intComplaintId) => {
   taskForm.append("strComment", data.comment);
 
   // Append the workers individually.
-  const workersList = data.Employees.map((emp) => ({
-    intId: emp.id,
-    isLeader: emp.id === data.Leader[0].id,
-  }));
-  workersList.forEach((worker, index) => {
+  data.team.forEach((worker, index) => {
     taskForm.append(`workersList[${index}].intId`, worker.intId);
     taskForm.append(`workersList[${index}].isLeader`, worker.isLeader);
   });

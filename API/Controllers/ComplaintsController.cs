@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Application;
-using Domain.DataModels.Complaints;
-using Domain.ClientDTOs.User;
 using Domain.ClientDTOs.Complaint;
 using System.IdentityModel.Tokens.Jwt;
+using Application.Queries.Complaints;
 
 namespace API.Controllers
 {

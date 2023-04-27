@@ -17,6 +17,8 @@ import {
 
 // Project Imports
 import { FlexBetween } from "../../../Components/FlexBetween";
+import { IdentityHelper } from "../../../Utils/IdentityHelper";
+import CapitalizeFirstLetter from "../../../Utils/CapitalizeFirstLetter";
 
 // Context
 import AppContext from "../../../Context/AppContext";
@@ -24,7 +26,7 @@ import AppContext from "../../../Context/AppContext";
 const Navbar = () => {
   const theme = useTheme();
   const { ToggleDisplayMode } = useContext(AppContext);
-
+  const user = IdentityHelper.UserData;
   return (
     <AppBar
       theme={theme}
@@ -67,13 +69,15 @@ const Navbar = () => {
                   fontSize="0.85rem"
                   sx={{ color: theme?.palette?.secondary[100] }}
                 >
-                  Full Name
+                  {CapitalizeFirstLetter(user.firstName) +
+                    " " +
+                    CapitalizeFirstLetter(user.lastName)}
                 </Typography>
                 <Typography
                   fontSize="0.75rem"
                   sx={{ color: theme?.palette?.secondary[200] }}
                 >
-                  User Type
+                  {CapitalizeFirstLetter(user.userType)}
                 </Typography>
               </Box>
               <ArrowDropDownOutlined

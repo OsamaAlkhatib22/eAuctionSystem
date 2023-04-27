@@ -15,7 +15,7 @@ import {
 import { EvaluateTaskApi } from "./Service/EvaluateTaskApi";
 import { GetTaskDetailsApi } from "./Service/GetTaskDetailsApi";
 import TaskDetails from "./Components/TaskDetails";
-import PhotoGallery from "../../Common/Components/UI/PhotoGallery";
+import MediaGallery from "../../Common/Components/MediaGallery";
 import FormTextFieldMulti from "../../Common/Components/UI/FormFields/FormTextFieldMulti";
 import FormRatingGroup from "../../Common/Components/UI/FormFields/FormRatingGroup";
 import FormRowRadioGroup from "../../Common/Components/UI/FormFields/FormRadioGroup";
@@ -24,15 +24,15 @@ import ScrollableContent from "../../Common/Components/ScrollableContent";
 
 const testPhotos = [
   {
-    image: "https://picsum.photos/id/10/800",
+    media: "https://picsum.photos/id/10/800",
     title: "Test 1",
   },
   {
-    image: "https://picsum.photos/id/13/800",
+    media: "https://picsum.photos/id/13/800",
     title: "Test 2",
   },
   {
-    image: "https://picsum.photos/id/14/800",
+    media: "https://picsum.photos/id/14/800",
     title: "Test 3",
   },
 ];
@@ -88,8 +88,13 @@ const CreateTask = () => {
         <ScrollableContent>
           <FormProvider {...methods}>
             <form onSubmit={methods.handleSubmit(onSubmit)}>
-              <Stack spacing={2} width="22.5vw">
-                <PhotoGallery items={task} height="25rem" width="auto" />
+              <Stack spacing={2} width="32.5vw">
+                <MediaGallery
+                  items={task}
+                  height="25rem"
+                  width="auto"
+                  borderRadius="1rem"
+                />
                 <TaskDetails theme={theme} taskId={taskId} />
                 <FormRatingGroup name="rating" />
                 <FormTextFieldMulti label="Comment" name="comment" />
@@ -98,7 +103,14 @@ const CreateTask = () => {
                   radioLabel="Status"
                   labels={radioOptions}
                 />
-                <Button type="submit">Next</Button>
+                <Button
+                  type="submit"
+                  color="primary"
+                  variant="contained"
+                  sx={{ borderRadius: "1rem" }}
+                >
+                  Next
+                </Button>
               </Stack>
             </form>
           </FormProvider>

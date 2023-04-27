@@ -34,7 +34,7 @@ namespace API.Controllers
 
         [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<ActionResult<UserDTO>> Login(LoginDTO login)
+        public async Task<ActionResult<string>> Login(LoginDTO login)
         {
             ApplicationUser user;
             // Check if user used phonenumber or username for login
@@ -56,26 +56,20 @@ namespace API.Controllers
             if (result)
             {
                 user.UserInfo = await _context.UserInfos.FindAsync(user.Id);
-                return CreateUserDTO(user);
+                return _tokenService.CreateToken(user);
             }
             return Unauthorized("Password is not correct.");
         }
 
         [AllowAnonymous]
         [HttpPost("register")]
-        public async Task<ActionResult<UserDTO>> Register(RegisterDTO register)
+        public async Task<ActionResult<string>> Register(RegisterDTO register)
         {
             // If fails, return error code and stop executing
             var validation = await ValidateUserInput(register);
             if (validation is BadRequestObjectResult)
             {
                 return validation;
-            }
-
-            // Set empty properties to null for database
-            foreach (var prop in register.GetType().GetProperties())
-            {
-                prop.SetValue(register, EmptyToNull(prop.GetValue(register).ToString()));
             }
 
             // START TRANSACTION
@@ -105,14 +99,14 @@ namespace API.Controllers
                 if (result.Succeeded)
                 {
                     await transaction.CommitAsync();
-                    return CreateUserDTO(user);
+                    return _tokenService.CreateToken(user);
                 }
 
                 // Rollback changes if failed
                 await transaction.RollbackAsync();
                 return BadRequest(result.Errors);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 await transaction.RollbackAsync();
                 // Display error
@@ -174,17 +168,6 @@ namespace API.Controllers
             }
             ///
 
-            // Null validation
-            if (
-                register.strNationalId.IsNullOrEmpty()
-                && register.strRegistrationNumber.IsNullOrEmpty()
-                && register.strPassportNumber.IsNullOrEmpty()
-            )
-            {
-                return BadRequest("Identifier must be entered (Id, Id number or Passport).");
-            }
-            ///
-
             return Ok();
         }
 
@@ -202,29 +185,6 @@ namespace API.Controllers
                     strRegistrationNumber = register.strRegistrationNumber,
                 }
             );
-        }
-
-        private string EmptyToNull(string input)
-        {
-            if (String.IsNullOrWhiteSpace(input))
-            {
-                return null;
-            }
-            else
-            {
-                return input;
-            }
-        }
-
-        private UserDTO CreateUserDTO(ApplicationUser user)
-        {
-            return new UserDTO
-            {
-                strFirstName = user.UserInfo.strFirstName.ToLower(),
-                strLastName = user.UserInfo.strLastName.ToLower(),
-                strToken = _tokenService.CreateToken(user),
-                strUserName = user.UserName.ToLower(),
-            };
         }
     }
 }

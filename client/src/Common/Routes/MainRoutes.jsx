@@ -7,18 +7,14 @@ import Loadable from "../Utils/Loadable";
 
 // Views Routing
 
-const Login = Loadable(lazy(() => import("../../Views/Authentication/Login")));
-const Register = Loadable(
-  lazy(() => import("../../Views/Authentication/Register"))
-);
+const Auth = Loadable(lazy(() => import("../../Views/Authentication/")));
 const Dashboard = Loadable(lazy(() => import("../../Views/Dashboard")));
 const NotFound = Loadable(lazy(() => import("../../Views/NotFound")));
 const ViewComplaints = Loadable(lazy(() => import("../../Views/Complaints")));
-const CreateTask = Loadable(lazy(() => import("../../Views/TaskCreation")));
 const EvaluateTask = Loadable(lazy(() => import("../../Views/TaskEvaluation")));
 
 const MainRoutes = {
-  path: "/",
+  path: "/auth",
   element: <Layout />,
   children: [
     {
@@ -30,11 +26,7 @@ const MainRoutes = {
       element: <ViewComplaints />,
     },
     {
-      path: "/create-task/:intComplaintId",
-      element: <CreateTask />,
-    },
-    {
-      path: "/tasks",
+      path: "tasks",
       element: <EvaluateTask />,
     },
     {
@@ -45,16 +37,12 @@ const MainRoutes = {
 };
 
 export const AuthRoutes = {
-  path: "/Auth",
+  path: "/",
   element: <MinimalLayout />,
   children: [
     {
       path: "",
-      element: <Login />,
-    },
-    {
-      path: "register",
-      element: <Register />,
+      element: <Auth />,
     },
     {
       path: "*",

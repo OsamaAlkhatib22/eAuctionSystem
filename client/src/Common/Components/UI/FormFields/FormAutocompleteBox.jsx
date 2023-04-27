@@ -1,8 +1,7 @@
 import React from "react";
 
 // Third party
-import debounce from "lodash.debounce";
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller, useFormContext, useWatch } from "react-hook-form";
 
 // Mui
 import { Autocomplete, TextField, IconButton } from "@mui/material";
@@ -10,42 +9,38 @@ import { Autocomplete, TextField, IconButton } from "@mui/material";
 // Mui Icons
 import CircularProgress from "@mui/material/CircularProgress";
 
-function GetOptions(query) {
-  if (query !== "");
-  // Fetch Data From BackEnd
-}
+const FormAutocompleteBox = ({
+  name,
+  items,
+  label,
+  iconButton,
+  onClickIcon,
+  endIcon,
+}) => {
+  // Items should be an array of {intId: int, strName: "String", ...any properties}
+  const { control, setValue } = useFormContext();
+  const optionValue = useWatch({ control, name });
+  const options = items ? items : [];
 
-const FormAutocompleteBox = (props) => {
-  const { control } = useFormContext();
+  const handleOptionChange = (event, value) => {
+    if (options?.includes(value)) {
+      setValue(name, value);
+    } else {
+      setValue(name, options[0]);
+    }
+  };
 
-  const [options, setOptions] = React.useState([]);
   const [open, setOpen] = React.useState(false);
-  const [query, setQuery] = React.useState("");
   const [load, setLoad] = React.useState(false);
   const loading = open && load;
 
-  const onChangeHandler = (event) => {
-    const value = event?.target.value;
-    setQuery(value);
-    // move the load after the axios fetch
-    setLoad(false);
-  };
-
-  const debouncedOnChangeHandler = React.useMemo(
-    () => debounce(onChangeHandler, 350),
-    []
-  );
-
   React.useEffect(() => {
-    if (open) {
-      // here add await axios fetch
-      setOptions(GetOptions(query));
-    }
-  }, [open, query]);
+    handleOptionChange(null, optionValue);
+  }, [options]);
 
   return (
     <Controller
-      name={props.name}
+      name={name}
       control={control}
       render={({
         field: { onChange, value },
@@ -54,54 +49,54 @@ const FormAutocompleteBox = (props) => {
       }) => (
         <Autocomplete
           options={options}
-          onChange={(_, data) => onChange(data)}
-          // freeSolo={true}
-          // forcePopupIcon={true}
-          onInputChange={(event) => {
-            setLoad(true);
-            debouncedOnChangeHandler(event);
-          }}
+          value={value || null}
+          onChange={(_, value) => handleOptionChange(_, value)}
+          getOptionLabel={(option) => option.strName || ""}
+          isOptionEqualToValue={(option, value) => option.intId === value.intId}
+          onInputChange={() => setLoad(true)}
           filterSelectedOptions={true}
-          value={value || ""}
           onOpen={() => {
             setOpen(true);
           }}
           onClose={() => {
             setOpen(false);
           }}
-          color="primary"
-          sx={{ width: "15rem" }}
+          renderOption={(props, option) => {
+            return (
+              <li {...props} key={option.intId}>
+                {option.strName}
+              </li>
+            );
+          }}
           renderInput={(params) => (
             <TextField
               {...params}
-              label={props.label}
+              label={label}
               error={error ? true : false}
               helperText={error ? error.message : null}
               InputProps={{
                 ...params.InputProps,
-                endAdornment: props.iconButton ? (
+                endAdornment: iconButton ? (
                   <>
-                    <IconButton onClick={props.onClickIcon}>
-                      {props.iconButton}
-                    </IconButton>
+                    <IconButton onClick={onClickIcon}>{iconButton}</IconButton>
                     {loading ? (
                       <CircularProgress color="inherit" size={20} />
                     ) : (
-                      props.endIcon
+                      endIcon
+                    )}
+                    {params.InputProps.endAdornment}
+                  </>
+                ) : endIcon ? (
+                  <>
+                    {loading ? (
+                      <CircularProgress color="inherit" size={20} />
+                    ) : (
+                      endIcon
                     )}
                     {params.InputProps.endAdornment}
                   </>
                 ) : (
-                  props.endIcon && (
-                    <>
-                      {loading ? (
-                        <CircularProgress color="inherit" size={20} />
-                      ) : (
-                        props.endIcon
-                      )}
-                      {params.InputProps.endAdornment}
-                    </>
-                  )
+                  <>{params.InputProps.endAdornment}</>
                 ),
               }}
             />
