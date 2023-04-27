@@ -41,6 +41,7 @@ namespace Persistence
                 intStatusId = 1,
                 strComment = "",
                 intReminder = 1,
+                intPrivacyId = 2,
                 dtmDateLastModified = dateCreated,
                 dtmDateLastReminded = dateReminded,
                 intLastModifiedBy = 1,

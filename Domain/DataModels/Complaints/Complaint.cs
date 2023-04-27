@@ -28,6 +28,12 @@ namespace Domain.DataModels.Complaints
         public int intStatusId { get; set; }
         public ComplaintStatus Status { get; set; }
 
+        [Column("PRIVACY_ID")]
+        [Required]
+        [ForeignKey("Privacy")]
+        public int intPrivacyId { get; set; }
+        public ComplaintPrivacy Privacy { get; set; }
+
         [Column("COMMENT")]
         [AllowNull]
         public string strComment { get; set; }

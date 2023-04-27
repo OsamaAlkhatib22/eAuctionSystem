@@ -5,6 +5,7 @@ using Domain.DataModels.User;
 using Domain.DataModels.Complaints;
 using Domain.DataModels.Intersections;
 using Domain.DataModels.Tasks;
+using Domain.DataModels.LookUps;
 
 namespace Persistence
 {
@@ -150,6 +151,36 @@ namespace Persistence
                 .HasOne(q => q.Complaint)
                 .WithMany(q => q.Tasks)
                 .HasForeignKey(q => q.intComplaintId);
+
+            // Department_Users intersection table
+            builder.Entity<DepartmentUsers>(
+                q => q.HasKey(q => new { q.intUserId, q.intDepartmentId })
+            );
+            builder
+                .Entity<DepartmentUsers>()
+                .HasOne(q => q.Department)
+                .WithMany(q => q.Users)
+                .HasForeignKey(q => q.intDepartmentId);
+            builder
+                .Entity<DepartmentUsers>()
+                .HasOne(q => q.User)
+                .WithMany(q => q.Departments)
+                .HasForeignKey(q => q.intUserId);
+
+            // Profession_Users intersection table
+            builder.Entity<ProfessionUsers>(
+                q => q.HasKey(q => new { q.intUserId, q.intProfessionId })
+            );
+            builder
+                .Entity<ProfessionUsers>()
+                .HasOne(q => q.Profession)
+                .WithMany(q => q.Users)
+                .HasForeignKey(q => q.intProfessionId);
+            builder
+                .Entity<ProfessionUsers>()
+                .HasOne(q => q.User)
+                .WithMany(q => q.Professions)
+                .HasForeignKey(q => q.intUserId);
         }
 
         // Complaints DataSets
@@ -172,5 +203,13 @@ namespace Persistence
         public DbSet<WorkTaskMembers> TaskMembers { get; set; }
         public DbSet<WorkTaskComplaints> TasksComplaints { get; set; }
         public DbSet<WorkTaskAttachment> TaskAttachments { get; set; }
+
+        // Departments DataSets
+        public DbSet<Department> Departments { get; set; }
+        public DbSet<DepartmentUsers> DepartmentUsers { get; set; }
+
+        // Professions DataSets
+        public DbSet<Profession> Professions { get; set; }
+        public DbSet<ProfessionUsers> ProfessionUsers { get; set; }
     }
 }
