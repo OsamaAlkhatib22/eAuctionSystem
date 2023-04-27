@@ -10,6 +10,7 @@ import { GetComplaintByidApi } from "./Service/GetComplaintByidApi";
 import ComplaintEvaluation from "./Components/ComplaintEvaluation";
 import TaskCreation from "../TaskCreation";
 import ScrollableContent from "../../Common/Components/ScrollableContent";
+import { DateFormatterEn } from "../../Common/Utils/DateFormatter";
 
 const ViewComplaints = () => {
   const [complaint, setComplaint] = useState({ lstMedia: [] });
@@ -26,6 +27,12 @@ const ViewComplaints = () => {
     setComplaintsView();
   }, []);
 
+  const FormatDate = () => {
+    const rows = [...complaints];
+    rows.forEach((c) => (c.dtmDateCreated = DateFormatterEn(c.dtmDateCreated)));
+    return rows;
+  };
+
   const photos = complaint.lstMedia.map((media, index) => ({
     media: `data:image/jpg;base64, ${media}`,
     title: complaint.intComplaintId + "-" + index,
@@ -35,7 +42,7 @@ const ViewComplaints = () => {
     <div>
       <Typography variant="h1">View Complaints</Typography>
       <ComplaintsDataGrid
-        data={complaints}
+        data={FormatDate()}
         AddComplaint={async (params) => {
           const response = await GetComplaintByidApi(params);
           setComplaint(response.data);

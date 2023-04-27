@@ -43,35 +43,37 @@ function Login({ setNewUser }) {
   return (
     <div>
       <FormProvider {...methods}>
-        <Stack spacing={2} sx={{ width: "25vw" }}>
-          <Typography variant="h2">Log in</Typography>
-          <Typography style={{ color: Colors.grey500 }}>
-            Don't have an account?{" "}
+        <form onSubmit={handleSubmit(onSubmit, onInvalid)}>
+          <Stack spacing={2} sx={{ width: "25vw" }}>
+            <Typography variant="h2">Log in</Typography>
+            <Typography style={{ color: Colors.grey500 }}>
+              Don't have an account?{" "}
+              <Link
+                style={{ textDecoration: "none", color: Colors.primary800 }}
+                onClick={() => setNewUser(true)}
+              >
+                Register
+              </Link>
+            </Typography>
+            <FormTextField name="login" label="Username/Phonenumber" />
+            <FormTextField name="password" label="Password" type="password" />
+
+            <Button
+              type="submit"
+              color="primary"
+              variant="contained"
+              sx={{ borderRadius: "1rem" }}
+            >
+              Continue
+            </Button>
             <Link
               style={{ textDecoration: "none", color: Colors.primary800 }}
-              onClick={() => setNewUser(true)}
+              to={location.pathname + ""}
             >
-              Register
+              Forgot password?
             </Link>
-          </Typography>
-          <FormTextField name="login" label="Username/Phonenumber" />
-          <FormTextField name="password" label="Password" type="password" />
-
-          <Button
-            onClick={handleSubmit(onSubmit, onInvalid)}
-            color="primary"
-            variant="contained"
-            sx={{ borderRadius: "1rem" }}
-          >
-            Continue
-          </Button>
-          <Link
-            style={{ textDecoration: "none", color: Colors.primary800 }}
-            to={location.pathname + ""}
-          >
-            Forgot password?
-          </Link>
-        </Stack>
+          </Stack>
+        </form>
       </FormProvider>
     </div>
   );
