@@ -13,13 +13,15 @@ import {
   ListItemIcon,
   ListItemText,
   Stack,
+  Collapse,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import {
-  ChevronRightOutlined,
   SettingsOutlined,
   ChevronLeft,
   ChevronRight,
+  ExpandLess,
+  ExpandMore,
 } from "@mui/icons-material";
 
 // Third Party
@@ -27,7 +29,7 @@ import PerfectScrollbar from "react-perfect-scrollbar";
 import "react-perfect-scrollbar/dist/css/styles.css";
 
 // Project Imports
-import GetMenus from "../Utils/SideBarMenus";
+import GetMenus from "../../../Routes/SideBarMenus";
 import { FlexBetween } from "../../../Components/FlexBetween";
 import { DrawerHeader, Drawer } from "../Utils/SideBarHelpers";
 import CapitalizeFirstLetter from "../../../Utils/CapitalizeFirstLetter";
@@ -37,6 +39,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, user, children }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [active, setActive] = useState(location.pathname);
+
   const SideBarMenus = GetMenus(user.userType);
   return (
     <Box sx={{ display: "flex" }}>
@@ -56,7 +59,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, user, children }) => {
           {isSidebarOpen ? (
             <Stack height="93%" justifyContent="space-between">
               <List>
-                {SideBarMenus.map(({ text, path, icon }) => {
+                {SideBarMenus.map(({ text, path, icon, children }) => {
                   if (!icon) {
                     return (
                       <React.Fragment key={text}>
@@ -72,40 +75,100 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, user, children }) => {
                     );
                   }
                   return (
-                    <ListItem key={text} disablePadding>
-                      <ListItemButton
-                        onClick={() => {
-                          navigate(path);
-                          setActive(path);
-                        }}
-                        sx={{
-                          backgroundColor:
-                            active === path
-                              ? theme.palette.secondary.light
-                              : "transparent",
-                          color:
-                            active === path
-                              ? theme.palette.primary.main
-                              : theme.palette.secondary.main,
-                        }}
-                      >
-                        <ListItemIcon
+                    <>
+                      <ListItem key={text} disablePadding>
+                        <ListItemButton
+                          onClick={() => {
+                            navigate(path);
+                            setActive(path);
+                          }}
                           sx={{
-                            ml: "2rem",
+                            backgroundColor:
+                              active === path
+                                ? theme.palette.secondary.light
+                                : "transparent",
                             color:
                               active === path
                                 ? theme.palette.primary.main
                                 : theme.palette.secondary.main,
                           }}
                         >
-                          {icon}
-                        </ListItemIcon>
-                        <ListItemText primary={text} key={text + "Text"} />
-                        {active === path && (
-                          <ChevronRightOutlined sx={{ ml: "auto" }} />
-                        )}
-                      </ListItemButton>
-                    </ListItem>
+                          <ListItemIcon
+                            sx={{
+                              ml: "2rem",
+                              color:
+                                active === path
+                                  ? theme.palette.primary.main
+                                  : theme.palette.secondary.main,
+                            }}
+                          >
+                            {icon}
+                          </ListItemIcon>
+                          <ListItemText primary={text} key={text + "Text"} />
+                          {children &&
+                            (active === path ? <ExpandLess /> : <ExpandMore />)}
+                        </ListItemButton>
+                      </ListItem>
+                      {children && (
+                        <Collapse
+                          in={
+                            active === path ||
+                            children.some((child) => child.path === active)
+                          }
+                          timeout="auto"
+                          unmountOnExit
+                        >
+                          <List component="div" disablePadding>
+                            {children.map(({ text, path, icon }) => (
+                              <ListItemButton
+                                onClick={() => {
+                                  navigate(path);
+                                  setActive(path);
+                                }}
+                                sx={{
+                                  backgroundColor:
+                                    active === path
+                                      ? theme.palette.secondary.light
+                                      : "transparent",
+                                  color:
+                                    active === path
+                                      ? theme.palette.primary.main
+                                      : theme.palette.secondary.main,
+                                }}
+                              >
+                                <Stack
+                                  direction="row"
+                                  alignItems="center"
+                                  paddingLeft="2rem"
+                                >
+                                  <ListItemIcon
+                                    sx={{
+                                      ml: "2rem",
+                                      color:
+                                        active === path
+                                          ? theme.palette.primary.main
+                                          : theme.palette.secondary.main,
+                                    }}
+                                  >
+                                    {React.cloneElement(icon, {
+                                      fontSize: "small",
+                                    })}
+                                  </ListItemIcon>
+                                  <ListItemText
+                                    sx={{ marginLeft: "-1.25rem" }}
+                                    primaryTypographyProps={{
+                                      fontSize: "0.75rem",
+                                    }}
+                                    primary={text}
+                                    key={text + "Text"}
+                                  />
+                                </Stack>
+                              </ListItemButton>
+                            ))}
+                          </List>
+                        </Collapse>
+                      )}
+                    </>
                   );
                 })}
               </List>

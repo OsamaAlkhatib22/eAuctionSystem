@@ -11,6 +11,8 @@ import {
   DisplaySettingsOutlined,
   Public,
   ContentPaste,
+  Map,
+  TableChart,
 } from "@mui/icons-material";
 
 const AdminMenus = [
@@ -26,6 +28,18 @@ const AdminMenus = [
     text: "Complaints",
     path: "/auth/complaints",
     icon: <ContentPaste />,
+    children: [
+      {
+        text: "Table View",
+        path: "/auth/complaints",
+        icon: <TableChart />,
+      },
+      {
+        text: "Map View",
+        path: "/auth/mapcomplaints",
+        icon: <Map />,
+      },
+    ],
   },
   {
     text: "Workers",
@@ -36,6 +50,18 @@ const AdminMenus = [
     text: "Tasks",
     path: "/auth/tasks",
     icon: <AssignmentIndOutlined />,
+    children: [
+      {
+        text: "Table View",
+        path: "/auth/tasks",
+        icon: <TableChart />,
+      },
+      {
+        text: "Map View",
+        path: "/auth/maptasks",
+        icon: <Map />,
+      },
+    ],
   },
   {
     text: "History",
@@ -91,8 +117,20 @@ const WorkerMenus = [
   },
   {
     text: "General Complaints",
-    path: "/auth/complaints",
+    path: "/auth/generalcomplaints",
     icon: <Public />,
+    children: [
+      {
+        text: "Table View",
+        path: "/auth/generalcomplaints",
+        icon: <TableChart />,
+      },
+      {
+        text: "Map View",
+        path: "/auth/mapgeneralcomplaints",
+        icon: <Map />,
+      },
+    ],
   },
   {
     text: "Tasks",
@@ -114,11 +152,35 @@ const UserMenus = [
     text: "General Complaints",
     path: "/auth/generalcomplaints",
     icon: <Public />,
+    children: [
+      {
+        text: "Table View",
+        path: "/auth/generalcomplaints",
+        icon: <TableChart />,
+      },
+      {
+        text: "Map View",
+        path: "/auth/mapgeneralcomplaints",
+        icon: <Map />,
+      },
+    ],
   },
   {
     text: "Complaints",
     path: "/auth/complaints",
     icon: <ContentPaste />,
+    children: [
+      {
+        text: "Table View",
+        path: "/auth/complaints",
+        icon: <TableChart />,
+      },
+      {
+        text: "Map View",
+        path: "/auth/mapcomplaints",
+        icon: <Map />,
+      },
+    ],
   },
 ];
 
