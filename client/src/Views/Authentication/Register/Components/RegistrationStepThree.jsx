@@ -1,3 +1,5 @@
+import React, { useState } from "react";
+
 // Mui
 import {
   Typography,
@@ -7,6 +9,9 @@ import {
   Divider,
   Chip,
   useTheme,
+  Alert,
+  AlertTitle,
+  CircularProgress,
 } from "@mui/material";
 
 // Project Imports
@@ -14,10 +19,18 @@ import { FlexBetween } from "../../../../Common/Components/FlexBetween";
 
 const RegistrationStepThree = ({ request, onSubmit, options }) => {
   const theme = useTheme();
+  const [loading, setLoading] = useState(false);
+  const [error, showError] = useState(false);
   return (
     <>
       <Box>
         <Stack spacing={2}>
+          {error && (
+            <Alert severity="error">
+              <AlertTitle>UNKNOWN ERROR</AlertTitle>
+              An error has occurred or the server is down.
+            </Alert>
+          )}
           <Box width="25rem">
             <Typography variant="h2">
               {request.strFirstName + " " + request.strLastName}
@@ -51,12 +64,16 @@ const RegistrationStepThree = ({ request, onSubmit, options }) => {
         </Stack>
       </Box>
       <Button
-        onClick={onSubmit}
+        onClick={() => onSubmit(setLoading, showError)}
         color="primary"
         variant="contained"
         sx={{ borderRadius: "1rem" }}
       >
-        Creat New User
+        {loading ? (
+          <CircularProgress color="inherit" size="1.5rem" />
+        ) : (
+          "Creat New User"
+        )}
       </Button>
     </>
   );

@@ -34,11 +34,17 @@ const Register = ({ setNewUser }) => {
   });
   const [selectedOption, setSelectedOption] = useState("Jordanian");
 
-  const onSubmit = async () => {
-    if (await Authorize.Register(request))
+  const onSubmit = async (setLoading, showError) => {
+    setLoading(true);
+    showError(false);
+    if (await Authorize.Register(request)) {
       navigate({
         pathname: "/auth/dashboard",
       });
+    } else {
+      showError(true);
+    }
+    setLoading(false);
   };
 
   return (

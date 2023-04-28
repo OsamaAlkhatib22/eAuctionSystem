@@ -2,7 +2,14 @@ import { useLocation, useNavigate, Link } from "react-router-dom";
 import { FormProvider, useForm } from "react-hook-form";
 
 // Mui
-import { Typography, Button, Stack } from "@mui/material";
+import {
+  Typography,
+  Button,
+  Stack,
+  Alert,
+  AlertTitle,
+  CircularProgress,
+} from "@mui/material";
 
 // Third Party
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -14,10 +21,14 @@ import Colors from "../../../Assets/Styles/_themes-vars.module.scss";
 
 // Schema
 import { LoginSchema as schema } from "../Utils/Schemas";
+import { useState } from "react";
 
 function Login({ setNewUser }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const [loading, setLoading] = useState(false);
+  const [error, showError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const methods = useForm({
     resolver: yupResolver(schema),
@@ -25,26 +36,36 @@ function Login({ setNewUser }) {
 
   const { handleSubmit } = methods;
 
-  const onInvalid = (errors) => {
-    console.log(errors);
-  };
-
   const onSubmit = async (data) => {
+    setLoading(true);
+    showError(false);
     const request = {
       strLogin: data.login,
       strPassword: data.password,
     };
-    if (await Authorize.Login(request))
+    const response = await Authorize.Login(request);
+    if (response.status) {
       navigate({
         pathname: "/auth/dashboard",
       });
+    } else {
+      showError(true);
+      setErrorMessage(response.message);
+    }
+    setLoading(false);
   };
 
   return (
     <div>
       <FormProvider {...methods}>
-        <form onSubmit={handleSubmit(onSubmit, onInvalid)}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <Stack spacing={2} sx={{ width: "25vw" }}>
+            {error && (
+              <Alert severity="error">
+                <AlertTitle>Error</AlertTitle>
+                {errorMessage}
+              </Alert>
+            )}
             <Typography variant="h2">Log in</Typography>
             <Typography style={{ color: Colors.grey500 }}>
               Don't have an account?{" "}
@@ -64,7 +85,11 @@ function Login({ setNewUser }) {
               variant="contained"
               sx={{ borderRadius: "1rem" }}
             >
-              Continue
+              {loading ? (
+                <CircularProgress color="inherit" size="1.5rem" />
+              ) : (
+                "Continue"
+              )}
             </Button>
             <Link
               style={{ textDecoration: "none", color: Colors.primary800 }}
