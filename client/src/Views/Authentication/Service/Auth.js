@@ -10,7 +10,7 @@ export const Authorize = {
       return { status: IdentityHelper.isTokenValid(), message: "Success" };
     } catch (error) {
       IdentityHelper.removeToken();
-      return error.code == "ERR_NETWORK"
+      return error.code === "ERR_NETWORK"
         ? {
             status: IdentityHelper.isTokenValid(),
             message: "No connection, server is down.",
