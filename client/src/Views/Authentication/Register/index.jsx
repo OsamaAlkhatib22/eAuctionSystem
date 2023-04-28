@@ -13,7 +13,7 @@ import RegistrationStepOne from "./Components/RegistrationStepOne";
 import RegistrationStepTwo from "./Components/RegistrationStepTwo";
 import RegistrationStepThree from "./Components/RegistrationStepThree";
 
-const Register = ({ setNewUser }) => {
+const Register = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [options, setOptions] = useState({
@@ -39,7 +39,7 @@ const Register = ({ setNewUser }) => {
     showError(false);
     if (await Authorize.Register(request)) {
       navigate({
-        pathname: "/auth/dashboard",
+        pathname: "/auth/home",
       });
     } else {
       showError(true);
@@ -64,7 +64,7 @@ const Register = ({ setNewUser }) => {
         Already have an account?{" "}
         <Link
           style={{ textDecoration: "none", color: Colors.primary800 }}
-          onClick={() => setNewUser(false)}
+          to={"/"}
         >
           Login
         </Link>

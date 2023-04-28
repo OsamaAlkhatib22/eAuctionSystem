@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 // Mui
 import {
@@ -30,14 +30,13 @@ import "react-perfect-scrollbar/dist/css/styles.css";
 import GetMenus from "../Utils/SideBarMenus";
 import { FlexBetween } from "../../../Components/FlexBetween";
 import { DrawerHeader, Drawer } from "../Utils/SideBarHelpers";
-import { IdentityHelper } from "../../../Utils/IdentityHelper";
 import CapitalizeFirstLetter from "../../../Utils/CapitalizeFirstLetter";
 
-const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, children }) => {
+const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, user, children }) => {
   const theme = useTheme();
-  const [active, setActive] = useState("");
   const navigate = useNavigate();
-  const user = IdentityHelper.UserData;
+  const location = useLocation();
+  const [active, setActive] = useState(location.pathname);
   const SideBarMenus = GetMenus(user.userType);
   return (
     <Box sx={{ display: "flex" }}>
@@ -55,7 +54,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, children }) => {
           </DrawerHeader>
           {/* SIDEBAR OPENED STATUS */}
           {isSidebarOpen ? (
-            <Stack height="95%" justifyContent="space-between">
+            <Stack height="93%" justifyContent="space-between">
               <List>
                 {SideBarMenus.map(({ text, path, icon }) => {
                   if (!icon) {
@@ -82,12 +81,12 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, children }) => {
                         sx={{
                           backgroundColor:
                             active === path
-                              ? theme.palette.secondary[300]
+                              ? theme.palette.secondary.light
                               : "transparent",
                           color:
                             active === path
-                              ? theme.palette.primary[600]
-                              : theme.palette.secondary[100],
+                              ? theme.palette.primary.main
+                              : theme.palette.secondary.main,
                         }}
                       >
                         <ListItemIcon
@@ -95,8 +94,8 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, children }) => {
                             ml: "2rem",
                             color:
                               active === path
-                                ? theme.palette.primary[600]
-                                : theme.palette.secondary[200],
+                                ? theme.palette.primary.main
+                                : theme.palette.secondary.main,
                           }}
                         >
                           {icon}
@@ -110,7 +109,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, children }) => {
                   );
                 })}
               </List>
-              <Box marginBottom="2rem">
+              <Box marginBottom="1rem">
                 <Divider variant="middle" />
                 <FlexBetween
                   textTransform="none"
@@ -129,7 +128,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, children }) => {
                     </Typography>
                     <Typography
                       fontSize="0.8rem"
-                      sx={{ color: theme.palette.secondary[200] }}
+                      sx={{ color: theme.palette.primary.main }}
                     >
                       {CapitalizeFirstLetter(user.userType)}
                     </Typography>
@@ -137,26 +136,13 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, children }) => {
                   <ListItemButton
                     onClick={() => {
                       navigate("/auth/account");
-                      setActive("account");
-                    }}
-                    sx={{
-                      backgroundColor:
-                        active === "account"
-                          ? theme.palette.secondary[300]
-                          : "transparent",
-                      color:
-                        active === "account"
-                          ? theme.palette.primary[600]
-                          : theme.palette.secondary[100],
+                      setActive("/auth/account");
                     }}
                   >
                     <ListItemIcon
                       sx={{
                         ml: "2rem",
-                        color:
-                          active === "account"
-                            ? theme.palette.primary[600]
-                            : theme.palette.secondary[200],
+                        color: theme.palette.primary.main,
                       }}
                     >
                       <SettingsOutlined />
@@ -166,7 +152,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, children }) => {
               </Box>
             </Stack>
           ) : (
-            <Stack height="95%" justifyContent="space-between">
+            <Stack height="93%" justifyContent="space-between">
               <List>
                 {/* SIDEBAR ClOSED STATUS */}
                 {SideBarMenus.map(({ text, path, icon }) => {
@@ -196,8 +182,8 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, children }) => {
                             justifyContent: "center",
                             color:
                               active === path
-                                ? theme.palette.primary[600]
-                                : theme.palette.secondary[200],
+                                ? theme.palette.primary.main
+                                : theme.palette.secondary.main,
                           }}
                         >
                           {icon}
@@ -207,12 +193,12 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, children }) => {
                   );
                 })}
               </List>
-              <Box marginBottom="2rem">
+              <Box marginBottom="1rem">
                 <Divider variant="middle" />
                 <ListItemButton
                   onClick={() => {
                     navigate(`/auth/account`);
-                    setActive("account");
+                    setActive("/auth/account");
                   }}
                   sx={{
                     minHeight: 48,
@@ -227,8 +213,8 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, children }) => {
                       justifyContent: "center",
                       color:
                         active === "account"
-                          ? theme.palette.primary[600]
-                          : theme.palette.secondary[200],
+                          ? theme.palette.primary.main
+                          : theme.palette.secondary.main,
                     }}
                   >
                     <SettingsOutlined />

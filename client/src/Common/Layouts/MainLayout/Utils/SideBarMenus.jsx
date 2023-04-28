@@ -1,6 +1,5 @@
 import {
   HomeOutlined,
-  InsertDriveFileOutlined,
   Groups2Outlined,
   ReceiptLongOutlined,
   AssignmentIndOutlined,
@@ -17,7 +16,7 @@ import {
 const AdminMenus = [
   {
     text: "Dashboard",
-    path: "/auth/dashboard",
+    path: "/auth/home",
     icon: <HomeOutlined />,
   },
   {
@@ -84,7 +83,7 @@ const AdminMenus = [
 const WorkerMenus = [
   {
     text: "Dashboard",
-    path: "/auth/dashboard",
+    path: "/auth/home",
     icon: <HomeOutlined />,
   },
   {
@@ -105,7 +104,7 @@ const WorkerMenus = [
 const UserMenus = [
   {
     text: "Public Forum",
-    path: "/auth/forum",
+    path: "/auth/home",
     icon: <HomeOutlined />,
   },
   {
@@ -113,7 +112,7 @@ const UserMenus = [
   },
   {
     text: "General Complaints",
-    path: "/auth/complaints",
+    path: "/auth/generalcomplaints",
     icon: <Public />,
   },
   {

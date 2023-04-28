@@ -1,6 +1,6 @@
 import { Grid, Paper, Typography } from "@mui/material";
 
-function Dashboard() {
+function AdminDashboard() {
   return (
     <>
       <Typography variant="h4" component="h1" gutterBottom>
@@ -21,4 +21,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default AdminDashboard;

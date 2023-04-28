@@ -4,30 +4,53 @@ import React, { lazy } from "react";
 import Layout from "../Layouts/MainLayout";
 import MinimalLayout from "../Layouts/MinimalLayout";
 import Loadable from "../Utils/Loadable";
+import PermissionsHelper from "../Utils/PermissionsHelper";
 
 // Views Routing
-
-const Auth = Loadable(lazy(() => import("../../Views/Authentication/")));
-const Dashboard = Loadable(lazy(() => import("../../Views/Dashboard")));
-const NotFound = Loadable(lazy(() => import("../../Views/NotFound")));
+const Home = Loadable(lazy(() => import("../../Views/Home")));
 const ViewComplaints = Loadable(lazy(() => import("../../Views/Complaints")));
 const EvaluateTask = Loadable(lazy(() => import("../../Views/TaskEvaluation")));
+const NotFound = Loadable(lazy(() => import("../../Views/NotFound")));
+const Auth = Loadable(lazy(() => import("../../Views/Authentication/")));
+const Login = Loadable(lazy(() => import("../../Views/Authentication/Login")));
+const Register = Loadable(
+  lazy(() => import("../../Views/Authentication/Register"))
+);
+
+const Admin = "admin";
+const Worker = "worker";
+const User = "user";
 
 const MainRoutes = {
   path: "/auth",
   element: <Layout />,
   children: [
     {
-      path: "dashboard",
-      element: <Dashboard />,
+      path: "home",
+      element: (
+        <PermissionsHelper
+          allowedRoles={[Admin, Worker, User]}
+          element={<Home />}
+        />
+      ),
     },
     {
       path: "complaints",
-      element: <ViewComplaints />,
+      element: (
+        <PermissionsHelper
+          allowedRoles={[Admin, User]}
+          element={<ViewComplaints />}
+        />
+      ),
     },
     {
       path: "tasks",
-      element: <EvaluateTask />,
+      element: (
+        <PermissionsHelper
+          allowedRoles={[Admin, Worker]}
+          element={<EvaluateTask />}
+        />
+      ),
     },
     {
       path: "*",
@@ -43,6 +66,16 @@ export const AuthRoutes = {
     {
       path: "",
       element: <Auth />,
+      children: [
+        {
+          path: "",
+          element: <Login />,
+        },
+        {
+          path: "register",
+          element: <Register />,
+        },
+      ],
     },
     {
       path: "*",

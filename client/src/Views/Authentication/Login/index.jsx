@@ -23,7 +23,7 @@ import Colors from "../../../Assets/Styles/_themes-vars.module.scss";
 import { LoginSchema as schema } from "../Utils/Schemas";
 import { useState } from "react";
 
-function Login({ setNewUser }) {
+function Login() {
   const navigate = useNavigate();
   const location = useLocation();
   const [loading, setLoading] = useState(false);
@@ -46,7 +46,7 @@ function Login({ setNewUser }) {
     const response = await Authorize.Login(request);
     if (response.status) {
       navigate({
-        pathname: "/auth/dashboard",
+        pathname: "/auth/home",
       });
     } else {
       showError(true);
@@ -71,7 +71,7 @@ function Login({ setNewUser }) {
               Don't have an account?{" "}
               <Link
                 style={{ textDecoration: "none", color: Colors.primary800 }}
-                onClick={() => setNewUser(true)}
+                to={"/register"}
               >
                 Register
               </Link>
