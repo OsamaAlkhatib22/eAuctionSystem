@@ -5,27 +5,24 @@ using Domain.DataModels.Intersections;
 using Domain.DataModels.User;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
 using Persistence;
 using Microsoft.EntityFrameworkCore;
-using Domain.ClientDTOs.Complaint;
+using Domain.Resources;
+using Domain.DataModels.Complaints;
 
 namespace Application.Handlers.Tasks
 {
-    public class InsertTasktHandler : IRequestHandler<InsertTaskCommand, Result<TaskDTO>>
+    public class InsertTaskHandler : IRequestHandler<InsertTaskCommand, Result<TaskDTO>>
     {
         private readonly DataContext _context;
-        private readonly IConfiguration _configuration;
         public readonly UserManager<ApplicationUser> _userManager;
 
-        public InsertTasktHandler(
+        public InsertTaskHandler(
             DataContext context,
-            IConfiguration configuration,
             UserManager<ApplicationUser> userManager
         )
         {
             _context = context;
-            _configuration = configuration;
             _userManager = userManager;
         }
 
@@ -34,23 +31,26 @@ namespace Application.Handlers.Tasks
             CancellationToken cancellationToken
         )
         {
+            using var transaction = await _context.Database.BeginTransactionAsync();
             var leaderCount = 0;
             var taskDTO = request.TaskDTO;
-            var workersList = request.TaskDTO.workersList;
-            var user = await _userManager.FindByNameAsync(taskDTO.strUserName);
-            int userId = user.Id;
+            var workersList = taskDTO.workersList;
+            int userId = await _context.Users
+                .Where(q => q.UserName == taskDTO.strUserName)
+                .Select(q => q.Id)
+                .FirstOrDefaultAsync();                            
             int taskType = await _context.Complaints
                 .Where(q => q.intId == request.Id)
                 .Select(q => q.intTypeId)
                 .FirstOrDefaultAsync();
 
-            using var transaction = await _context.Database.BeginTransactionAsync();
+            
             try
             {
                 var task = new WorkTask //Date Activated and Date Finished should be null
                 {
                     intAdminId = userId,
-                    intStatusId = 1,
+                    intStatusId = (int)TasksConstant.taskStatus.inactive,
                     intTypeId = taskType,
                     decCost = request.TaskDTO.decCost ?? 0.00m,
                     dtmDateScheduled = request.TaskDTO.scheduledDate,
@@ -112,6 +112,11 @@ namespace Application.Handlers.Tasks
                     };
 
                     await _context.TasksComplaints.AddAsync(taskComplaint);
+
+
+                    var complaint = new Complaint { intId = request.Id };
+                    _context.Complaints.Attach(complaint);
+                    complaint.intStatusId = (int)ComplaintsConstant.complaintStatus.approved;
                 }
                 catch (Exception)
                 {
