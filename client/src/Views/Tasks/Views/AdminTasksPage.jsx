@@ -12,15 +12,15 @@ import {
 } from "@mui/material";
 
 // Project Imports
-import { EvaluateTaskApi } from "./Service/EvaluateTaskApi";
-import { GetTaskDetailsApi } from "./Service/GetTaskDetailsApi";
-import TaskDetails from "./Components/TaskDetails";
-import MediaGallery from "../../Common/Components/MediaGallery";
-import FormTextFieldMulti from "../../Common/Components/UI/FormFields/FormTextFieldMulti";
-import FormRatingGroup from "../../Common/Components/UI/FormFields/FormRatingGroup";
-import FormRowRadioGroup from "../../Common/Components/UI/FormFields/FormRadioGroup";
-import TasksDataGrid from "./Components/TasksDataGrid";
-import ScrollableContent from "../../Common/Components/ScrollableContent";
+import { EvaluateTaskApi } from "../Service/EvaluateTaskApi";
+import { GetTaskDetailsApi } from "../Service/GetTaskDetailsApi";
+import TaskDetails from "../Components/TaskDetails";
+import MediaGallery from "../../../Common/Components/MediaGallery";
+import FormTextFieldMulti from "../../../Common/Components/UI/FormFields/FormTextFieldMulti";
+import FormRatingGroup from "../../../Common/Components/UI/FormFields/FormRatingGroup";
+import FormRowRadioGroup from "../../../Common/Components/UI/FormFields/FormRadioGroup";
+import TasksDataGrid from "../Components/TasksDataGrid";
+import ScrollableContent from "../../../Common/Components/ScrollableContent";
 
 const testPhotos = [
   {
@@ -38,7 +38,7 @@ const testPhotos = [
 ];
 const radioOptions = ["Failed", "Incomplete", "Completed"];
 
-const CreateTask = () => {
+const AdminTasksPage = () => {
   const methods = useForm();
   const theme = useTheme();
   const [taskId, setTaskId] = useState(0);
@@ -126,4 +126,4 @@ const CreateTask = () => {
   );
 };
 
-export default CreateTask;
+export default AdminTasksPage;

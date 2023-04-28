@@ -9,7 +9,7 @@ import PermissionsHelper from "../Utils/PermissionsHelper";
 // Views Routing
 const Home = Loadable(lazy(() => import("../../Views/Home")));
 const ViewComplaints = Loadable(lazy(() => import("../../Views/Complaints")));
-const EvaluateTask = Loadable(lazy(() => import("../../Views/TaskEvaluation")));
+const EvaluateTask = Loadable(lazy(() => import("../../Views/Tasks")));
 const NotFound = Loadable(lazy(() => import("../../Views/NotFound")));
 const Auth = Loadable(lazy(() => import("../../Views/Authentication/")));
 const Login = Loadable(lazy(() => import("../../Views/Authentication/Login")));
