@@ -41,6 +41,7 @@ const Register = () => {
       navigate({
         pathname: "/auth/home",
       });
+      window.location.reload();
     } else {
       showError(true);
     }

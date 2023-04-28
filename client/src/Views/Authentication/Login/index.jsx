@@ -48,6 +48,7 @@ function Login() {
       navigate({
         pathname: "/auth/home",
       });
+      window.location.reload();
     } else {
       showError(true);
       setErrorMessage(response.message);
