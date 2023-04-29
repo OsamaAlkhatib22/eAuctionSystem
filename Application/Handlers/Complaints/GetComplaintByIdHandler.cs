@@ -61,10 +61,11 @@ namespace Application.Handlers.Complaints
                             strComplaintTypeEn = c.ComplaintType.strNameEn,
                             strComplaintTypeAr = c.ComplaintType.strNameAr,
                             lstMedia = c.Complaint.Complaint.Attachments
-                                .Select(
-                                    a => Convert.ToBase64String(File.ReadAllBytes(a.strMediaRef))
-                                )
-                                .ToList(),
+                                    .Select(
+                                        a =>
+                                           File.Exists(a.strMediaRef)? Convert.ToBase64String(File.ReadAllBytes(a.strMediaRef)): string.Empty
+                                    )
+                                    .ToList(),
                             blnIsVideo = c.ComplaintAttachment.blnIsVideo
                         }
                 )
