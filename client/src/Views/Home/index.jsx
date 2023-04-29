@@ -1,6 +1,7 @@
 // Project Imports
-import AdminViewComplaints from "./Views/AdminViewComplaints";
-import CitizenViewComplaints from "./Views/CitizenViewComplaints";
+import AdminDashboard from "./Views/AdminDashboard";
+import WorkerDashboard from "./Views/WorkerDashboard";
+import CitizenForum from "./Views/CitizenForum";
 import { IdentityHelper } from "../../Common/Utils/IdentityHelper";
 import NotFoundPage from "../NotFound";
 
@@ -8,9 +9,11 @@ function Home() {
   const userType = IdentityHelper.UserData.userType;
   switch (userType) {
     case "admin":
-      return <AdminViewComplaints />;
+      return <AdminDashboard />;
+    case "worker":
+      return <WorkerDashboard />;
     case "user":
-      return <CitizenViewComplaints />;
+      return <CitizenForum />;
     default:
       return <NotFoundPage />;
   }

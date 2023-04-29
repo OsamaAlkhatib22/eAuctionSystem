@@ -45,18 +45,8 @@ const RegistrationStepTwo = ({
   const { handleSubmit } = methods;
   return (
     <FormProvider {...methods}>
-      <Stack spacing={2}>
-        {NationalityInputs(
-          selectedOption,
-          methods.setValue,
-          selectedDocument,
-          setSelectedDocument
-        )}
-        <FormTextField name="phone" label="Phone Number" />
-        <FormTextField name="email" label="Email" />
-      </Stack>
-      <Button
-        onClick={handleSubmit((data) => {
+      <form
+        onSubmit={handleSubmit((data) => {
           setRequest({
             ...request,
             strPhonenumber: data.phone,
@@ -72,12 +62,26 @@ const RegistrationStepTwo = ({
           });
           setStep(3);
         })}
-        color="primary"
-        variant="contained"
-        sx={{ borderRadius: "1rem" }}
       >
-        Next
-      </Button>
+        <Stack spacing={2}>
+          {NationalityInputs(
+            selectedOption,
+            methods.setValue,
+            selectedDocument,
+            setSelectedDocument
+          )}
+          <FormTextField name="phone" label="Phone Number" />
+          <FormTextField name="email" label="Email" />
+          <Button
+            type="submit"
+            color="primary"
+            variant="contained"
+            sx={{ borderRadius: "1rem" }}
+          >
+            Next
+          </Button>
+        </Stack>
+      </form>
     </FormProvider>
   );
 };

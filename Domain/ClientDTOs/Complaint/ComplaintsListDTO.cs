@@ -1,6 +1,12 @@
 ﻿namespace Domain.ClientDTOs.Complaint
 {
-    public class ComplaintViewDTO
+    public struct LatLng
+    {
+        public decimal decLat { get; set; }
+        public decimal decLng { get; set; }
+    }
+
+    public class ComplaintsListDTO
     {
         public int intComplaintId { get; set; }
         public string strUserName { get; set; }
@@ -12,10 +18,7 @@
         public string strStatus { get; set; }
         public int intPrivacyId { get; set; }
         public int intVotersCount { get; set; }
-        public decimal decLat { get; set; }
-        public decimal decLng { get; set; }
+        public LatLng latLng { get; set; }
         public Decimal decPriority { get; set; }
-        public List<String> lstMedia { get; set; }
-        public Boolean blnIsVideo { get; set; }
     }
 }

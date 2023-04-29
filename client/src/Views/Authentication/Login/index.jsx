@@ -2,7 +2,14 @@ import { useLocation, useNavigate, Link } from "react-router-dom";
 import { FormProvider, useForm } from "react-hook-form";
 
 // Mui
-import { Typography, Button, Stack } from "@mui/material";
+import {
+  Typography,
+  Button,
+  Stack,
+  Alert,
+  AlertTitle,
+  CircularProgress,
+} from "@mui/material";
 
 // Third Party
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -14,10 +21,14 @@ import Colors from "../../../Assets/Styles/_themes-vars.module.scss";
 
 // Schema
 import { LoginSchema as schema } from "../Utils/Schemas";
+import { useState } from "react";
 
-function Login({ setNewUser }) {
+function Login() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [loading, setLoading] = useState(false);
+  const [error, showError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const methods = useForm({
     resolver: yupResolver(schema),
@@ -25,53 +36,70 @@ function Login({ setNewUser }) {
 
   const { handleSubmit } = methods;
 
-  const onInvalid = (errors) => {
-    console.log(errors);
-  };
-
   const onSubmit = async (data) => {
+    setLoading(true);
+    showError(false);
     const request = {
       strLogin: data.login,
       strPassword: data.password,
     };
-    if (await Authorize.Login(request))
+    const response = await Authorize.Login(request);
+    if (response.status) {
       navigate({
-        pathname: "/auth/dashboard",
+        pathname: "/auth/home",
       });
+      window.location.reload();
+    } else {
+      showError(true);
+      setErrorMessage(response.message);
+    }
+    setLoading(false);
   };
 
   return (
     <div>
       <FormProvider {...methods}>
-        <Stack spacing={2} sx={{ width: "25vw" }}>
-          <Typography variant="h2">Log in</Typography>
-          <Typography style={{ color: Colors.grey500 }}>
-            Don't have an account?{" "}
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Stack spacing={2} sx={{ width: "25vw" }}>
+            {error && (
+              <Alert severity="error">
+                <AlertTitle>Error</AlertTitle>
+                {errorMessage}
+              </Alert>
+            )}
+            <Typography variant="h2">Log in</Typography>
+            <Typography style={{ color: Colors.grey500 }}>
+              Don't have an account?{" "}
+              <Link
+                style={{ textDecoration: "none", color: Colors.primary800 }}
+                to={"/register"}
+              >
+                Register
+              </Link>
+            </Typography>
+            <FormTextField name="login" label="Username/Phonenumber" />
+            <FormTextField name="password" label="Password" type="password" />
+
+            <Button
+              type="submit"
+              color="primary"
+              variant="contained"
+              sx={{ borderRadius: "1rem" }}
+            >
+              {loading ? (
+                <CircularProgress color="inherit" size="1.5rem" />
+              ) : (
+                "Continue"
+              )}
+            </Button>
             <Link
               style={{ textDecoration: "none", color: Colors.primary800 }}
-              onClick={() => setNewUser(true)}
+              to={location.pathname + ""}
             >
-              Register
+              Forgot password?
             </Link>
-          </Typography>
-          <FormTextField name="login" label="Username/Phonenumber" />
-          <FormTextField name="password" label="Password" type="password" />
-
-          <Button
-            onClick={handleSubmit(onSubmit, onInvalid)}
-            color="primary"
-            variant="contained"
-            sx={{ borderRadius: "1rem" }}
-          >
-            Continue
-          </Button>
-          <Link
-            style={{ textDecoration: "none", color: Colors.primary800 }}
-            to={location.pathname + ""}
-          >
-            Forgot password?
-          </Link>
-        </Stack>
+          </Stack>
+        </form>
       </FormProvider>
     </div>
   );
