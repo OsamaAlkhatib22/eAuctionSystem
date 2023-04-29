@@ -4,5 +4,5 @@ using MediatR;
 
 namespace Application.Queries.Complaints
 {
-    public record GetComplaintByUserIdQuery(int Id) : IRequest<Result<List<Complaint>>>;
+    public record GetComplaintsByUserQuery(string username) : IRequest<Result<List<Complaint>>>;
 }

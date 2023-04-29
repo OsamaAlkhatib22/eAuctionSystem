@@ -21,7 +21,7 @@ namespace API.Controllers
         }
 
         [HttpPost] // .../api/complaints
-        public async Task<IActionResult> InsertComplaint([FromForm] ComplaintDTO complaintDTO)
+        public async Task<IActionResult> InsertComplaint([FromForm] InsertComplaintDTO complaintDTO)
         {
             string authHeader = Request.Headers["Authorization"];
             JwtSecurityTokenHandler tokenHandler = new();
@@ -32,10 +32,15 @@ namespace API.Controllers
             return HandleResult(await Mediator.Send(new InsertComplaintCommand(complaintDTO)));
         }
 
-        [HttpGet("user/{userId}")] // .../api/complaints/user/..
-        public async Task<IActionResult> GetComplaintByUserId(int userId)
+        [HttpGet("user")] // .../api/complaints/user
+        public async Task<IActionResult> GetComplaintsByUser()
         {
-            return HandleResult(await Mediator.Send(new GetComplaintByUserIdQuery(userId)));
+            string authHeader = Request.Headers["Authorization"];
+            JwtSecurityTokenHandler tokenHandler = new();
+            JwtSecurityToken jwtToken = tokenHandler.ReadJwtToken(authHeader[7..]);
+            string username = jwtToken.Claims.First(c => c.Type == "username").Value;
+
+            return HandleResult(await Mediator.Send(new GetComplaintsByUserQuery(username)));
         }
 
         [HttpGet("types")] // .../api/complaints/types

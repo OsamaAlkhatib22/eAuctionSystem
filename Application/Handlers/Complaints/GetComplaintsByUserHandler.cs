@@ -7,22 +7,21 @@ using Persistence;
 
 namespace Application.Handlers.Complaints
 {
-    public class GetComplaintsByUserIdHandler
-        : IRequestHandler<GetComplaintByUserIdQuery, Result<List<Complaint>>>
+    public class GetComplaintsByUserHandler
+        : IRequestHandler<GetComplaintsByUserQuery, Result<List<Complaint>>>
     {
         private readonly DataContext _context;
 
-        public GetComplaintsByUserIdHandler(DataContext context)
+        public GetComplaintsByUserHandler(DataContext context)
         {
             _context = context;
         }
 
         public async Task<Result<List<Complaint>>> Handle(
-            GetComplaintByUserIdQuery request,
+            GetComplaintsByUserQuery request,
             CancellationToken cancellationToken
         )
         {
-            var user = await _context.ApplicationUsers.Where(q => q.Id == request.Id).FirstAsync();
             var result = await _context.Complaints.Where(q => q.intUserID == user.Id).ToListAsync();
             return Result<List<Complaint>>.Success(result);
         }

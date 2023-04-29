@@ -12,7 +12,7 @@ using Persistence;
 namespace Application.Handlers.Complaints
 {
     public class InsertComplaintHandler
-        : IRequestHandler<InsertComplaintCommand, Result<ComplaintDTO>>
+        : IRequestHandler<InsertComplaintCommand, Result<InsertComplaintDTO>>
     {
         private readonly DataContext _context;
         private readonly IConfiguration _configuration;
@@ -29,7 +29,7 @@ namespace Application.Handlers.Complaints
             _userManager = userManager;
         }
 
-        public async Task<Result<ComplaintDTO>> Handle(
+        public async Task<Result<InsertComplaintDTO>> Handle(
             InsertComplaintCommand request,
             CancellationToken cancellationToken
         )
@@ -65,7 +65,7 @@ namespace Application.Handlers.Complaints
                 if (lstMedia.Count == 0)
                 {
                     await transaction.RollbackAsync();
-                    return Result<ComplaintDTO>.Failure("No file was Uploaded.");
+                    return Result<InsertComplaintDTO>.Failure("No file was Uploaded.");
                 }
 
                 var complaintAttachments = new List<ComplaintAttachment>();
@@ -110,10 +110,10 @@ namespace Application.Handlers.Complaints
             catch (Exception)
             {
                 await transaction.RollbackAsync();
-                return Result<ComplaintDTO>.Failure("Unknown Error");
+                return Result<InsertComplaintDTO>.Failure("Unknown Error");
             }
 
-            return Result<ComplaintDTO>.Success(complaintDTO);
+            return Result<InsertComplaintDTO>.Success(complaintDTO);
         }
     }
 }

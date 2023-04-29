@@ -2,7 +2,7 @@
 
 namespace Domain.ClientDTOs.Complaint
 {
-    public class ComplaintAttachmentsDTO
+    public class InsertComplaintAttachmentsDTO
     {
         public IFormFile fileMedia { get; set; }
         public float decLat { get; set; }

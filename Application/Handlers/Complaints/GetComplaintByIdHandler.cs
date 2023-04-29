@@ -11,7 +11,7 @@ using System.IO;
 namespace Application.Handlers.Complaints
 {
     public class GetComplaintByIdHandler
-        : IRequestHandler<GetComplaintByIdQuery, Result<ComplaintViewDTO>>
+        : IRequestHandler<GetComplaintByIdQuery, Result<AdminComplaintViewDTO>>
     {
         private readonly DataContext _context;
 
@@ -20,7 +20,7 @@ namespace Application.Handlers.Complaints
             _context = context;
         }
 
-        public async Task<Result<ComplaintViewDTO>> Handle(
+        public async Task<Result<AdminComplaintViewDTO>> Handle(
             GetComplaintByIdQuery request,
             CancellationToken cancellationToken
         )
@@ -53,7 +53,7 @@ namespace Application.Handlers.Complaints
                 )
                 .Select(
                     c =>
-                        new ComplaintViewDTO
+                        new AdminComplaintViewDTO
                         {
                             intComplaintId = c.Complaint.Complaint.intId,
                             strUserName = c.Complaint.User.UserName,
@@ -72,10 +72,10 @@ namespace Application.Handlers.Complaints
 
             if (result == null)
             {
-                return Result<ComplaintViewDTO>.Failure("Complaint not found");
+                return Result<AdminComplaintViewDTO>.Failure("Complaint not found");
             }
 
-            return Result<ComplaintViewDTO>.Success(result);
+            return Result<AdminComplaintViewDTO>.Success(result);
         }
     }
 }
