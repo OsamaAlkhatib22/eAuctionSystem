@@ -8,7 +8,7 @@ using Persistence;
 namespace Application.Handlers.Complaints
 {
     public class GetComplaintsListHandler
-        : IRequestHandler<GetComplaintsListQuery, Result<List<ComplaintListDTO>>>
+        : IRequestHandler<GetComplaintsListQuery, Result<List<ComplaintsListDTO>>>
     {
         private readonly DataContext _context;
 
@@ -17,7 +17,7 @@ namespace Application.Handlers.Complaints
             _context = context;
         }
 
-        public async Task<Result<List<ComplaintListDTO>>> Handle(
+        public async Task<Result<List<ComplaintsListDTO>>> Handle(
             GetComplaintsListQuery request,
             CancellationToken cancellationToken
         )
@@ -41,7 +41,7 @@ namespace Application.Handlers.Complaints
                 .AsNoTracking()
                 .Select(
                     c =>
-                        new ComplaintListDTO
+                        new ComplaintsListDTO
                         {
                             intComplaintId = c.Complaint.intId,
                             strUserName = c.UserName,
@@ -79,7 +79,7 @@ namespace Application.Handlers.Complaints
                 }
             }
 
-            return Result<List<ComplaintListDTO>>.Success(result);
+            return Result<List<ComplaintsListDTO>>.Success(result);
         }
     }
 }
