@@ -28,7 +28,7 @@ namespace Application.Handlers.Complaints
                     q =>
                         new ComplaintTypeDTO
                         {
-                            intId = q.intId,
+                            intDepartmentId = q.intDepartmentId,
                             strNameAr = q.strNameAr,
                             strNameEn = q.strNameEn
                         }
