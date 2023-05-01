@@ -7,7 +7,12 @@ namespace Domain.Resources
         {
             pending = 1,
             rejected = 2,
-            approved = 3
+            approved = 3,
+            Scheduled = 4,
+            inProgress = 5,
+            waitingEvaluation = 6,
+            completed = 7,
+            refiled = 8
         }
     }
 }
