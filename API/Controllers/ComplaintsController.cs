@@ -43,5 +43,20 @@ namespace API.Controllers
         {
             return HandleResult(await Mediator.Send(new GetComplaintTypesListQuery()));
         }
+<<<<<<< Updated upstream
+=======
+
+        [HttpPost("CreateType")] // .../api/complaints/CreateType
+        public async Task<IActionResult> InsertComplaintType([FromForm] ComplaintTypeDTO complaintTypeDTO)
+        {
+            string authHeader = Request.Headers["Authorization"];
+            JwtSecurityTokenHandler tokenHandler = new();
+            JwtSecurityToken jwtToken = tokenHandler.ReadJwtToken(authHeader[7..]);
+
+            complaintTypeDTO.strUserName = jwtToken.Claims.First(c => c.Type == "username").Value;
+
+            return HandleResult(await Mediator.Send(new InsertComplaintTypeCommand(complaintTypeDTO)));
+        }
+>>>>>>> Stashed changes
     }
 }
