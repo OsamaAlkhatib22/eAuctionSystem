@@ -9,7 +9,7 @@ using Domain.Resources;
 using Domain.DataModels.Complaints;
 using Domain.ClientDTOs.Evaluation;
 
-namespace Application.Handlers.Tasks
+namespace Application.Handlers.Evaluations
 {
     public class SetTaskAsCompletedHandler : IRequestHandler<CompleteTaskCommand, Result<EvaluationDTO>>
     {
@@ -61,7 +61,6 @@ namespace Application.Handlers.Tasks
                 .Select(q => q.intComplaintId)
                 .FirstOrDefaultAsync();
 
-                Console.WriteLine(complaintId);
                 var complaint = new Complaint { intId = complaintId };
                 _context.Complaints.Attach(complaint);
                 complaint.intStatusId = (int)ComplaintsConstant.complaintStatus.completed;
