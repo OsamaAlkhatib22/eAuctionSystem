@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Domain.DataModels.User;
+using Application.Handlers.Tasks;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,7 @@ builder.Services.AddControllers(opt =>
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddCorsService(builder.Configuration, builder.Environment);
 builder.Services.AddIdentityService(builder.Configuration);
+builder.Services.AddTransient<InsertTaskHandler>();
 
 var app = builder.Build();
 
