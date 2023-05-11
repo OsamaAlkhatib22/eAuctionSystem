@@ -3,6 +3,7 @@ using Application;
 using Domain.ClientDTOs.Complaint;
 using System.IdentityModel.Tokens.Jwt;
 using Application.Queries.Complaints;
+using Domain.ClientDTOs.Task;
 
 namespace API.Controllers
 {
@@ -47,6 +48,18 @@ namespace API.Controllers
         public async Task<IActionResult> GetComplaintTypes()
         {
             return HandleResult(await Mediator.Send(new GetComplaintTypesListQuery()));
+        }
+
+        [HttpPost("CreateType")] // .../api/complaints/CreateType
+        public async Task<IActionResult> InsertTaskType([FromForm] ComplaintTypeDTO complaintTypeDTO)
+        {
+            string authHeader = Request.Headers["Authorization"];
+            JwtSecurityTokenHandler tokenHandler = new();
+            JwtSecurityToken jwtToken = tokenHandler.ReadJwtToken(authHeader[7..]);
+
+            complaintTypeDTO.strUserName = jwtToken.Claims.First(c => c.Type == "username").Value;
+
+            return HandleResult(await Mediator.Send(new InsertComplaintTypeCommand(complaintTypeDTO)));
         }
     }
 }
