@@ -6,7 +6,7 @@ import 'package:account/API/file_complaint_request.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator_platform_interface/src/models/position.dart';
 import 'package:intl/intl.dart';
-
+import 'package:account/Screens/file_complaint.dart';
 import 'file_complaint.dart';
 
 
@@ -15,7 +15,7 @@ final now = DateTime.now();
 
 class SubmissionPage extends StatefulWidget {
   final File? image1;
-  final String dropdownvalue;
+  final DropDownValue dropdownvalue;
   final String? currentAddress;
   final Position? currentPosition;
   final String? comment;
@@ -39,7 +39,7 @@ class SubmissionPage extends StatefulWidget {
 
 class _SubmissionPageState extends State<SubmissionPage> {
   File? image1;
-  String dropdownvalue;
+  DropDownValue dropdownvalue;
   String? currentAddress;
   Position ? currentPosition;
   String ?comment;
@@ -130,7 +130,7 @@ class _SubmissionPageState extends State<SubmissionPage> {
                       color: Color.fromARGB(255, 186, 172, 42),
                     ),
                     Text(
-                      'Complaint type:$dropdownvalue',
+                      'Complaint type:${dropdownvalue.stringName}',
                       textAlign: TextAlign.start,
                     ),
                   ],
@@ -171,7 +171,7 @@ class _SubmissionPageState extends State<SubmissionPage> {
               ),
               onPressed: () {
                 Complaint complaint=Complaint();
-                complaint.fileComplaint(1,selectedImages,currentPosition?.latitude as double,currentPosition?.longitude as double,comment!);
+                complaint.fileComplaint(dropdownvalue.intID,selectedImages,currentPosition?.latitude as double,currentPosition?.longitude as double,comment!);
                 show();
             
 

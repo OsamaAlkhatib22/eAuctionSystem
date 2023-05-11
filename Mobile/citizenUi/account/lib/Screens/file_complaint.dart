@@ -14,6 +14,12 @@ import '../API/sign_in_up_request.dart';
 import 'package:account/Screens/filecomplaintsub.dart';
 
 
+// determine public or private complaint and for complaint type 
+// edit image picker to from camera 
+// user name in login remove debug , ,,  remove complaint type int debug
+
+enum complaint_level{private,public,none}
+
 
 
 class HomePage1 extends StatefulWidget {
@@ -25,12 +31,22 @@ class HomePage1 extends StatefulWidget {
 
 class _HomePageState extends State<HomePage1> {
   //File? image1;
+  complaint_level selectLevel=complaint_level.none;
   List<File> selectedImages = [];
   final _picker = ImagePicker();
   TextEditingController textArea = TextEditingController();
-  String? dropdownvalue;
+  //int? dropdownvalue;
   late int intType;
+  late DropDownValue dropdown=DropDownValue(1, "");
+  late Future<List<Map<String, dynamic>>>_futureData;
  
+
+  @override
+  void initState() {
+    super.initState();
+    _futureData=getAllCategory();
+  }
+  
 
   // Implementing the image picker
   Future getImages() async {
@@ -38,6 +54,7 @@ class _HomePageState extends State<HomePage1> {
     final pickedFile = await _picker.pickMultiImage(
         imageQuality: 50, 
       ); 
+
     List<XFile> xfilePick = pickedFile;
         if (xfilePick.isNotEmpty) {
           for (var i = 0; i < xfilePick.length; i++) {
@@ -47,6 +64,7 @@ class _HomePageState extends State<HomePage1> {
            setState(
       () {  },
     );
+    _getCurrentPosition();
     print(selectedImages.length);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -56,7 +74,7 @@ class _HomePageState extends State<HomePage1> {
 
 //fetch classification
  Future<List<Map<String, dynamic>>> getAllCategory() async {
-   HttpOverrides.global = MyHttpOverrides();
+   
    
   var baseUrl = "https://10.0.2.2:5000/api/complaints/types";
   http.Response response = await http.get(Uri.parse(baseUrl),
@@ -148,7 +166,8 @@ class _HomePageState extends State<HomePage1> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+  
+        return Scaffold(
       backgroundColor: const Color.fromARGB(255, 207, 207, 207),
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 216, 90, 81),
@@ -177,29 +196,67 @@ class _HomePageState extends State<HomePage1> {
             ],),
             const SizedBox(height:5),
             const Text("   Choose type of complaint that you want to report",style: TextStyle(fontSize: 12,color: Color.fromARGB(255, 167, 167, 167)),),
-           const SizedBox(height:20),
-           
+           Row(
+          children: [
+            Expanded(child: 
+      
+      RadioListTile<complaint_level>(
+        title: const Text('Public'),
+        value: complaint_level.public,
+        groupValue: selectLevel,
+        onChanged: (value) {
+          setState(() {
+            selectLevel = complaint_level.public;
+          });
+        },
+      ),),
+     Expanded(child: 
+      RadioListTile<complaint_level>(
+        title: const Text('Private'),
+        value: complaint_level.private,
+        groupValue: selectLevel,
+        onChanged: (value) {
+          setState(() {
+            selectLevel = complaint_level.private;
+          });
+        },
+      ),
+           )],
+  ),
+
+
           
           FutureBuilder<List<Map<String, dynamic>>>(
-          future: getAllCategory(),
+          //move getAllCategory on page load
+           future: _futureData,
           builder: (context, snapshot) {
           if (snapshot.hasData) {
          var data = snapshot.data!;
-         return DropdownButton(
-        value: dropdownvalue ?? data[0]["strNameEn"],
-        icon: const Icon(Icons.keyboard_arrow_down),
-        items: data.map((item) {
+         var items =  data.map((item) {
           return DropdownMenuItem(
-            value: item["strNameEn"],
+            value:  DropDownValue(item["intId"], item["strNameEn"]) ,
             child: Text(item["strNameEn"]),
           );
-        }).toList(),
+        }).toList();
+
+      
+      // dropdown=items[0].value!;
+       dropdown=items[dropdown.intID-1].value!;
+
+         return DropdownButton(
+       
+        value:dropdown ,
+        icon: const Icon(Icons.keyboard_arrow_down),
+        items:items,
         onChanged: (newValue) {
           setState(() {
-            dropdownvalue = newValue as String?;
+            dropdown= newValue!;
+            print(dropdown.intID );
+            print(dropdown.stringName );
            
           });
         },
+
       );
     } else {
       return const CircularProgressIndicator();
@@ -240,7 +297,7 @@ class _HomePageState extends State<HomePage1> {
                 ),
                 onPressed: () {
 
-                 _getCurrentPosition();
+              
                 if(selectedImages.length<=3){
                 getImages();
                 }
@@ -284,7 +341,7 @@ class _HomePageState extends State<HomePage1> {
               
 
                Navigator.of(context).push(MaterialPageRoute(builder: (context) => SubmissionPage(currentAddress: currentAddress,currentPosition:_currentPosition!
-               ,dropdownvalue: dropdownvalue!,comment:textArea.text,selectedImages:selectedImages)));
+               ,dropdownvalue: dropdown,comment:textArea.text,selectedImages:selectedImages)));
                   
                 },
                   
@@ -313,6 +370,14 @@ class MyHttpOverrides extends HttpOverrides{
       ..badCertificateCallback = (X509Certificate cert, String host, int port)=> true;
   }
 }
+
+class DropDownValue{
+DropDownValue( this.intID, this.stringName);
+
+late int intID=0;
+late String stringName;
+}
+
 
 
 
