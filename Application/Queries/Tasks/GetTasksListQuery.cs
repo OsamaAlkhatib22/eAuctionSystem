@@ -1,8 +1,8 @@
 ﻿using Application.Core;
-using Domain.DataModels.Tasks;
+using Domain.ClientDTOs.Task;
 using MediatR;
 
 namespace Application.Queries.Tasks
 {
-    public record GetTasksListQuery() : IRequest<Result<List<WorkTask>>>;
+    public record GetTasksListQuery() : IRequest<Result<List<TaskListDTO>>>;
 }
