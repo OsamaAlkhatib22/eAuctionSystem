@@ -7,9 +7,18 @@ export const Authorize = {
       const response = await axios.post("/api/account/login", LoginRequest);
 
       IdentityHelper.token = response.data;
-      return IdentityHelper.isTokenValid();
+      return { status: IdentityHelper.isTokenValid(), message: "Success" };
     } catch (error) {
-      return false;
+      IdentityHelper.removeToken();
+      return error.code === "ERR_NETWORK"
+        ? {
+            status: IdentityHelper.isTokenValid(),
+            message: "No connection, server is down.",
+          }
+        : {
+            status: IdentityHelper.isTokenValid(),
+            message: error.response.data,
+          };
     }
   },
 

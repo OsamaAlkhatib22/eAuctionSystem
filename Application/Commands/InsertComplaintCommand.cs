@@ -4,6 +4,6 @@ using MediatR;
 
 namespace Application
 {
-    public record InsertComplaintCommand(ComplaintDTO ComplaintDTO)
-        : IRequest<Result<ComplaintDTO>>;
+    public record InsertComplaintCommand(InsertComplaintDTO ComplaintDTO)
+        : IRequest<Result<InsertComplaintDTO>>;
 }

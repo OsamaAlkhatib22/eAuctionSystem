@@ -3,17 +3,14 @@ import { useState } from "react";
 import { Outlet } from "react-router-dom";
 
 // Mui
-import { Box, CssBaseline, useTheme } from "@mui/material";
+import { Box, CssBaseline } from "@mui/material";
 import { styled } from "@mui/system";
-
-// Third Party
-import PerfectScrollbar from "react-perfect-scrollbar";
-import "react-perfect-scrollbar/dist/css/styles.css";
 
 // Project imports
 import Navbar from "./Components/NavBar";
 import Sidebar from "./Components/SideBar";
 import ScrollableContent from "../../Components/ScrollableContent";
+import { IdentityHelper } from "../../Utils/IdentityHelper";
 
 const Main = styled(Box)({
   display: "flex",
@@ -30,21 +27,17 @@ const MainContent = styled("main")(({ theme }) => ({
 }));
 
 function Layout() {
-  const theme = useTheme();
-
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const user = IdentityHelper.UserData;
 
-  return (
+  return user ? (
     <Main>
       <CssBaseline />
-      <Navbar
-        isSidebarOpen={isSidebarOpen}
-        setIsSidebarOpen={setIsSidebarOpen}
-        theme={theme}
-      />
+      <Navbar user={user} />
       <Sidebar
         isSidebarOpen={isSidebarOpen}
         setIsSidebarOpen={setIsSidebarOpen}
+        user={user}
       >
         <MainContent>
           <ScrollableContent>
@@ -53,6 +46,12 @@ function Layout() {
         </MainContent>
       </Sidebar>
     </Main>
+  ) : (
+    <MainContent>
+      <ScrollableContent>
+        <Outlet />
+      </ScrollableContent>
+    </MainContent>
   );
 }
 

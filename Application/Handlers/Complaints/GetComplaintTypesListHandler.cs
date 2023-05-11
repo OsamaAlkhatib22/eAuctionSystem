@@ -30,7 +30,8 @@ namespace Application.Handlers.Complaints
                         {
                             intId = q.intId,
                             strNameAr = q.strNameAr,
-                            strNameEn = q.strNameEn
+                            strNameEn = q.strNameEn,
+                            intPrivacyId = q.intPrivacyId,
                         }
                 )
                 .ToListAsync();
