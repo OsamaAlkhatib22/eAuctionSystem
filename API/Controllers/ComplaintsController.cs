@@ -51,7 +51,7 @@ namespace API.Controllers
         }
 
         [HttpPost("CreateType")] // .../api/complaints/CreateType
-        public async Task<IActionResult> InsertTaskType([FromForm] ComplaintTypeDTO complaintTypeDTO)
+        public async Task<IActionResult> InsertComplaintType([FromForm] ComplaintTypeDTO complaintTypeDTO)
         {
             string authHeader = Request.Headers["Authorization"];
             JwtSecurityTokenHandler tokenHandler = new();
