@@ -3,7 +3,7 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'package:account/Screens/filecomplaintsub.dart';
+
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
@@ -11,7 +11,9 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import '../API/sign_in_up_request.dart';
-import 'package:account/Screens/filecomplaintsub.dart';
+
+
+import 'file_complaint_submission.dart';
 
 
 // determine public or private complaint and for complaint type 
@@ -38,39 +40,66 @@ class _HomePageState extends State<HomePage1> {
   //int? dropdownvalue;
   late int intType;
   late DropDownValue dropdown=DropDownValue(1, "");
+  List<DropDownValue> items = [];
   late Future<List<Map<String, dynamic>>>_futureData;
+  String language="strNameAr";
  
 
   @override
   void initState() {
     super.initState();
     _futureData=getAllCategory();
+_initializeData();
+
+    
   }
   
+  void _initializeData() async {
+  final data = await getAllCategory();
+  setState(() {
+    items = data.map((item) => DropDownValue(item["intId"], item[language])).toList();
+    dropdown = items[0];
+  });
+}
 
   // Implementing the image picker
-  Future getImages() async {
+  // Future getImages() async {
 
-    final pickedFile = await _picker.pickMultiImage(
-        imageQuality: 50, 
-      ); 
+  //   final pickedFile = await _picker.pickMultiImage(
+  //       imageQuality: 50, 
+  //     ); 
 
-    List<XFile> xfilePick = pickedFile;
-        if (xfilePick.isNotEmpty) {
-          for (var i = 0; i < xfilePick.length; i++) {
+  //   List<XFile> xfilePick = pickedFile;
+  //       if (xfilePick.isNotEmpty) {
+  //         for (var i = 0; i < xfilePick.length; i++) {
             
-            selectedImages.add(File(xfilePick[i].path));
-          }
-           setState(
-      () {  },
-    );
+  //           selectedImages.add(File(xfilePick[i].path));
+  //         }
+  //          setState(
+  //     () {  },
+  //   );
+  //   _getCurrentPosition();
+  //   print(selectedImages.length);
+  //       } else {
+  //         ScaffoldMessenger.of(context).showSnackBar(
+  //             const SnackBar(content: Text('Nothing is selected')));
+  //       }
+  // }
+
+Future<void> getImages() async {
+  final pickedFile = await _picker.pickImage(source: ImageSource.camera, imageQuality: 50);
+
+  if (pickedFile != null) {
+    selectedImages.add(File(pickedFile.path));
+    setState(() {});
     _getCurrentPosition();
     print(selectedImages.length);
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Nothing is selected')));
-        }
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Nothing is selected')),
+    );
   }
+}
 
 //fetch classification
  Future<List<Map<String, dynamic>>> getAllCategory() async {
@@ -189,6 +218,23 @@ class _HomePageState extends State<HomePage1> {
           padding: const EdgeInsets.all(20),
           child: Column(children: [
             
+            GestureDetector(child:Row(children: [ const Icon(Icons.translate),const Text("Eng"),]),
+            onTap: () {
+                setState(() {
+                language = "strNameEn";
+                _initializeData();
+              });
+            },),// icon
+
+            GestureDetector(child:Row(children: [ const Icon(Icons.translate),const Text("Ar"),]),
+            onTap: () 
+             {
+                setState(() {
+                language = "strNameAr";
+                _initializeData();
+              });
+            },),//  // icon
+        
              const SizedBox(height:20),
             Row(children: const [
             Icon(Icons.flag_circle,color: Colors.red,),
@@ -234,8 +280,8 @@ class _HomePageState extends State<HomePage1> {
          var data = snapshot.data!;
          var items =  data.map((item) {
           return DropdownMenuItem(
-            value:  DropDownValue(item["intId"], item["strNameEn"]) ,
-            child: Text(item["strNameEn"]),
+            value:  DropDownValue(item["intId"], item[language]) ,
+            child: Text(item[language]),
           );
         }).toList();
 
@@ -298,7 +344,7 @@ class _HomePageState extends State<HomePage1> {
                 onPressed: () {
 
               
-                if(selectedImages.length<=3){
+                if(selectedImages.length<=2){
                 getImages();
                 }
                 else{
@@ -377,18 +423,6 @@ DropDownValue( this.intID, this.stringName);
 late int intID=0;
 late String stringName;
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

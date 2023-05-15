@@ -1,4 +1,4 @@
-// ignore_for_file: file_names, avoid_print, use_build_context_synchronously, unused_local_variable
+// ignore_for_file: file_names, avoid_print, use_build_context_synchronously, unused_local_variable, unused_import
 import 'dart:convert';
 
 import 'dart:io';
@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../Screens/starting_page.dart';
 
 late String token2;
 
@@ -47,7 +49,7 @@ class User {
 
        Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => const HomePage1(),
+          builder: (context) =>  firstPage(),
         ),
       );
 

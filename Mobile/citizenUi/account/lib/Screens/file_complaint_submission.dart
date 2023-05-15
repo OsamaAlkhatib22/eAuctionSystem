@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:geolocator_platform_interface/src/models/position.dart';
 import 'package:intl/intl.dart';
 import 'package:account/Screens/file_complaint.dart';
-import 'file_complaint.dart';
 
 
 
@@ -184,5 +183,4 @@ class _SubmissionPageState extends State<SubmissionPage> {
         
   }
 }
-
 
