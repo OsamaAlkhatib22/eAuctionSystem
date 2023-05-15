@@ -36,40 +36,8 @@ const RegistrationStepOne = ({
   const { handleSubmit } = methods;
   return (
     <FormProvider {...methods}>
-      <Stack spacing={2}>
-        <Stack direction="row" spacing={1}>
-          <FormTextField name="firstname" label="First Name" />
-          <FormTextField name="lastname" label="Last Name" />
-        </Stack>
-        <FormControl>
-          <FormLabel>Nationality</FormLabel>
-          <RadioGroup
-            row
-            value={selectedOption}
-            onChange={(event) => setSelectedOption(event.target.value)}
-          >
-            <FormControlLabel
-              value="Jordanian"
-              control={<Radio />}
-              label="Jordanian"
-            />
-            <FormControlLabel
-              value="Non-Jordanian"
-              control={<Radio />}
-              label="Non-Jordanian"
-            />
-          </RadioGroup>
-        </FormControl>
-        <FormTextField name="username" label="Username" />
-        <FormTextField name="password" label="Password" type="password" />
-        <FormTextField
-          name="confirmPassword"
-          label="Confirm Password"
-          type="password"
-        />
-      </Stack>
-      <Button
-        onClick={handleSubmit((data) => {
+      <form
+        onSubmit={handleSubmit((data) => {
           setRequest({
             ...request,
             strFirstName: data.firstname,
@@ -79,12 +47,48 @@ const RegistrationStepOne = ({
           });
           setStep(2);
         })}
-        color="primary"
-        variant="contained"
-        sx={{ borderRadius: "1rem" }}
       >
-        Next
-      </Button>
+        <Stack spacing={2}>
+          <Stack direction="row" spacing={1}>
+            <FormTextField name="firstname" label="First Name" />
+            <FormTextField name="lastname" label="Last Name" />
+          </Stack>
+          <FormControl>
+            <FormLabel>Nationality</FormLabel>
+            <RadioGroup
+              row
+              value={selectedOption}
+              onChange={(event) => setSelectedOption(event.target.value)}
+            >
+              <FormControlLabel
+                value="Jordanian"
+                control={<Radio />}
+                label="Jordanian"
+              />
+              <FormControlLabel
+                value="Non-Jordanian"
+                control={<Radio />}
+                label="Non-Jordanian"
+              />
+            </RadioGroup>
+          </FormControl>
+          <FormTextField name="username" label="Username" />
+          <FormTextField name="password" label="Password" type="password" />
+          <FormTextField
+            name="confirmPassword"
+            label="Confirm Password"
+            type="password"
+          />
+          <Button
+            type="submit"
+            color="primary"
+            variant="contained"
+            sx={{ borderRadius: "1rem" }}
+          >
+            Next
+          </Button>
+        </Stack>
+      </form>
     </FormProvider>
   );
 };

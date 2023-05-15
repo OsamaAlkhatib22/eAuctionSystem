@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 // Mui
 import {
@@ -12,225 +12,282 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  Stack,
+  Collapse,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import {
-  ChevronRightOutlined,
   SettingsOutlined,
   ChevronLeft,
   ChevronRight,
+  ExpandLess,
+  ExpandMore,
 } from "@mui/icons-material";
 
+// Third Party
+import PerfectScrollbar from "react-perfect-scrollbar";
+import "react-perfect-scrollbar/dist/css/styles.css";
+
 // Project Imports
-import { SideBarMenus } from "../Utils/SideBarMenus";
+import GetMenus from "../../../Routes/SideBarMenus";
 import { FlexBetween } from "../../../Components/FlexBetween";
 import { DrawerHeader, Drawer } from "../Utils/SideBarHelpers";
-import { IdentityHelper } from "../../../Utils/IdentityHelper";
 import CapitalizeFirstLetter from "../../../Utils/CapitalizeFirstLetter";
 
-const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, children }) => {
+const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, user, children }) => {
   const theme = useTheme();
-  const [active, setActive] = useState("");
   const navigate = useNavigate();
-  const user = IdentityHelper.UserData;
+  const location = useLocation();
+  const [active, setActive] = useState(location.pathname);
 
+  const SideBarMenus = GetMenus(user.userType);
   return (
     <Box sx={{ display: "flex" }}>
       <Drawer variant="permanent" open={isSidebarOpen}>
-        <DrawerHeader>
-          <FlexBetween gap="1.5rem">
-            <Typography variant="h4" fontWeight="bold">
-              Road Damage
-            </Typography>
-            <IconButton onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
-              {!isSidebarOpen ? <ChevronRight /> : <ChevronLeft />}
-            </IconButton>
-          </FlexBetween>
-        </DrawerHeader>
-        {/* SIDEBAR OPEN STATUS */}
-        {isSidebarOpen ? (
-          <>
-            <List>
-              {SideBarMenus.map(({ text, icon }) => {
-                if (!icon) {
+        <PerfectScrollbar>
+          <DrawerHeader>
+            <FlexBetween gap="1.5rem">
+              <Typography variant="h4" fontWeight="bold">
+                Road Damage
+              </Typography>
+              <IconButton onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+                {!isSidebarOpen ? <ChevronRight /> : <ChevronLeft />}
+              </IconButton>
+            </FlexBetween>
+          </DrawerHeader>
+          {/* SIDEBAR OPENED STATUS */}
+          {isSidebarOpen ? (
+            <Stack height="93%" justifyContent="space-between">
+              <List>
+                {SideBarMenus.map(({ text, path, icon, children }) => {
+                  if (!icon) {
+                    return (
+                      <React.Fragment key={text}>
+                        <Divider />
+                        <Typography
+                          variant="h4"
+                          fontWeight="regular"
+                          sx={{ m: "2.25rem 0 1rem 3rem" }}
+                        >
+                          {text}
+                        </Typography>
+                      </React.Fragment>
+                    );
+                  }
                   return (
-                    <React.Fragment key={text}>
-                      <Divider />
-                      <Typography
-                        variant="h4"
-                        fontWeight="regular"
-                        sx={{ m: "2.25rem 0 1rem 3rem" }}
-                      >
-                        {text}
-                      </Typography>
-                    </React.Fragment>
+                    <>
+                      <ListItem key={text} disablePadding>
+                        <ListItemButton
+                          onClick={() => {
+                            navigate(path);
+                            setActive(path);
+                          }}
+                          sx={{
+                            backgroundColor:
+                              active === path
+                                ? theme.palette.secondary.light
+                                : "transparent",
+                            color:
+                              active === path
+                                ? theme.palette.primary.main
+                                : theme.palette.secondary.main,
+                          }}
+                        >
+                          <ListItemIcon
+                            sx={{
+                              ml: "2rem",
+                              color:
+                                active === path
+                                  ? theme.palette.primary.main
+                                  : theme.palette.secondary.main,
+                            }}
+                          >
+                            {icon}
+                          </ListItemIcon>
+                          <ListItemText primary={text} key={text + "Text"} />
+                          {children &&
+                            (active === path ? <ExpandLess /> : <ExpandMore />)}
+                        </ListItemButton>
+                      </ListItem>
+                      {children && (
+                        <Collapse
+                          in={
+                            active === path ||
+                            children.some((child) => child.path === active)
+                          }
+                          timeout="auto"
+                          unmountOnExit
+                        >
+                          <List component="div" disablePadding>
+                            {children.map(({ text, path, icon }) => (
+                              <ListItemButton
+                                onClick={() => {
+                                  navigate(path);
+                                  setActive(path);
+                                }}
+                                sx={{
+                                  backgroundColor:
+                                    active === path
+                                      ? theme.palette.secondary.light
+                                      : "transparent",
+                                  color:
+                                    active === path
+                                      ? theme.palette.primary.main
+                                      : theme.palette.secondary.main,
+                                }}
+                              >
+                                <Stack
+                                  direction="row"
+                                  alignItems="center"
+                                  paddingLeft="2rem"
+                                >
+                                  <ListItemIcon
+                                    sx={{
+                                      ml: "2rem",
+                                      color:
+                                        active === path
+                                          ? theme.palette.primary.main
+                                          : theme.palette.secondary.main,
+                                    }}
+                                  >
+                                    {React.cloneElement(icon, {
+                                      fontSize: "small",
+                                    })}
+                                  </ListItemIcon>
+                                  <ListItemText
+                                    sx={{ marginLeft: "-1.25rem" }}
+                                    primaryTypographyProps={{
+                                      fontSize: "0.75rem",
+                                    }}
+                                    primary={text}
+                                    key={text + "Text"}
+                                  />
+                                </Stack>
+                              </ListItemButton>
+                            ))}
+                          </List>
+                        </Collapse>
+                      )}
+                    </>
                   );
-                }
-                const lcText = text.toLowerCase();
-
-                return (
-                  <ListItem key={text} disablePadding>
-                    <ListItemButton
-                      onClick={() => {
-                        navigate(`/auth/${lcText}`);
-                        setActive(lcText);
-                      }}
+                })}
+              </List>
+              <Box marginBottom="1rem">
+                <Divider variant="middle" />
+                <FlexBetween
+                  textTransform="none"
+                  gap="1rem"
+                  m="1.5rem 2rem 0 3rem"
+                >
+                  <Box textAlign="left">
+                    <Typography
+                      fontWeight="bold"
+                      fontSize="0.9rem"
+                      sx={{ color: theme.palette.secondary[100] }}
+                    >
+                      {CapitalizeFirstLetter(user.firstName) +
+                        " " +
+                        CapitalizeFirstLetter(user.lastName)}
+                    </Typography>
+                    <Typography
+                      fontSize="0.8rem"
+                      sx={{ color: theme.palette.primary.main }}
+                    >
+                      {CapitalizeFirstLetter(user.userType)}
+                    </Typography>
+                  </Box>
+                  <ListItemButton
+                    onClick={() => {
+                      navigate("/auth/account");
+                      setActive("/auth/account");
+                    }}
+                  >
+                    <ListItemIcon
                       sx={{
-                        backgroundColor:
-                          active === lcText
-                            ? theme.palette.secondary[300]
-                            : "transparent",
-                        color:
-                          active === lcText
-                            ? theme.palette.primary[600]
-                            : theme.palette.secondary[100],
+                        ml: "2rem",
+                        color: theme.palette.primary.main,
                       }}
                     >
-                      <ListItemIcon
+                      <SettingsOutlined />
+                    </ListItemIcon>
+                  </ListItemButton>
+                </FlexBetween>
+              </Box>
+            </Stack>
+          ) : (
+            <Stack height="93%" justifyContent="space-between">
+              <List>
+                {/* SIDEBAR ClOSED STATUS */}
+                {SideBarMenus.map(({ text, path, icon }) => {
+                  if (!icon) return <Divider key={text} />;
+
+                  return (
+                    <ListItem
+                      key={text}
+                      disablePadding
+                      sx={{ display: "block" }}
+                    >
+                      <ListItemButton
+                        onClick={() => {
+                          navigate(path);
+                          setActive(path);
+                        }}
                         sx={{
-                          ml: "2rem",
-                          color:
-                            active === lcText
-                              ? theme.palette.primary[600]
-                              : theme.palette.secondary[200],
+                          minHeight: 48,
+                          justifyContent: isSidebarOpen ? "initial" : "center",
+                          px: 2.5,
                         }}
                       >
-                        {icon}
-                      </ListItemIcon>
-                      <ListItemText primary={text} key={text + "Text"} />
-                      {active === lcText && (
-                        <ChevronRightOutlined sx={{ ml: "auto" }} />
-                      )}
-                    </ListItemButton>
-                  </ListItem>
-                );
-              })}
-            </List>
-            <Box width={"100%"} position="absolute" bottom="2rem">
-              <Divider variant="middle" />
-              <FlexBetween
-                textTransform="none"
-                gap="1rem"
-                m="1.5rem 2rem 0 3rem"
-              >
-                <Box textAlign="left">
-                  <Typography
-                    fontWeight="bold"
-                    fontSize="0.9rem"
-                    sx={{ color: theme.palette.secondary[100] }}
-                  >
-                    {CapitalizeFirstLetter(user.firstName) +
-                      " " +
-                      CapitalizeFirstLetter(user.lastName)}
-                  </Typography>
-                  <Typography
-                    fontSize="0.8rem"
-                    sx={{ color: theme.palette.secondary[200] }}
-                  >
-                    {CapitalizeFirstLetter(user.userType)}
-                  </Typography>
-                </Box>
+                        <ListItemIcon
+                          sx={{
+                            minWidth: 0,
+                            mr: isSidebarOpen ? 3 : "auto",
+                            justifyContent: "center",
+                            color:
+                              active === path
+                                ? theme.palette.primary.main
+                                : theme.palette.secondary.main,
+                          }}
+                        >
+                          {icon}
+                        </ListItemIcon>
+                      </ListItemButton>
+                    </ListItem>
+                  );
+                })}
+              </List>
+              <Box marginBottom="1rem">
+                <Divider variant="middle" />
                 <ListItemButton
                   onClick={() => {
-                    navigate("/account");
-                    setActive("account");
+                    navigate(`/auth/account`);
+                    setActive("/auth/account");
                   }}
                   sx={{
-                    backgroundColor:
-                      active === "account"
-                        ? theme.palette.secondary[300]
-                        : "transparent",
-                    color:
-                      active === "account"
-                        ? theme.palette.primary[600]
-                        : theme.palette.secondary[100],
+                    minHeight: 48,
+                    justifyContent: isSidebarOpen ? "initial" : "center",
+                    px: 2.5,
                   }}
                 >
                   <ListItemIcon
                     sx={{
-                      ml: "2rem",
+                      minWidth: 0,
+                      mr: isSidebarOpen ? 3 : "auto",
+                      justifyContent: "center",
                       color:
                         active === "account"
-                          ? theme.palette.primary[600]
-                          : theme.palette.secondary[200],
+                          ? theme.palette.primary.main
+                          : theme.palette.secondary.main,
                     }}
                   >
                     <SettingsOutlined />
                   </ListItemIcon>
                 </ListItemButton>
-              </FlexBetween>
-            </Box>
-          </>
-        ) : (
-          <>
-            <List>
-              {/* SIDEBAR OPEN STATUS */}
-              {SideBarMenus.map(({ text, icon }) => {
-                const lcText = text.toLowerCase();
-                if (!icon) return <Divider key={text} />;
-
-                return (
-                  <ListItem key={text} disablePadding sx={{ display: "block" }}>
-                    <ListItemButton
-                      onClick={() => {
-                        navigate(`/${lcText}`);
-                        setActive(lcText);
-                      }}
-                      sx={{
-                        minHeight: 48,
-                        justifyContent: isSidebarOpen ? "initial" : "center",
-                        px: 2.5,
-                      }}
-                    >
-                      <ListItemIcon
-                        sx={{
-                          minWidth: 0,
-                          mr: isSidebarOpen ? 3 : "auto",
-                          justifyContent: "center",
-                          color:
-                            active === lcText
-                              ? theme.palette.primary[600]
-                              : theme.palette.secondary[200],
-                        }}
-                      >
-                        {icon}
-                      </ListItemIcon>
-                    </ListItemButton>
-                  </ListItem>
-                );
-              })}
-            </List>
-            <Box width={"100%"} position="absolute" bottom="2rem">
-              <Divider variant="middle" />
-              <ListItemButton
-                onClick={() => {
-                  navigate(`/account`);
-                  setActive("account");
-                }}
-                sx={{
-                  minHeight: 48,
-                  justifyContent: isSidebarOpen ? "initial" : "center",
-                  px: 2.5,
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: isSidebarOpen ? 3 : "auto",
-                    justifyContent: "center",
-                    color:
-                      active === "account"
-                        ? theme.palette.primary[600]
-                        : theme.palette.secondary[200],
-                  }}
-                >
-                  <SettingsOutlined />
-                </ListItemIcon>
-              </ListItemButton>
-            </Box>
-          </>
-        )}
-        <Divider />
+              </Box>
+            </Stack>
+          )}
+          <Divider />
+        </PerfectScrollbar>
       </Drawer>
       <Box component="div" sx={{ flex: "1 1 auto" }}>
         {children}

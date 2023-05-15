@@ -4,6 +4,7 @@ import {
   Avatar,
   Chip,
   Typography,
+  Slider,
   useTheme,
 } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
@@ -64,7 +65,7 @@ const ComplaintsDataGrid = ({ AddComplaint, data }) => {
     },
     { field: "strComplaintTypeEn", headerName: "Type", flex: 1 },
     {
-      field: "priority",
+      field: "decPriority",
       headerName: "Priority",
       flex: 1,
       renderCell: (params) => (
@@ -75,19 +76,33 @@ const ComplaintsDataGrid = ({ AddComplaint, data }) => {
           gap="0.5rem"
         >
           <ArrowCircleUp />
-          {params.row.priority}
+          <Slider
+            sx={{
+              width: "8rem",
+              height: "0.7rem",
+              "& .MuiSlider-track": {
+                backgroundImage: `linear-gradient(90deg, ${theme.palette.primary.main} 0%,  ${theme.palette.secondary.main} 100%)`,
+              },
+              "& .MuiSlider-thumb": {
+                display: "none",
+              },
+            }}
+            defaultValue={params.row.decPriority * 100}
+            disabled
+          />
+          %{(params.row.decPriority * 100).toFixed(2)}
         </Typography>
       ),
     },
     { field: "dtmDateCreated", headerName: "Date Created", flex: 1 },
     {
-      field: "status",
+      field: "strStatus",
       headerName: "Status",
       flex: 1,
       renderCell: (params) => (
         <Chip
-          label={params.row.status}
-          color={StatusColor(params.row.status)}
+          label={params.row.strStatus}
+          color={StatusColor(params.row.strStatus)}
           variant="outlined"
           sx={{
             width: "7rem",
