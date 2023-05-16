@@ -19,6 +19,6 @@
         public int intPrivacyId { get; set; }
         public int intVotersCount { get; set; }
         public LatLng latLng { get; set; }
-        public Decimal decPriority { get; set; }
+        public decimal decPriority { get; set; }
     }
 }
