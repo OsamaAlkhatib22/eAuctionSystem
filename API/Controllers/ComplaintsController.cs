@@ -51,7 +51,9 @@ namespace API.Controllers
         }
 
         [HttpPost("CreateType")] // .../api/complaints/CreateType
-        public async Task<IActionResult> InsertComplaintType([FromForm] ComplaintTypeDTO complaintTypeDTO)
+        public async Task<IActionResult> InsertComplaintType(
+            [FromForm] ComplaintTypeDTO complaintTypeDTO
+        )
         {
             string authHeader = Request.Headers["Authorization"];
             JwtSecurityTokenHandler tokenHandler = new();
@@ -59,7 +61,23 @@ namespace API.Controllers
 
             complaintTypeDTO.strUserName = jwtToken.Claims.First(c => c.Type == "username").Value;
 
-            return HandleResult(await Mediator.Send(new InsertComplaintTypeCommand(complaintTypeDTO)));
+            return HandleResult(
+                await Mediator.Send(new InsertComplaintTypeCommand(complaintTypeDTO))
+            );
+        }
+
+        [HttpPost("vote/{intComplaintId}")] // .../api/complaints/vote
+        public async Task<IActionResult> InsertVote(int intComplaintId)
+        {
+            string authHeader = Request.Headers["Authorization"];
+            JwtSecurityTokenHandler tokenHandler = new();
+            JwtSecurityToken jwtToken = tokenHandler.ReadJwtToken(authHeader[7..]);
+
+            string strUserName = jwtToken.Claims.First(c => c.Type == "username").Value;
+
+            return HandleResult(
+                await Mediator.Send(new InsertVoteCommand(intComplaintId, strUserName))
+            );
         }
     }
 }
