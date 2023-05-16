@@ -23,7 +23,7 @@ namespace API.Controllers
             return HandleResult(await Mediator.Send(new InsertProfessionCommand(professionDTO)));
         }
 
-        [HttpGet] // .../api/complaints
+        [HttpGet] // .../api/professions
         public async Task<IActionResult> GetProfessionsList()
         {
             return HandleResult(await Mediator.Send(new GetProfessionsListQuery()));
