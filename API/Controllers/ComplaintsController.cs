@@ -3,6 +3,7 @@ using Application;
 using Domain.ClientDTOs.Complaint;
 using System.IdentityModel.Tokens.Jwt;
 using Application.Queries.Complaints;
+using Domain.Helpers;
 
 namespace API.Controllers
 {
@@ -21,9 +22,9 @@ namespace API.Controllers
         }
 
         [HttpGet("location")] // .../api/complaints/location
-        public async Task<IActionResult> GetComplaintsByLocation()
+        public async Task<IActionResult> GetComplaintsByLocation(LatLng latLng)
         {
-            return HandleResult(await Mediator.Send(new GetComplaintsBtLocationQuery()));
+            return HandleResult(await Mediator.Send(new GetComplaintsBtLocationQuery(latLng)));
         }
 
         [HttpPost] // .../api/complaints
