@@ -2,17 +2,18 @@
 
 import 'dart:convert';
 import 'dart:io';
-import 'package:account/API/sign_in_up_request.dart';
 import 'package:http/http.dart' as http;
 
-class Complaint {
+import 'login_request.dart';
 
+class Complaint {
   Future<void> fileComplaint(
     int intTypeId,
-    List<File> lstMedia,
+    int intPrivacyId,
+    List<MediaFile> lstMedia,
+    String strComment,
     double decLat,
     double decLng,
-    String strComment,
   ) async {
     try {
       final request = http.MultipartRequest(
@@ -26,22 +27,23 @@ class Complaint {
 
       // Add the request fields
       request.fields['intTypeId'] = intTypeId.toString();
-      request.fields['decLat'] = decLat.toString();
-      request.fields['decLng'] = decLng.toString();
+      request.fields['intPrivacyId'] = intPrivacyId.toString();
       request.fields['strComment'] = strComment;
 
       // Add the files
-      for (var i = 0; i < lstMedia.length; i++) {
-        var file = lstMedia[i];
-        var stream = http.ByteStream(file.openRead());
-        var length = await file.length();
+      for (var mediaFile in lstMedia) {
+        var stream = http.ByteStream(mediaFile.file.openRead());
+        var length = await mediaFile.file.length();
         var multipartFile = http.MultipartFile(
           'lstMedia',
           stream,
           length,
-          filename: file.path.split('/').last,
+          filename: mediaFile.file.path.split('/').last,
         );
         request.files.add(multipartFile);
+        request.fields['decLat'] = mediaFile.decLat.toString();
+        request.fields['decLng'] = mediaFile.decLng.toString();
+        request.fields['blnIsVideo'] = mediaFile.blnIsVideo.toString();
       }
 
       // Send the request
@@ -67,4 +69,13 @@ class Complaint {
       print('Error: $e');
     }
   }
+}
+
+class MediaFile {
+  final File file;
+  final double decLat;
+  final double decLng;
+  final bool blnIsVideo;
+
+  MediaFile(this.file, this.decLat, this.decLng, this.blnIsVideo);
 }
