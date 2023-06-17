@@ -1,5 +1,6 @@
 // ignore_for_file: constant_identifier_names, unused_element, unnecessary_null_comparison, prefer_const_constructors, unused_local_variable, depend_on_referenced_packages
 
+import 'package:account/Screens/register.dart';
 import 'package:account/Screens/register1.dart';
 import 'package:flutter/material.dart';
 import 'package:adobe_xd/pinned.dart';
@@ -31,13 +32,13 @@ class XDRegister4 extends StatelessWidget {
                 InkWell(
                   onTap: () {
                     
-                    if(_emailController!=null && _usernameCon !=null && _passwordCon!=null && _passConfirm !=null){
-                    if(flag1==false && flag2==false&& flag3==false && flag4==false){
+                    // if(_emailController!=null && _usernameCon !=null && _passwordCon!=null && _passConfirm !=null){
+                    // if(flag1==false && flag2==false&& flag3==false && flag4==false){
                       UserSignup user=UserSignup();
-                    // user.signup(_usernameCon.text,_passwordCon.text,_emailController.text,PhoneController.text,FnameController.text,LnameController.text,NationalNumController.text,registrationNumberConcat,IDNumbberController.text);
-                     Navigator.push(context,MaterialPageRoute(builder: (context) => XDLogin()),);
-                    }
-                    }
+                     user.signup(_usernameCon.text,_passwordCon.text,_emailController.text,PhoneController.text,FnameController.text,LnameController.text,NationalNumController.text,registrationNumberConcat,IDNumbberController.text,passwordController.text,context);
+                    
+                    
+                    
                   },
              
               child: Stack(

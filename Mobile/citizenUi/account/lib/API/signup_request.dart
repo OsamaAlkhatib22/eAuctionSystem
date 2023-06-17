@@ -3,8 +3,11 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
+
+import '../Screens/login.dart';
 
 
 class UserSignup{
@@ -12,7 +15,7 @@ class UserSignup{
 
 void signup(String username,String phone,String password,
 String firstName,String lastName,String email,String  nationalId,String passportNumber,
-String registrationNumber,String nationalIdNumber) async {
+String registrationNumber,String nationalIdNumber,BuildContext context) async {
 
   print(username + phone  + password + email +nationalId + firstName + lastName +nationalIdNumber  );
 
@@ -33,15 +36,15 @@ String registrationNumber,String nationalIdNumber) async {
         body:jsonEncode({
         
         "strUsername": username,
-        "strPhonenumber": phone,
+        "strPhonenumber": "0795820003",
         "strPassword": password,
-        "strFirstName": firstName,
+        "strFirstName": "ruba",
         "strLastName": lastName,
-        "strEmail": email,
+        "strEmail": "rubaabu@yahoo.com",
         "strNationalId": nationalId,
         "strPassportNumber": passportNumber,
         "strRegistrationNumber": registrationNumber,
-        "strNationalIdNumber": nationalIdNumber,
+        "strNationalIdNumber": "BBB00000",
         }),
       
       );
@@ -58,6 +61,7 @@ String registrationNumber,String nationalIdNumber) async {
     var fName = jsonResponse['strFirstName'];
     var lName = jsonResponse['strLastName'];
     print('Signup successful. Welcome, $fName $lName!');
+     Navigator.push(context,MaterialPageRoute(builder: (context) => XDLogin()),);
 
   } else {
     print('Signup failed. Status code: ${response.statusCode}');
