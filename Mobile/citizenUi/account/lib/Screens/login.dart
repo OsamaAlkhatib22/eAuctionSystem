@@ -59,8 +59,8 @@ class _XDLoginState extends State<XDLogin> {
             child: Stack(
               children: <Widget>[
                 Pinned.fromPins(
-                Pin(size: 130.0, start: 33.0),
-                Pin(start: 175.0, end: 15.0),
+                Pin(size: 130.0, start: 40.0),
+                Pin(start: 175.0, end: 10.0),
                 
                   child: const Text(
                     'Remember me',
@@ -73,7 +73,7 @@ class _XDLoginState extends State<XDLogin> {
                 ),
                 Pinned.fromPins(
                   Pin(size: 15.0, start: 0.0),
-                  Pin(size: 15.0, end: 2.0),
+                  Pin(size: 15.0, end: 10.0),
                   child: SvgPicture.string(
                     _svg_t3ffj,
                     allowDrawingOutsideViewBox: true,
