@@ -1,15 +1,104 @@
-// ignore_for_file: constant_identifier_names, depend_on_referenced_packages
+// ignore_for_file: constant_identifier_names, depend_on_referenced_packages, unnecessary_null_comparison
+
+import 'dart:io';
 
 import 'package:account/Screens/public_feed.dart';
 import 'package:flutter/material.dart';
 import 'package:adobe_xd/pinned.dart';
 import 'package:adobe_xd/page_link.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 
-class XDComplaints2 extends StatelessWidget {
-  const XDComplaints2({
-    Key? key,
-  }) : super(key: key);
+import 'complaints1.dart';
+
+class XDComplaints2 extends StatefulWidget {
+  const XDComplaints2({super.key});
+
+ 
+  @override
+   _XDComplaints2State createState() => _XDComplaints2State();
+
+ }
+ class _XDComplaints2State extends State<XDComplaints2> {
+
+
+@override
+void initState() {
+   WidgetsBinding.instance.addPostFrameCallback((_) {
+    _getCurrentPosition();
+  });
+  super.initState();
+ 
+}
+
+
+  String? currentAddress=" ";
+  Position? _currentPosition;
+
+  Future<bool> _handleLocationPermission() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              'Location services are disabled. Please enable the services')));
+      return false;
+    }
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        // ignore: use_build_context_synchronously
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Location permissions are denied')));
+        return false;
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              'Location permissions are permanently denied, we cannot request permissions.')));
+      return false;
+    }
+    return true;
+  }
+
+  Future<void> _getCurrentPosition() async {
+
+   
+    final hasPermission = await _handleLocationPermission();
+
+    if (!hasPermission) return;
+    await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
+        .then((Position position) {
+      setState(() => _currentPosition = position);
+      _getAddressFromLatLng(_currentPosition!);
+    }).catchError((e) {
+      debugPrint(e);
+    });
+    
+  }
+
+  Future<void> _getAddressFromLatLng(Position position) async {
+    await placemarkFromCoordinates(
+            _currentPosition!.latitude, _currentPosition!.longitude)
+        .then((List<Placemark> placemarks) {
+      Placemark place = placemarks[0];
+      setState(() {
+        currentAddress =
+            '${place.street}, ${place.subLocality}, ${place.subAdministrativeArea}, ${place.postalCode}';
+      });
+    }).catchError((e) {
+      debugPrint(e);
+    });
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,7 +129,7 @@ class XDComplaints2 extends StatelessWidget {
                   alignment: Alignment(1.0, 0.509),
                   child: SizedBox(
                     width: 144.0,
-                    height: 21.0,
+                    height: 40.0,
                     child: Text(
                       'Complaint',
                       style: TextStyle(
@@ -52,17 +141,12 @@ class XDComplaints2 extends StatelessWidget {
                   ),
                 ),
                 Pinned.fromPins(
-                  Pin(size: 34.0, start: 6.0),
-                  Pin(size: 34.0, end: 0.0),
+                  Pin(size: 20.0, start: 10.0),
+                  Pin(size: 40.0, end: 20.0),
                   child:
                       // Adobe XD layer: 'report' (shape)
-                      Container(
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage(''),
-                        fit: BoxFit.fill,
-                      ),
-                    ),
+                      Container( child:
+                    Icon(Icons.report_gmailerrorred_outlined,color:Color(0xff2a0340)),
                   ),
                 ),
               ],
@@ -70,18 +154,37 @@ class XDComplaints2 extends StatelessWidget {
           ),
           Pinned.fromPins(
             Pin(start: 23.0, end: 23.0),
-            Pin(size: 167.3, middle: 0.6954),
+            Pin(size: 110.3, middle: 0.6700),
             child: Stack(
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0.0, 24.0, 0.0, 0.0),
-                  child: SizedBox.expand(
-                      child: SvgPicture.string(
-                    _svg_bs1q1u,
-                    allowDrawingOutsideViewBox: true,
-                    fit: BoxFit.fill,
-                  )),
-                ),
+               Padding(
+  padding: const EdgeInsets.fromLTRB(0.0, 24.0, 0.0, 0.0),
+  child: Stack(
+    children: [
+      SizedBox.expand(
+        child: SvgPicture.string(
+          _svg_bs1q1u,
+          allowDrawingOutsideViewBox: true,
+          fit: BoxFit.fill,
+        ),
+      ),
+      Positioned.fill(
+        child: Align(
+          alignment: Alignment.center,
+          child: Text(
+            'Hello',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+        ),
+      ),
+    ],
+  ),
+)
+,
                 Pinned.fromPins(
                   Pin(size: 87.0, start: 3.0),
                   Pin(size: 21.0, start: 0.0),
@@ -99,9 +202,9 @@ class XDComplaints2 extends StatelessWidget {
           ),
           Pinned.fromPins(
             Pin(start: 63.0, end: 62.0),
-            Pin(size: 71.0, end: 60.0),
+            Pin(size: 71.0, end: 20.0),
             child:
-                // Adobe XD layer: 'Login Button' (group)
+                // Adobe XD layer: 'submit Button' (group)
                 PageLink(
               links: [
                 PageLinkInfo(
@@ -111,7 +214,7 @@ class XDComplaints2 extends StatelessWidget {
               ],
               child: Stack(
                 children: <Widget>[
-                  // Adobe XD layer: 'Login' (shape)
+                  // Adobe XD layer: 'sbumut' (shape)
                   Container(
                     decoration: BoxDecoration(
                       color: const Color(0xff2a0340),
@@ -139,7 +242,7 @@ class XDComplaints2 extends StatelessWidget {
           ),
           Pinned.fromPins(
             Pin(start: -61.4, end: -147.3),
-            Pin(size: 511.3, start: -88.2),
+            Pin(size: 350.3, start: -88.2),
             child:
                 // Adobe XD layer: 'Action Bar' (group)
                 Stack(
@@ -174,115 +277,10 @@ class XDComplaints2 extends StatelessWidget {
               ],
             ),
           ),
-          Pinned.fromPins(
-            Pin(start: -12.0, end: -8.0),
-            Pin(size: 44.0, start: -5.0),
-            child:
-                // Adobe XD layer: 'iPhone X/Status Bar…' (group)
-                Stack(
-              children: <Widget>[
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: SizedBox(
-                    width: 450.0,
-                    height: 44.0,
-                    child:
-                        // Adobe XD layer: 'iPhone X/Status Bar…' (group)
-                        Stack(
-                      children: <Widget>[
-                        // Adobe XD layer: 'Rectangle' (shape)
-                        Container(
-                          decoration: const BoxDecoration(),
-                        ),
-                        Pinned.fromPins(
-                          Pin(size: 31.0, end: 26.0),
-                          Pin(size: 11.3, start: 23.3),
-                          child:
-                              // Adobe XD layer: 'Battery' (group)
-                              Stack(
-                            children: <Widget>[
-                              // Adobe XD layer: 'Border' (shape)
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: const Color(0x59ffffff),
-                                  borderRadius: BorderRadius.circular(2.67),
-                                ),
-                                margin: const EdgeInsets.fromLTRB(0.0, 0.0, 2.3, 0.0),
-                              ),
-                              Align(
-                                alignment: Alignment.centerRight,
-                                child: SizedBox(
-                                  width: 1.0,
-                                  height: 4.0,
-                                  child:
-                                      // Adobe XD layer: 'Cap' (shape)
-                                      SvgPicture.string(
-                                    _svg_nrpqt7,
-                                    allowDrawingOutsideViewBox: true,
-                                  ),
-                                ),
-                              ),
-                              Pinned.fromPins(
-                                Pin(size: 18.0, start: 2.0),
-                                Pin(start: 2.0, end: 2.0),
-                                child:
-                                    // Adobe XD layer: 'Capacity' (shape)
-                                    Container(
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xffffffff),
-                                    borderRadius: BorderRadius.circular(1.33),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Pinned.fromPins(
-                          Pin(size: 41.0, middle: 0.1174),
-                          Pin(size: 21.0, start: 17.0),
-                          child: const Text(
-                            '12:50',
-                            style: TextStyle(
-                              fontFamily: 'Segoe UI',
-                              fontSize: 16,
-                              color: Color(0xffffffff),
-                              fontWeight: FontWeight.w700,
-                            ),
-                            softWrap: false,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Pinned.fromPins(
-                  Pin(size: 15.3, end: 62.0),
-                  Pin(size: 11.0, start: 23.2),
-                  child:
-                      // Adobe XD layer: 'Wifi' (shape)
-                      SvgPicture.string(
-                    _svg_pmvna3,
-                    allowDrawingOutsideViewBox: true,
-                    fit: BoxFit.fill,
-                  ),
-                ),
-                Pinned.fromPins(
-                  Pin(size: 17.0, end: 82.3),
-                  Pin(size: 10.7, start: 23.5),
-                  child:
-                      // Adobe XD layer: 'Cellular Connection' (shape)
-                      SvgPicture.string(
-                    _svg_anq0p,
-                    allowDrawingOutsideViewBox: true,
-                    fit: BoxFit.fill,
-                  ),
-                ),
-              ],
-            ),
-          ),
+         
           Pinned.fromPins(
             Pin(size: 142.0, start: 34.0),
-            Pin(size: 68.0, middle: 0.8194),
+            Pin(size: 68.0, middle: 0.8300),
             child:
                 // Adobe XD layer: 'Type of Complaint' (group)
                 Stack(
@@ -300,10 +298,10 @@ class XDComplaints2 extends StatelessWidget {
                   ),
                 ),
                 Pinned.fromPins(
-                  Pin(size: 86.0, end: 7.0),
-                  Pin(size: 21.0, end: 7.0),
-                  child: const Text(
-                    'Location',
+                  Pin(size: 220.0, end: 30.0),
+                  Pin(size: 45.0, start: 60.0),
+                  child:  Text(
+                    currentAddress!,
                     style: TextStyle(
                       fontFamily: 'Poppins',
                       fontSize: 15,
@@ -312,33 +310,41 @@ class XDComplaints2 extends StatelessWidget {
                   ),
                 ),
                 Pinned.fromPins(
-                  Pin(size: 34.0, start: 6.0),
-                  Pin(size: 34.0, end: 0.0),
+                  Pin(size: 10.0, start: -2.0),
+                  Pin(size: 50.0, end: 0.0),
                   child:
                       // Adobe XD layer: 'location' (shape)
-                      Container(
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage(''),
-                        fit: BoxFit.fill,
-                      ),
-                    ),
+                      Container(child:
+                   Icon(Icons.location_on,color: Color((0xff2a0340)),
+                     
+                   ),
                   ),
                 ),
               ],
             ),
           ),
+         
           Pinned.fromPins(
             Pin(size: 21.9, start: 23.0),
             Pin(size: 36.6, start: 49.1),
             child:
+              
+                // Adobe XD layer: 'BackIcon' (shape)
+                PageLink(
+              links: [
+                PageLinkInfo(
+                  duration: 0,
+                  pageBuilder: () => XDPublicFeed1(),
+                ),
+              ],
+              child:
                 // Adobe XD layer: 'BackIcon' (shape)
                 SvgPicture.string(
               _svg_u5a7dw,
               allowDrawingOutsideViewBox: true,
               fit: BoxFit.fill,
             ),
-          ),
+          )),
           Pinned.fromPins(
             Pin(size: 287.0, end: 62.0),
             Pin(size: 288.0, start: 39.0),
@@ -346,27 +352,30 @@ class XDComplaints2 extends StatelessWidget {
                 // Adobe XD layer: 'photo' (shape)
                 Container(
               decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(''),
-                  fit: BoxFit.fill,
-                ),
+                
               ),
             ),
           ),
           Align(
-            alignment: const Alignment(-0.316, -0.293),
+            alignment: const Alignment(-0.500, -0.800),
             child:
                 // Adobe XD layer: 'photo' (shape)
-                Container(
-              width: 47.0,
-              height: 47.0,
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(''),
-                  fit: BoxFit.fill,
+               Wrap(
+        spacing: 13, 
+        children: [
+          if (selectedImages != null)
+            ...selectedImages.map((imageone) {
+              return Container(
+                width:80,
+                height: 80,
+                child: Image.file(
+                  File(imageone.path),
+                  fit: BoxFit.cover,
                 ),
-              ),
-            ),
+              );
+            }).toList(),
+        ],
+      ),
           ),
           Align(
             alignment: const Alignment(-0.005, -0.294),
@@ -376,10 +385,7 @@ class XDComplaints2 extends StatelessWidget {
               width: 48.0,
               height: 48.0,
               decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(''),
-                  fit: BoxFit.fill,
-                ),
+                
               ),
             ),
           ),
@@ -391,10 +397,7 @@ class XDComplaints2 extends StatelessWidget {
               width: 50.0,
               height: 50.0,
               decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(''),
-                  fit: BoxFit.fill,
-                ),
+              
               ),
             ),
           ),
@@ -402,6 +405,17 @@ class XDComplaints2 extends StatelessWidget {
       ),
     );
   }
+
+
+
+
+
+
+
+
+
+
+
 }
 
 const String _svg_bs1q1u =

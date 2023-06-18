@@ -1,45 +1,155 @@
-// ignore_for_file: depend_on_referenced_packages, constant_identifier_names, unused_element
+// ignore_for_file: depend_on_referenced_packages, constant_identifier_names, unused_element, unnecessary_null_comparison, library_private_types_in_public_api
 
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:account/Screens/public_feed.dart';
 import 'package:flutter/material.dart';
 import 'package:adobe_xd/pinned.dart';
 import 'package:adobe_xd/page_link.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
+import 'package:image_picker/image_picker.dart';
+import '../API/login_request.dart';
 import 'complaints2.dart';
+import 'package:http/http.dart' as http;
+  List<File> selectedImages = [];
+  late DropDownValue dropdown=DropDownValue(1, "");
+  TextEditingController commentController = TextEditingController();
 
-class XDComplaints1 extends StatelessWidget {
-  const XDComplaints1({
-    Key? key,
-  }) : super(key: key);
+class XDComplaints1 extends StatefulWidget {
+  const XDComplaints1({super.key});
+
+ 
+  @override
+   _XDComplaints1State createState() => _XDComplaints1State();
+
+ }
+ class _XDComplaints1State extends State<XDComplaints1> {
+
+  final _picker = ImagePicker();
+
+  //drop down List
+
+  late int intType;
+  List<DropDownValue> items = [];
+  late Future<List<Map<String, dynamic>>>_futureData;
+  String language="strNameAr";
+
+
+@override
+void initState() {
+   WidgetsBinding.instance.addPostFrameCallback((_) {
+    getImages(context);
+  });
+  super.initState();
+    _futureData=getAllCategory();
+   _initializeData();
+ 
+}
+
+  void _initializeData() async {
+  final data = await getAllCategory();
+  setState(() {
+    items = data.map((item) => DropDownValue(item["intId"], item[language])).toList();
+    dropdown = items[0];
+  });
+}
+
+
+//fetch classification
+ Future<List<Map<String, dynamic>>> getAllCategory() async {
+   
+   
+  var baseUrl = "https://10.0.2.2:5000/api/complaints/types";
+  http.Response response = await http.get(Uri.parse(baseUrl),
+   headers: {
+          'Authorization': 'Bearer $token2',
+        }
+  );
+
+
+  if (response.statusCode == 200) {
+    var jsonData = json.decode(response.body) as List;
+    return jsonData.map((element) => {
+      "intId": element["intId"],
+      "strNameAr": element["strNameAr"],
+      "strNameEn": element["strNameEn"]
+    }).toList();
+  } else {
+    throw response.statusCode;
+  }
+}
+
+
+Future<void> getImages(BuildContext context) async {
+  final pickedFile = await _picker.pickImage(source: ImageSource.camera, imageQuality: 50);
+
+  if (pickedFile != null) {
+    selectedImages.add(File(pickedFile.path));
+    setState(() {});
+    print(selectedImages.length);
+  } else {
+    Navigator.pop(context,MaterialPageRoute(builder: (context) =>  XDPublicFeed1()));
+    // ScaffoldMessenger.of(context).showSnackBar(
+    //   const SnackBar(content: Text('Nothing is selected')),);
+    
+  }
+}
+
+
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
+      
       backgroundColor: const Color(0xffffffff),
       body: Stack(
         children: <Widget>[
           Pinned.fromPins(
+            //plus sign
             Pin(start: 23.0, end: 23.0),
-            Pin(size: 90.0, middle: 0.5107),
+            Pin(size: 90.0, middle: 0.5650),
             child: Stack(
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0.0, 24.0, 0.0, 0.0),
-                  child: SizedBox.expand(
-                      child: SvgPicture.string(
-                    _svg_heebsv,
-                    allowDrawingOutsideViewBox: true,
-                    fit: BoxFit.fill,
-                  )),
-                ),
-                Pinned.fromPins(
-                  Pin(size: 1.0, start: 51.5),
-                  Pin(size: 65.0, end: 0.5),
-                  child: SvgPicture.string(
-                    _svg_mvbn2e,
-                    allowDrawingOutsideViewBox: true,
-                    fit: BoxFit.fill,
-                  ),
-                ),
+
+            // DropdownButton(),
+                 FutureBuilder<List<Map<String, dynamic>>>(
+          //move getAllCategory on page load
+           future: _futureData,
+          builder: (context, snapshot) {
+          if (snapshot.hasData) {
+         var data = snapshot.data!;
+         var items =  data.map((item) {
+          return DropdownMenuItem(
+            value:  DropDownValue(item["intId"], item[language]) ,
+            child: Text(item[language]),
+          );
+        }).toList();
+
+      
+      // dropdown=items[0].value!;
+       dropdown=items[dropdown.intID-1].value!;
+
+         return DropdownButton(
+       
+        value:dropdown ,
+        icon: const Icon(Icons.keyboard_arrow_down),
+        items:items,
+        onChanged: (newValue) {
+          setState(() {
+            dropdown= newValue!;
+            print(dropdown.intID );
+            print(dropdown.stringName );
+           
+          });
+        },
+
+      );
+    } else {
+      return const CircularProgressIndicator();
+    }
+  },
+),
                 Pinned.fromPins(
                   Pin(size: 144.0, start: 3.0),
                   Pin(size: 21.0, start: 0.0),
@@ -52,46 +162,51 @@ class XDComplaints1 extends StatelessWidget {
                     ),
                   ),
                 ),
-                Pinned.fromPins(
-                  Pin(size: 34.0, start: 9.0),
-                  Pin(size: 34.0, middle: 0.7143),
-                  child:
-                      // Adobe XD layer: 'report' (shape)
-                      Container(
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage(''),
-                        fit: BoxFit.fill,
-                      ),
-                    ),
-                  ),
-                ),
-                Pinned.fromPins(
-                  Pin(size: 27.0, end: 22.0),
-                  Pin(size: 14.0, middle: 0.6579),
-                  child: SvgPicture.string(
-                    _svg_sp2zzo,
-                    allowDrawingOutsideViewBox: true,
-                    fit: BoxFit.fill,
-                  ),
-                ),
+                
+                
               ],
             ),
           ),
           Pinned.fromPins(
             Pin(start: 23.0, end: 23.0),
-            Pin(size: 167.3, middle: 0.6954),
+            Pin(size: 167.3, middle: 0.8800),
             child: Stack(
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0.0, 24.0, 0.0, 0.0),
-                  child: SizedBox.expand(
-                      child: SvgPicture.string(
-                    _svg_bs1q1u,
-                    allowDrawingOutsideViewBox: true,
-                    fit: BoxFit.fill,
-                  )),
+               Padding(
+                padding: const EdgeInsets.fromLTRB(0.0, 24.0, 0.0, 0.0),child:
+                TextFormField( 
+                
+                 controller: commentController,
+              
+                decoration: InputDecoration(
+                filled: true,
+               fillColor: Colors.white,
+               contentPadding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
+               border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+             borderSide: BorderSide(
+             width: 1,
+             color: Color(0xff6f407d),
+             ),
+            ),
+           enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(6),
+          borderSide: BorderSide(
+        width: 1,
+        color:  Color(0xff6f407d),
+         ),
+        ),
+       focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(6),
+      borderSide: const BorderSide(
+        width: 1,
+        color: Color(0xff6f407d),
+      ),
+    ),
+  )
+),
                 ),
+
                 Pinned.fromPins(
                   Pin(size: 87.0, start: 3.0),
                   Pin(size: 21.0, start: 0.0),
@@ -109,19 +224,19 @@ class XDComplaints1 extends StatelessWidget {
           ),
           Pinned.fromPins(
             Pin(start: 63.0, end: 62.0),
-            Pin(size: 71.0, end: 66.0),
+            Pin(size: 71.0, end: 20.0),
             child:
-                // Adobe XD layer: 'Login Button' (group)
-                PageLink(
-              links: [
-                PageLinkInfo(
-                  duration: 0,
-                  pageBuilder: () => XDComplaints2(),
-                ),
-              ],
+                // Adobe XD layer: 'Next Button' (group)
+                InkWell(
+              
+                onTap:(){
+                Navigator.push(context,MaterialPageRoute(builder: (context) => XDComplaints2()),);
+                },
+                
+              
               child: Stack(
                 children: <Widget>[
-                  // Adobe XD layer: 'Login' (shape)
+                  // Adobe XD layer: 'Next' (shape)
                   Container(
                     decoration: BoxDecoration(
                       color: const Color(0xff2a0340),
@@ -143,13 +258,14 @@ class XDComplaints1 extends StatelessWidget {
                       ),
                     ),
                   ),
-                ],
+              ],
               ),
             ),
           ),
+          //purple container
           Pinned.fromPins(
             Pin(start: -63.4, end: -145.3),
-            Pin(size: 511.3, start: -91.2),
+            Pin(size: 400.3, start: -91.2),
             child:
                 // Adobe XD layer: 'Action Bar' (group)
                 Stack(
@@ -182,77 +298,82 @@ class XDComplaints1 extends StatelessWidget {
                   ),
                 ),
                 Pinned.fromPins(
-                  Pin(size: 33.6, middle: 0.5477),
-                  Pin(size: 31.3, end: 64.8),
+                  Pin(size: 33.6, middle: 0.6200),
+                  Pin(size: 31.3, end: 55.8),
                   child:
-                      // Adobe XD layer: 'FillComplaintIcon' (group)
-                      Stack(
-                    children: <Widget>[
-                      Pinned.fromPins(
-                        Pin(size: 1.0, middle: 0.5153),
-                        Pin(start: 0.0, end: 0.0),
-                        child: SvgPicture.string(
-                          _svg_xph1jx,
-                          allowDrawingOutsideViewBox: true,
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                      Pinned.fromPins(
-                        Pin(start: 0.0, end: 0.0),
-                        Pin(size: 1.0, middle: 0.5165),
-                        child: SvgPicture.string(
-                          _svg_o6ekv6,
-                          allowDrawingOutsideViewBox: true,
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                    ],
-                  ),
+                  InkWell(
+                  child:  Icon(Icons.add,
+                    color: Colors.white,
+                    size: 45,),
+
+                    onTap: () {
+                      if(selectedImages.length<=2){
+                        getImages(context);
+                      }
+                     else{
+                      ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('you can only 3 images capture')));
+
+                }
+                    },
+
+                  )
+                    // Adobe XD layer: 'FillComplaintIcon' (group)
+                   
                 ),
               ],
             ),
           ),
           
-          Pinned.fromPins(
-            Pin(size: 287.0, middle: 0.5385),
-            Pin(size: 288.0, start: 39.0),
-            child:
-                // Adobe XD layer: 'photo' (shape)
-                Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(''),
-                  fit: BoxFit.fill,
-                ),
-              ),
-            ),
-          ),
+          
           Pinned.fromPins(
             Pin(size: 21.9, start: 23.0),
             Pin(size: 36.6, start: 49.1),
             child:
+              
+                // Adobe XD layer: 'BackIcon' (shape)
+                PageLink(
+              links: [
+                PageLinkInfo(
+                  duration: 0,
+                  pageBuilder: () => XDPublicFeed1(),
+                ),
+              ],
+              child:
                 // Adobe XD layer: 'BackIcon' (shape)
                 SvgPicture.string(
               _svg_u5a7dw,
               allowDrawingOutsideViewBox: true,
               fit: BoxFit.fill,
             ),
-          ),
-          Align(
-            alignment: const Alignment(-0.561, -0.286),
-            child:
-                // Adobe XD layer: 'photo' (shape)
-                Container(
-              width: 47.0,
-              height: 47.0,
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(''),
-                  fit: BoxFit.fill,
+          )),
+         
+      Align(
+  alignment: const Alignment(-0.561, -0.286),
+  child: Column(
+    children: [
+      SizedBox(height: 120),
+      Wrap(
+        spacing: 13, 
+        children: [
+          if (selectedImages != null)
+            ...selectedImages.map((imageone) {
+              return Container(
+                width:80,
+                height: 80,
+                child: Image.file(
+                  File(imageone.path),
+                  fit: BoxFit.cover,
                 ),
-              ),
-            ),
-          ),
+              );
+            }).toList(),
+        ],
+      ),
+    ],
+  ),
+),
+
+
           Align(
             alignment: const Alignment(-0.251, -0.287),
             child:
@@ -261,10 +382,7 @@ class XDComplaints1 extends StatelessWidget {
               width: 48.0,
               height: 48.0,
               decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(''),
-                  fit: BoxFit.fill,
-                ),
+               
               ),
             ),
           ),
@@ -276,27 +394,11 @@ class XDComplaints1 extends StatelessWidget {
               width: 50.0,
               height: 50.0,
               decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(''),
-                  fit: BoxFit.fill,
-                ),
+                
               ),
             ),
           ),
-          Pinned.fromPins(
-            Pin(size: 23.0, end: 23.0),
-            Pin(size: 23.0, start: 49.0),
-            child:
-                // Adobe XD layer: 'bin' (shape)
-                Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(''),
-                  fit: BoxFit.fill,
-                ),
-              ),
-            ),
-          ),
+         
         ],
       ),
     );
@@ -329,3 +431,12 @@ const String _svg_anq0p =
     '<svg viewBox="370.0 18.5 17.0 10.7" ><path transform="translate(370.0, 18.48)" d="M 16.00020027160645 10.6668004989624 L 15.00029945373535 10.6668004989624 C 14.44894981384277 10.6668004989624 14.00039958953857 10.2182502746582 14.00039958953857 9.666900634765625 L 14.00039958953857 0.9998999834060669 C 14.00039958953857 0.4485500156879425 14.44894981384277 0 15.00029945373535 0 L 16.00020027160645 0 C 16.55154991149902 0 17.00010108947754 0.4485500156879425 17.00010108947754 0.9998999834060669 L 17.00010108947754 9.666900634765625 C 17.00010108947754 10.2182502746582 16.55154991149902 10.6668004989624 16.00020027160645 10.6668004989624 Z M 11.33369922637939 10.6668004989624 L 10.33290004730225 10.6668004989624 C 9.781549453735352 10.6668004989624 9.332999229431152 10.2182502746582 9.332999229431152 9.666900634765625 L 9.332999229431152 3.333600044250488 C 9.332999229431152 2.782249927520752 9.781549453735352 2.333699941635132 10.33290004730225 2.333699941635132 L 11.33369922637939 2.333699941635132 C 11.88504981994629 2.333699941635132 12.33360004425049 2.782249927520752 12.33360004425049 3.333600044250488 L 12.33360004425049 9.666900634765625 C 12.33360004425049 10.2182502746582 11.88504981994629 10.6668004989624 11.33369922637939 10.6668004989624 Z M 6.666300296783447 10.6668004989624 L 5.666399955749512 10.6668004989624 C 5.115049839019775 10.6668004989624 4.666500091552734 10.2182502746582 4.666500091552734 9.666900634765625 L 4.666500091552734 5.66640043258667 C 4.666500091552734 5.115050315856934 5.115049839019775 4.666500091552734 5.666399955749512 4.666500091552734 L 6.666300296783447 4.666500091552734 C 7.218140125274658 4.666500091552734 7.667099952697754 5.115050315856934 7.667099952697754 5.66640043258667 L 7.667099952697754 9.666900634765625 C 7.667099952697754 10.2182502746582 7.218140125274658 10.6668004989624 6.666300296783447 10.6668004989624 Z M 1.999799966812134 10.6668004989624 L 0.9998999834060669 10.6668004989624 C 0.4485500156879425 10.6668004989624 0 10.2182502746582 0 9.666900634765625 L 0 7.667100429534912 C 0 7.115260124206543 0.4485500156879425 6.666300296783447 0.9998999834060669 6.666300296783447 L 1.999799966812134 6.666300296783447 C 2.55115008354187 6.666300296783447 2.99970006942749 7.115260124206543 2.99970006942749 7.667100429534912 L 2.99970006942749 9.666900634765625 C 2.99970006942749 10.2182502746582 2.55115008354187 10.6668004989624 1.999799966812134 10.6668004989624 Z" fill="#ffffff" stroke="none" stroke-width="1" stroke-miterlimit="10" stroke-linecap="butt" /></svg>';
 const String _svg_u5a7dw =
     '<svg viewBox="23.0 49.1 21.9 36.6" ><path transform="translate(15.0, 43.14)" d="M 29.90407371520996 10.30359077453613 L 25.73609352111816 6 L 7.999998092651367 24.31315040588379 L 25.73609352111816 42.62630462646484 L 29.90407371520996 38.32271575927734 L 16.36552429199219 24.31315040588379 L 29.90407371520996 10.30359077453613 Z" fill="#ffffff" stroke="none" stroke-width="1" stroke-miterlimit="4" stroke-linecap="butt" /></svg>';
+
+
+class DropDownValue{
+DropDownValue( this.intID, this.stringName);
+
+late int intID=0;
+late String stringName;
+}
+

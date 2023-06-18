@@ -685,8 +685,10 @@ class XDPublicFeed1 extends StatelessWidget {
                     child:
                         // Adobe XD layer: 'FillComplaintIcon' (group)
                         InkWell(
-                      onTap: () =>  Navigator.push(context,MaterialPageRoute(builder: (context) =>   const XDComplaints1())),
-                                              
+                      onTap: () {
+                          
+                          Navigator.push(context,MaterialPageRoute(builder: (context) =>  XDComplaints1()));
+                      },             
                       child: Stack(
                         children: <Widget>[
                           Pinned.fromPins(

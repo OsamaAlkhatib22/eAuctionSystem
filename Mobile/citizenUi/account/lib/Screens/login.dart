@@ -1,5 +1,6 @@
-// ignore_for_file: constant_identifier_names, unused_element, depend_on_referenced_packages, prefer_typing_uninitialized_variables, unnecessary_new, library_private_types_in_public_api, avoid_print
+// ignore_for_file: constant_identifier_names, unused_element, depend_on_referenced_packages, prefer_typing_uninitialized_variables, unnecessary_new, library_private_types_in_public_api, avoid_print, unused_local_variable
 
+import 'package:account/Screens/public_feed.dart';
 import 'package:account/Screens/register.dart';
 import 'package:flutter/material.dart';
 import 'package:adobe_xd/pinned.dart';
@@ -93,9 +94,9 @@ class _XDLoginState extends State<XDLogin> {
 
                     //_sendToServer();
                      UserLogin user=UserLogin();
-                     user.login(usernameController.text,passwordController.text,context);
+                    // user.login(usernameController.text,passwordController.text,context);
                   // print(responseMessage);
-                   // Navigator.push(context,MaterialPageRoute(builder: (context) =>  XDPublicFeed1 ()));
+                    Navigator.push(context,MaterialPageRoute(builder: (context) =>  XDPublicFeed1 ()));
                   } ,
               
               child: Stack(
@@ -270,6 +271,7 @@ String? validateEmail(String? value) {
       return null;
     }
     }
+     return null;
   }
  Widget passowrdForm(){
   return Form(
