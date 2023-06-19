@@ -4,17 +4,20 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.DataModels.Intersections
 {
-    [Table("complaints_voters")]
-    public class ComplaintVoters
+    [Table("complaints_statuses")]
+    public class ComplaintsStatuses
     {
-        [ForeignKey("User")]
-        [Column("USER_ID")]
-        public int intUserId { get; set; }
-        public ApplicationUser User { get; set; }
-
         [Column("COMPLAINT_ID")]
         [ForeignKey("Complaint")]
         public int intComplaintId { get; set; }
         public Complaint Complaint { get; set; }
+
+        [ForeignKey("User")]
+        [Column("STATUS_ID")]
+        public int intStatusId { get; set; }
+        public ComplaintStatus ComplaintStatus { get; set; }
+
+        [Column("TRANS_DATE")]
+        public DateTime dtmTransDate { get; set; }
     }
 }
