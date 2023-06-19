@@ -65,7 +65,7 @@ namespace API.Controllers
             JwtSecurityTokenHandler tokenHandler = new();
             JwtSecurityToken jwtToken = tokenHandler.ReadJwtToken(authHeader[7..]);
 
-            complaintTypeDTO.strUserName = jwtToken.Claims.First(c => c.Type == "username").Value;
+            insertComplaintTypeDTO.strUserName = jwtToken.Claims.First(c => c.Type == "username").Value;
 
             return HandleResult(
                 await Mediator.Send(new InsertComplaintTypeCommand(complaintTypeDTO))

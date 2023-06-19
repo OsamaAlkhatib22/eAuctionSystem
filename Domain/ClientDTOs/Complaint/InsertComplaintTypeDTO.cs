@@ -2,12 +2,12 @@
 
 namespace Domain.ClientDTOs.Complaint
 {
-    public class ComplaintTypeDTO
+    public class InsertComplaintTypeDTO
     {
         [JsonIgnore]
         public string strUserName { get; set; }
         public decimal decGrade { get; set; }
-        public string strPrivacy { get; set; }
+        public int intPrivacyId { get; set; }
         public int intDepartmentId { get; set; }
         public string strNameAr { get; set; }
         public string strNameEn { get; set; }
