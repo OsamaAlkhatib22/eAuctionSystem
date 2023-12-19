@@ -1,4 +1,4 @@
-﻿using Domain.DataModels.Intersections;
+﻿/*using Domain.DataModels.Intersections;
 using Domain.DataModels.User;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -87,3 +87,4 @@ namespace Domain.DataModels.Tasks
         public ICollection<WorkTaskComplaints> Complaints { get; set; }
     }
 }
+*/

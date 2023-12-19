@@ -1,4 +1,4 @@
-﻿using Domain.Helpers;
+﻿/*using Domain.Helpers;
 
 namespace Domain.ClientDTOs.Complaint
 {
@@ -18,3 +18,4 @@ namespace Domain.ClientDTOs.Complaint
         public decimal decPriority { get; set; }
     }
 }
+*/

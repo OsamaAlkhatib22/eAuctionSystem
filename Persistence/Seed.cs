@@ -1,4 +1,4 @@
-﻿using Domain.DataModels.User;
+﻿/*using Domain.DataModels.User;
 using Domain.Resources;
 using Microsoft.AspNetCore.Identity;
 
@@ -102,3 +102,4 @@ namespace Persistence
         }
     }
 }
+*/

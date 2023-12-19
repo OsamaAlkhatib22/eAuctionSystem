@@ -19,589 +19,270 @@ namespace Persistence.Migrations
                 .HasAnnotation("ProductVersion", "7.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("Domain.DataModels.Complaints.Complaint", b =>
+            modelBuilder.Entity("Domain.DataModels.Categories.Category", b =>
                 {
                     b.Property<int>("intId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("ID");
+                        .HasColumnName("category_id");
 
-                    b.Property<bool>("blnIsRefiled")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("IS_REFILED");
-
-                    b.Property<DateTime>("dtmDateCreated")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("DATE_CREATED");
-
-                    b.Property<DateTime>("dtmDateLastModified")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("DATE_LAST_MODIFIED");
-
-                    b.Property<DateTime>("dtmDateLastReminded")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("DATE_LAST_REMINDED");
-
-                    b.Property<int>("intLastModifiedBy")
-                        .HasColumnType("int")
-                        .HasColumnName("LAST_MODIFIED_BY");
-
-                    b.Property<int>("intPrivacyId")
-                        .HasColumnType("int")
-                        .HasColumnName("PRIVACY_ID");
-
-                    b.Property<int>("intReminder")
-                        .HasColumnType("int")
-                        .HasColumnName("REMINDER");
-
-                    b.Property<int>("intStatusId")
-                        .HasColumnType("int")
-                        .HasColumnName("STATUS_ID");
-
-                    b.Property<int>("intTypeId")
-                        .HasColumnType("int")
-                        .HasColumnName("TYPE_ID");
-
-                    b.Property<int>("intUserID")
-                        .HasColumnType("int")
-                        .HasColumnName("USER_ID");
-
-                    b.Property<string>("strComment")
-                        .HasColumnType("longtext")
-                        .HasColumnName("COMMENT");
-
-                    b.HasKey("intId");
-
-                    b.HasIndex("intPrivacyId");
-
-                    b.HasIndex("intStatusId");
-
-                    b.HasIndex("intTypeId");
-
-                    b.ToTable("complaints");
-                });
-
-            modelBuilder.Entity("Domain.DataModels.Complaints.ComplaintPrivacy", b =>
-                {
-                    b.Property<int>("intId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("ID");
-
-                    b.Property<string>("strName")
+                    b.Property<string>("strCategoryName")
                         .IsRequired()
                         .HasColumnType("longtext")
-                        .HasColumnName("NAME");
+                        .HasColumnName("category_name");
 
                     b.HasKey("intId");
 
-                    b.ToTable("complaints_privacy");
+                    b.ToTable("Categories", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.DataModels.Complaints.ComplaintStatus", b =>
+            modelBuilder.Entity("Domain.DataModels.Reviews.Review", b =>
                 {
-                    b.Property<int>("intId")
+                    b.Property<int>("ReviewId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("ID");
+                        .HasColumnName("review_id");
 
-                    b.Property<string>("strName")
-                        .IsRequired()
+                    b.Property<string>("Comment")
                         .HasColumnType("longtext")
-                        .HasColumnName("NAME");
+                        .HasColumnName("Comment");
 
-                    b.HasKey("intId");
+                    b.Property<int>("Rating")
+                        .HasColumnType("int")
+                        .HasColumnName("Rating");
 
-                    b.ToTable("complaints_status");
+                    b.Property<DateTime>("ReviewDate")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("review_date");
+
+                    b.Property<int>("ServiceId")
+                        .HasColumnType("int")
+                        .HasColumnName("service_id");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int")
+                        .HasColumnName("UserId");
+
+                    b.HasKey("ReviewId");
+
+                    b.HasIndex("ServiceId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Reviews", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.DataModels.Complaints.ComplaintType", b =>
+            modelBuilder.Entity("Domain.DataModels.Services.Bids", b =>
                 {
-                    b.Property<int>("intId")
+                    b.Property<int>("BidId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("ID");
+                        .HasColumnName("Bid_id");
 
-                    b.Property<bool>("blnIsDeleted")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("IS_DELETED");
-
-                    b.Property<decimal>("decGrade")
+                    b.Property<decimal>("BidAmount")
                         .HasColumnType("decimal(18,2)")
-                        .HasColumnName("GRADE");
+                        .HasColumnName("Bid_Amount");
 
-                    b.Property<DateTime>("dtmDateCreated")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("DATE_CREATED");
-
-                    b.Property<DateTime>("dtmDateLastModified")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("DATE_LAST_MODIFIED");
-
-                    b.Property<int>("intCreatedBy")
+                    b.Property<int>("BidderId")
                         .HasColumnType("int")
-                        .HasColumnName("CREATED_BY");
+                        .HasColumnName("Bidder_id");
 
-                    b.Property<int>("intDepartmentId")
+                    b.Property<int>("ServiceId")
                         .HasColumnType("int")
-                        .HasColumnName("DEPARTMENT_ID");
+                        .HasColumnName("service_id");
 
-                    b.Property<int>("intLastModifiedBy")
+                    b.Property<int>("UserId")
                         .HasColumnType("int")
-                        .HasColumnName("LAST_MODIFIED_BY");
+                        .HasColumnName("UserId");
 
-                    b.Property<int>("intPrivacyId")
-                        .HasColumnType("int")
-                        .HasColumnName("PRIVACY_ID");
+                    b.HasKey("BidId");
 
-                    b.Property<string>("strNameAr")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("NAME_AR");
+                    b.HasIndex("ServiceId");
 
-                    b.Property<string>("strNameEn")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("NAME_EN");
+                    b.HasIndex("UserId");
 
-                    b.HasKey("intId");
-
-                    b.HasIndex("intPrivacyId");
-
-                    b.ToTable("complaints_types");
+                    b.ToTable("Bids", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.DataModels.Intersections.ComplaintAttachment", b =>
+            modelBuilder.Entity("Domain.DataModels.Services.Service", b =>
                 {
-                    b.Property<int>("intComplaintId")
-                        .HasColumnType("int")
-                        .HasColumnName("COMPLAINT_ID");
-
-                    b.Property<string>("strMediaRef")
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("MEDIA_REF");
-
-                    b.Property<bool>("blnIsVideo")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("IS_VIDEO");
-
-                    b.Property<decimal>("decLat")
-                        .HasPrecision(8, 6)
-                        .HasColumnType("decimal(8,6)")
-                        .HasColumnName("LAT");
-
-                    b.Property<decimal>("decLng")
-                        .HasPrecision(8, 6)
-                        .HasColumnType("decimal(8,6)")
-                        .HasColumnName("LNG");
-
-                    b.Property<DateTime>("dtmDateCreated")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("DATE_CREATED");
-
-                    b.Property<int>("intCreatedBy")
-                        .HasColumnType("int")
-                        .HasColumnName("CREATED_BY");
-
-                    b.HasKey("intComplaintId", "strMediaRef");
-
-                    b.ToTable("complaints_attachments");
-                });
-
-            modelBuilder.Entity("Domain.DataModels.Intersections.ComplaintVoters", b =>
-                {
-                    b.Property<int>("intUserId")
-                        .HasColumnType("int")
-                        .HasColumnName("USER_ID");
-
-                    b.Property<int>("intComplaintId")
-                        .HasColumnType("int")
-                        .HasColumnName("COMPLAINT_ID");
-
-                    b.HasKey("intUserId", "intComplaintId");
-
-                    b.HasIndex("intComplaintId");
-
-                    b.ToTable("complaints_voters");
-                });
-
-            modelBuilder.Entity("Domain.DataModels.Intersections.ComplaintsStatuses", b =>
-                {
-                    b.Property<int>("intComplaintId")
-                        .HasColumnType("int")
-                        .HasColumnName("COMPLAINT_ID");
-
-                    b.Property<int>("intStatusId")
-                        .HasColumnType("int")
-                        .HasColumnName("STATUS_ID");
-
-                    b.Property<DateTime>("dtmTransDate")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("TRANS_DATE");
-
-                    b.HasKey("intComplaintId", "intStatusId");
-
-                    b.HasIndex("intStatusId");
-
-                    b.ToTable("complaints_statuses");
-                });
-
-            modelBuilder.Entity("Domain.DataModels.Intersections.DepartmentUsers", b =>
-                {
-                    b.Property<int>("intUserId")
-                        .HasColumnType("int")
-                        .HasColumnName("USER_ID");
-
-                    b.Property<int>("intDepartmentId")
-                        .HasColumnType("int")
-                        .HasColumnName("DEPARTMENT_ID");
-
-                    b.HasKey("intUserId", "intDepartmentId");
-
-                    b.HasIndex("intDepartmentId");
-
-                    b.ToTable("department_users");
-                });
-
-            modelBuilder.Entity("Domain.DataModels.Intersections.ProfessionUsers", b =>
-                {
-                    b.Property<int>("intUserId")
-                        .HasColumnType("int")
-                        .HasColumnName("USER_ID");
-
-                    b.Property<int>("intProfessionId")
-                        .HasColumnType("int")
-                        .HasColumnName("PROFESSION_ID");
-
-                    b.HasKey("intUserId", "intProfessionId");
-
-                    b.HasIndex("intProfessionId");
-
-                    b.ToTable("profession_users");
-                });
-
-            modelBuilder.Entity("Domain.DataModels.Intersections.WorkTaskAttachment", b =>
-                {
-                    b.Property<int>("intTaskId")
-                        .HasColumnType("int")
-                        .HasColumnName("TASK_ID");
-
-                    b.Property<string>("strMediaRef")
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("MEDIA_REF");
-
-                    b.Property<bool>("blnIsVideo")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("IS_VIDEO");
-
-                    b.Property<DateTime>("dtmDateCreated")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("DATE_CREATED");
-
-                    b.Property<int>("intCreatedBy")
-                        .HasColumnType("int")
-                        .HasColumnName("CREATED_BY");
-
-                    b.HasKey("intTaskId", "strMediaRef");
-
-                    b.ToTable("tasks_attachments");
-                });
-
-            modelBuilder.Entity("Domain.DataModels.Intersections.WorkTaskComplaints", b =>
-                {
-                    b.Property<int>("intTaskId")
-                        .HasColumnType("int")
-                        .HasColumnName("TASK_ID");
-
-                    b.Property<int>("intComplaintId")
-                        .HasColumnType("int")
-                        .HasColumnName("COMPLAINT_ID");
-
-                    b.HasKey("intTaskId", "intComplaintId");
-
-                    b.HasIndex("intComplaintId");
-
-                    b.ToTable("tasks_complaints");
-                });
-
-            modelBuilder.Entity("Domain.DataModels.Intersections.WorkTaskMembers", b =>
-                {
-                    b.Property<int>("intWorkerId")
-                        .HasColumnType("int")
-                        .HasColumnName("USER_ID");
-
-                    b.Property<int>("intTaskId")
-                        .HasColumnType("int")
-                        .HasColumnName("TASK_ID");
-
-                    b.Property<bool>("blnIsLeader")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("IS_LEADER");
-
-                    b.HasKey("intWorkerId", "intTaskId");
-
-                    b.HasIndex("intTaskId");
-
-                    b.ToTable("tasks_members");
-                });
-
-            modelBuilder.Entity("Domain.DataModels.LookUps.Department", b =>
-                {
-                    b.Property<int>("intId")
+                    b.Property<int>("ServiceId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("ID");
+                        .HasColumnName("service_id");
 
-                    b.Property<bool>("blnIsDeleted")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("IS_DELETED");
+                    b.Property<TimeSpan>("BidDuration")
+                        .HasColumnType("time(6)")
+                        .HasColumnName("Bid_Duration");
 
-                    b.Property<DateTime>("dtmDateCreated")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("DATE_CREATED");
-
-                    b.Property<DateTime>("dtmDateLastModified")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("DATE_LAST_MODIFIED");
-
-                    b.Property<int>("intCreatedBy")
+                    b.Property<int>("CategoryId")
                         .HasColumnType("int")
-                        .HasColumnName("CREATED_BY");
+                        .HasColumnName("category_id");
 
-                    b.Property<int>("intLastModifiedBy")
-                        .HasColumnType("int")
-                        .HasColumnName("LAST_MODIFIED_BY");
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("creation_date");
 
-                    b.Property<string>("strNameAr")
+                    b.Property<string>("Description")
+                        .HasColumnType("longtext")
+                        .HasColumnName("Description");
+
+                    b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("longtext")
-                        .HasColumnName("NAME_AR");
+                        .HasColumnName("Title");
 
-                    b.Property<string>("strNameEn")
-                        .IsRequired()
+                    b.Property<int>("UserId")
+                        .HasColumnType("int")
+                        .HasColumnName("UserId");
+
+                    b.Property<string>("starting_bid")
                         .HasColumnType("longtext")
-                        .HasColumnName("NAME_EN");
+                        .HasColumnName("starting_bid");
 
-                    b.HasKey("intId");
+                    b.HasKey("ServiceId");
 
-                    b.ToTable("departments");
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Services", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.DataModels.LookUps.Profession", b =>
+            modelBuilder.Entity("Domain.DataModels.Services.TaskAttachment", b =>
                 {
-                    b.Property<int>("intId")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("ServiceId")
                         .HasColumnType("int")
-                        .HasColumnName("ID");
+                        .HasColumnName("service_id");
 
-                    b.Property<bool>("blnIsDeleted")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("IS_DELETED");
-
-                    b.Property<DateTime>("dtmDateCreated")
+                    b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime(6)")
-                        .HasColumnName("DATE_CREATED");
+                        .HasColumnName("date_created");
 
-                    b.Property<DateTime>("dtmDateLastModified")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("DATE_LAST_MODIFIED");
-
-                    b.Property<int>("intCreatedBy")
-                        .HasColumnType("int")
-                        .HasColumnName("CREATED_BY");
-
-                    b.Property<int>("intLastModifiedBy")
-                        .HasColumnType("int")
-                        .HasColumnName("LAST_MODIFIED_BY");
-
-                    b.Property<string>("strNameAr")
-                        .IsRequired()
+                    b.Property<string>("MediaRef")
                         .HasColumnType("longtext")
-                        .HasColumnName("NAME_AR");
+                        .HasColumnName("media_ref");
 
-                    b.Property<string>("strNameEn")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("NAME_EN");
+                    b.HasKey("ServiceId");
 
-                    b.HasKey("intId");
-
-                    b.ToTable("Professions");
+                    b.ToTable("TaskAttachment", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.DataModels.Tasks.WorkTask", b =>
+            modelBuilder.Entity("Domain.DataModels.Transactions.Transaction", b =>
                 {
-                    b.Property<int>("intId")
+                    b.Property<int>("TransactionId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("ID");
+                        .HasColumnName("transaction_id");
 
-                    b.Property<bool>("blnIsDeleted")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("IS_DELETED");
-
-                    b.Property<decimal>("decCost")
+                    b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)")
-                        .HasColumnName("COST");
+                        .HasColumnName("amount");
 
-                    b.Property<decimal>("decRating")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("RATING");
-
-                    b.Property<decimal>("decUserRating")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("USER_RATING");
-
-                    b.Property<DateTime>("dtmDateActivated")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("DATE_ACTIVATED");
-
-                    b.Property<DateTime>("dtmDateCreated")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("DATE_CREATED");
-
-                    b.Property<DateTime>("dtmDateDeadline")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("DATE_DEADLINE");
-
-                    b.Property<DateTime>("dtmDateFinished")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("DATE_FINISHED");
-
-                    b.Property<DateTime>("dtmDateLastModified")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("DATE_LAST_MODIFIED");
-
-                    b.Property<DateTime>("dtmDateScheduled")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("DATE_SCHEDULED");
-
-                    b.Property<int>("intAdminId")
+                    b.Property<int>("BidderId")
                         .HasColumnType("int")
-                        .HasColumnName("ADMIN_ID");
+                        .HasColumnName("Bidder_id");
 
-                    b.Property<int>("intLastModifiedBy")
+                    b.Property<int>("BuyerId")
                         .HasColumnType("int")
-                        .HasColumnName("LAST_MODIFIED_BY");
+                        .HasColumnName("buyer_id");
 
-                    b.Property<int>("intStatusId")
+                    b.Property<int>("ServiceId")
                         .HasColumnType("int")
-                        .HasColumnName("STATUS_ID");
+                        .HasColumnName("service_id");
 
-                    b.Property<int>("intTypeId")
-                        .HasColumnType("int")
-                        .HasColumnName("TYPE_ID");
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("transaction_date");
 
-                    b.Property<string>("strComment")
-                        .HasColumnType("longtext")
-                        .HasColumnName("COMMENT");
+                    b.HasKey("TransactionId");
 
-                    b.HasKey("intId");
+                    b.HasIndex("BuyerId");
 
-                    b.HasIndex("intAdminId");
+                    b.HasIndex("ServiceId")
+                        .IsUnique();
 
-                    b.HasIndex("intStatusId");
-
-                    b.HasIndex("intTypeId");
-
-                    b.ToTable("tasks");
+                    b.ToTable("Transactions", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.DataModels.Tasks.WorkTaskStatus", b =>
+            modelBuilder.Entity("Domain.DataModels.Transactions.Wallet", b =>
                 {
-                    b.Property<int>("intId")
+                    b.Property<int>("UserId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("ID");
+                        .HasColumnName("user_id");
 
-                    b.Property<string>("strName")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("NAME");
+                    b.Property<decimal>("Balance")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("Balance");
 
-                    b.HasKey("intId");
+                    b.HasKey("UserId");
 
-                    b.ToTable("tasks_status");
+                    b.ToTable("Wallet", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.DataModels.Tasks.WorkTaskType", b =>
+            modelBuilder.Entity("Domain.DataModels.UserRating.UserRating", b =>
                 {
-                    b.Property<int>("intId")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("UserId")
                         .HasColumnType("int")
-                        .HasColumnName("ID");
+                        .HasColumnName("UserId");
 
-                    b.Property<bool>("blnIsDeleted")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("IS_DELETED");
+                    b.Property<decimal>("Rating")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("Rating");
 
-                    b.Property<DateTime>("dtmDateCreated")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("DATE_CREATED");
+                    b.HasKey("UserId");
 
-                    b.Property<DateTime>("dtmDateLastModified")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("DATE_LAST_MODIFIED");
-
-                    b.Property<int>("intCreatedBy")
-                        .HasColumnType("int")
-                        .HasColumnName("CREATED_BY");
-
-                    b.Property<int>("intDepartmentId")
-                        .HasColumnType("int")
-                        .HasColumnName("DEPARTMENT_ID");
-
-                    b.Property<int>("intLastModifiedBy")
-                        .HasColumnType("int")
-                        .HasColumnName("LAST_MODIFIED_BY");
-
-                    b.Property<string>("strNameAr")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("NAME_AR");
-
-                    b.Property<string>("strNameEn")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("NAME_EN");
-
-                    b.HasKey("intId");
-
-                    b.ToTable("tasks_types");
+                    b.ToTable("UserRating", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.DataModels.User.ApplicationUser", b =>
+            modelBuilder.Entity("Domain.DataModels.Users.ApplicationUser", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("ID");
+                        .HasColumnName("UserId");
 
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int")
-                        .HasColumnName("ACCESS_FAILED_COUNT");
+                    b.Property<string>("Bio")
+                        .HasColumnType("longtext")
+                        .HasColumnName("bio");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("longtext")
                         .HasColumnName("CONCURRENCY_STAMP");
 
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("LOCKOUT_END");
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.Property<string>("FieldOfWork")
+                        .HasColumnType("longtext")
+                        .HasColumnName("Field_of_work");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("longtext")
+                        .HasColumnName("first_name");
+
+                    b.Property<string>("JobTitle")
+                        .HasColumnType("longtext")
+                        .HasColumnName("Job_title");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("longtext")
+                        .HasColumnName("last_name");
 
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
-                        .HasColumnType("varchar(256)")
-                        .HasColumnName("NORMALIZED_USER_NAME");
+                        .HasColumnType("varchar(256)");
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("longtext")
                         .HasColumnName("PASSWORD_HASH");
 
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("IS_CONFIRMED");
+                    b.Property<DateTime>("RegistrationDate")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("registration_date");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("longtext")
@@ -610,31 +291,11 @@ namespace Persistence.Migrations
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("varchar(256)")
-                        .HasColumnName("USER_NAME");
+                        .HasColumnName("UserName");
 
-                    b.Property<bool>("blnIsActive")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("IS_ACTIVE");
-
-                    b.Property<bool>("blnIsBlacklisted")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("IS_BLACKLISTED");
-
-                    b.Property<bool>("blnIsVerified")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("IS_VERIFIED");
-
-                    b.Property<int>("intGroupId")
+                    b.Property<int>("UserTypeId")
                         .HasColumnType("int")
-                        .HasColumnName("GROUP_ID");
-
-                    b.Property<int>("intUserInfoId")
-                        .HasColumnType("int")
-                        .HasColumnName("USER_INFO_ID");
-
-                    b.Property<int>("intUserTypeId")
-                        .HasColumnType("int")
-                        .HasColumnName("USER_TYPE_ID");
+                        .HasColumnName("user_type_id");
 
                     b.HasKey("Id");
 
@@ -642,91 +303,59 @@ namespace Persistence.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
 
-                    b.HasIndex("intUserInfoId")
-                        .IsUnique();
-
-                    b.HasIndex("intUserTypeId");
+                    b.HasIndex("UserTypeId");
 
                     b.ToTable("users", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.DataModels.User.UserInfo", b =>
+            modelBuilder.Entity("Domain.DataModels.Users.UserSkill", b =>
                 {
-                    b.Property<int>("intId")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("UserId")
                         .HasColumnType("int")
-                        .HasColumnName("ID");
+                        .HasColumnName("UserId");
 
-                    b.Property<string>("strFirstName")
+                    b.Property<string>("Skills")
                         .HasColumnType("longtext")
-                        .HasColumnName("FIRST_NAME");
+                        .HasColumnName("Skills");
 
-                    b.Property<string>("strLastName")
-                        .HasColumnType("longtext")
-                        .HasColumnName("LAST_NAME");
+                    b.HasKey("UserId");
 
-                    b.Property<string>("strNationalId")
-                        .HasColumnType("longtext")
-                        .HasColumnName("NATIONAL_ID");
-
-                    b.Property<string>("strNationalIdNumber")
-                        .HasColumnType("longtext")
-                        .HasColumnName("NATIONAL_ID_NUMBER");
-
-                    b.Property<string>("strPassportNumber")
-                        .HasColumnType("longtext")
-                        .HasColumnName("PASSPORT_NUMBER");
-
-                    b.Property<string>("strPhoneNumber")
-                        .HasColumnType("longtext")
-                        .HasColumnName("PHONE_NUMBER");
-
-                    b.Property<string>("strRegistrationNumber")
-                        .HasColumnType("longtext")
-                        .HasColumnName("REGISTRATION_NUMBER");
-
-                    b.HasKey("intId");
-
-                    b.ToTable("users_info");
+                    b.ToTable("UserSkill", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.DataModels.User.UserType", b =>
+            modelBuilder.Entity("Domain.DataModels.Users.UserType", b =>
                 {
-                    b.Property<int>("intId")
+                    b.Property<int>("UserTypeId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("ID");
+                        .HasColumnName("user_type_id");
 
-                    b.Property<string>("strName")
+                    b.Property<string>("Type")
                         .HasColumnType("longtext")
-                        .HasColumnName("NAME");
+                        .HasColumnName("Type");
 
-                    b.HasKey("intId");
+                    b.HasKey("UserTypeId");
 
-                    b.ToTable("users_types");
+                    b.ToTable("UserType", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<int>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("ID");
+                        .HasColumnType("int");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("longtext")
-                        .HasColumnName("CONCURRENCY_STAMP");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)
-                        .HasColumnType("varchar(256)")
-                        .HasColumnName("NAME");
+                        .HasColumnType("varchar(256)");
 
                     b.Property<string>("NormalizedName")
                         .HasMaxLength(256)
-                        .HasColumnType("varchar(256)")
-                        .HasColumnName("NORMALIZED_NAME");
+                        .HasColumnType("varchar(256)");
 
                     b.HasKey("Id");
 
@@ -734,344 +363,226 @@ namespace Persistence.Migrations
                         .IsUnique()
                         .HasDatabaseName("RoleNameIndex");
 
-                    b.ToTable("roles", (string)null);
+                    b.ToTable("AspNetRoles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("ID");
+                        .HasColumnType("int");
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("longtext")
-                        .HasColumnName("CLAIM_TYPE");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("longtext")
-                        .HasColumnName("CLAIM_VALUE");
+                        .HasColumnType("longtext");
 
                     b.Property<int>("RoleId")
-                        .HasColumnType("int")
-                        .HasColumnName("ROLE_ID");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("roles_claims", (string)null);
+                    b.ToTable("AspNetRoleClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("ID");
+                        .HasColumnType("int");
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("longtext")
-                        .HasColumnName("CLAIM_TYPE");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("longtext")
-                        .HasColumnName("CLAIM_VALUE");
+                        .HasColumnType("longtext");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int")
-                        .HasColumnName("USER_ID");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("users_claims", (string)null);
+                    b.ToTable("AspNetUserClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("LOGIN_PROVIDER");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("ProviderKey")
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("PROVIDER_KEY");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("ProviderDisplayName")
-                        .HasColumnType("longtext")
-                        .HasColumnName("PROVIDER_DISPLAY_NAME");
+                        .HasColumnType("longtext");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int")
-                        .HasColumnName("USER_ID");
+                        .HasColumnType("int");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("users_login", (string)null);
+                    b.ToTable("AspNetUserLogins", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("int")
-                        .HasColumnName("USER_ID");
+                        .HasColumnType("int");
 
                     b.Property<int>("RoleId")
-                        .HasColumnType("int")
-                        .HasColumnName("ROLE_ID");
+                        .HasColumnType("int");
 
                     b.HasKey("UserId", "RoleId");
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("users_roles", (string)null);
+                    b.ToTable("AspNetUserRoles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("int")
-                        .HasColumnName("USER_ID");
+                        .HasColumnType("int");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("LOGIN_PROVIDER");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("NAME");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("Value")
-                        .HasColumnType("longtext")
-                        .HasColumnName("VALUE");
+                        .HasColumnType("longtext");
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("users_tokens", (string)null);
+                    b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.DataModels.Complaints.Complaint", b =>
+            modelBuilder.Entity("Domain.DataModels.Reviews.Review", b =>
                 {
-                    b.HasOne("Domain.DataModels.Complaints.ComplaintPrivacy", "Privacy")
+                    b.HasOne("Domain.DataModels.Services.Service", "Service")
                         .WithMany()
-                        .HasForeignKey("intPrivacyId")
+                        .HasForeignKey("ServiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.DataModels.Complaints.ComplaintStatus", "Status")
+                    b.HasOne("Domain.DataModels.Users.ApplicationUser", "User")
                         .WithMany()
-                        .HasForeignKey("intStatusId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.DataModels.Complaints.ComplaintType", "ComplaintType")
-                        .WithMany()
-                        .HasForeignKey("intTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ComplaintType");
-
-                    b.Navigation("Privacy");
-
-                    b.Navigation("Status");
-                });
-
-            modelBuilder.Entity("Domain.DataModels.Complaints.ComplaintType", b =>
-                {
-                    b.HasOne("Domain.DataModels.Complaints.ComplaintPrivacy", "Privacy")
-                        .WithMany()
-                        .HasForeignKey("intPrivacyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Privacy");
-                });
-
-            modelBuilder.Entity("Domain.DataModels.Intersections.ComplaintAttachment", b =>
-                {
-                    b.HasOne("Domain.DataModels.Complaints.Complaint", "Complaint")
-                        .WithMany("Attachments")
-                        .HasForeignKey("intComplaintId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Complaint");
-                });
-
-            modelBuilder.Entity("Domain.DataModels.Intersections.ComplaintVoters", b =>
-                {
-                    b.HasOne("Domain.DataModels.Complaints.Complaint", "Complaint")
-                        .WithMany("Voters")
-                        .HasForeignKey("intComplaintId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.DataModels.User.ApplicationUser", "User")
-                        .WithMany("Complaints")
-                        .HasForeignKey("intUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Complaint");
+                    b.Navigation("Service");
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Domain.DataModels.Intersections.ComplaintsStatuses", b =>
+            modelBuilder.Entity("Domain.DataModels.Services.Bids", b =>
                 {
-                    b.HasOne("Domain.DataModels.Complaints.ComplaintStatus", "ComplaintStatus")
-                        .WithMany("Complaints")
-                        .HasForeignKey("intComplaintId")
+                    b.HasOne("Domain.DataModels.Services.Service", "Service")
+                        .WithMany()
+                        .HasForeignKey("ServiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.DataModels.Complaints.Complaint", "Complaint")
-                        .WithMany("Statuses")
-                        .HasForeignKey("intStatusId")
+                    b.HasOne("Domain.DataModels.Users.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Complaint");
-
-                    b.Navigation("ComplaintStatus");
-                });
-
-            modelBuilder.Entity("Domain.DataModels.Intersections.DepartmentUsers", b =>
-                {
-                    b.HasOne("Domain.DataModels.LookUps.Department", "Department")
-                        .WithMany("Users")
-                        .HasForeignKey("intDepartmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.DataModels.User.ApplicationUser", "User")
-                        .WithMany("Departments")
-                        .HasForeignKey("intUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Department");
+                    b.Navigation("Service");
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Domain.DataModels.Intersections.ProfessionUsers", b =>
+            modelBuilder.Entity("Domain.DataModels.Services.Service", b =>
                 {
-                    b.HasOne("Domain.DataModels.LookUps.Profession", "Profession")
-                        .WithMany("Users")
-                        .HasForeignKey("intProfessionId")
+                    b.HasOne("Domain.DataModels.Categories.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.DataModels.User.ApplicationUser", "User")
-                        .WithMany("Professions")
-                        .HasForeignKey("intUserId")
+                    b.HasOne("Domain.DataModels.Users.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Profession");
+                    b.Navigation("Category");
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Domain.DataModels.Intersections.WorkTaskAttachment", b =>
+            modelBuilder.Entity("Domain.DataModels.Services.TaskAttachment", b =>
                 {
-                    b.HasOne("Domain.DataModels.Tasks.WorkTask", "Task")
-                        .WithMany("Attachments")
-                        .HasForeignKey("intTaskId")
+                    b.HasOne("Domain.DataModels.Services.Service", "Service")
+                        .WithMany("TaskAttachments")
+                        .HasForeignKey("ServiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Task");
+                    b.Navigation("Service");
                 });
 
-            modelBuilder.Entity("Domain.DataModels.Intersections.WorkTaskComplaints", b =>
+            modelBuilder.Entity("Domain.DataModels.Transactions.Transaction", b =>
                 {
-                    b.HasOne("Domain.DataModels.Complaints.Complaint", "Complaint")
-                        .WithMany("Tasks")
-                        .HasForeignKey("intComplaintId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.DataModels.Tasks.WorkTask", "Task")
-                        .WithMany("Complaints")
-                        .HasForeignKey("intTaskId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Complaint");
-
-                    b.Navigation("Task");
-                });
-
-            modelBuilder.Entity("Domain.DataModels.Intersections.WorkTaskMembers", b =>
-                {
-                    b.HasOne("Domain.DataModels.Tasks.WorkTask", "Task")
-                        .WithMany("Workers")
-                        .HasForeignKey("intTaskId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.DataModels.User.ApplicationUser", "Worker")
-                        .WithMany("Tasks")
-                        .HasForeignKey("intWorkerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Task");
-
-                    b.Navigation("Worker");
-                });
-
-            modelBuilder.Entity("Domain.DataModels.Tasks.WorkTask", b =>
-                {
-                    b.HasOne("Domain.DataModels.User.ApplicationUser", "Admin")
+                    b.HasOne("Domain.DataModels.Users.ApplicationUser", "Buyer")
                         .WithMany()
-                        .HasForeignKey("intAdminId")
+                        .HasForeignKey("BuyerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.DataModels.Tasks.WorkTaskStatus", "Status")
-                        .WithMany()
-                        .HasForeignKey("intStatusId")
+                    b.HasOne("Domain.DataModels.Services.Service", "Service")
+                        .WithOne("Transaction")
+                        .HasForeignKey("Domain.DataModels.Transactions.Transaction", "ServiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.DataModels.Tasks.WorkTaskType", "TaskType")
-                        .WithMany()
-                        .HasForeignKey("intTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Buyer");
 
-                    b.Navigation("Admin");
-
-                    b.Navigation("Status");
-
-                    b.Navigation("TaskType");
+                    b.Navigation("Service");
                 });
 
-            modelBuilder.Entity("Domain.DataModels.User.ApplicationUser", b =>
+            modelBuilder.Entity("Domain.DataModels.UserRating.UserRating", b =>
                 {
-                    b.HasOne("Domain.DataModels.User.UserInfo", "UserInfo")
-                        .WithOne("User")
-                        .HasForeignKey("Domain.DataModels.User.ApplicationUser", "intUserInfoId")
+                    b.HasOne("Domain.DataModels.Users.ApplicationUser", "User")
+                        .WithMany("Ratings")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.DataModels.User.UserType", "UserType")
-                        .WithMany("Users")
-                        .HasForeignKey("intUserTypeId")
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.DataModels.Users.ApplicationUser", b =>
+                {
+                    b.HasOne("Domain.DataModels.Users.UserType", "UserType")
+                        .WithMany()
+                        .HasForeignKey("UserTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("UserInfo");
 
                     b.Navigation("UserType");
+                });
+
+            modelBuilder.Entity("Domain.DataModels.Users.UserSkill", b =>
+                {
+                    b.HasOne("Domain.DataModels.Users.ApplicationUser", "User")
+                        .WithMany("Skills")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -1085,7 +596,7 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
                 {
-                    b.HasOne("Domain.DataModels.User.ApplicationUser", null)
+                    b.HasOne("Domain.DataModels.Users.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1094,7 +605,7 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
-                    b.HasOne("Domain.DataModels.User.ApplicationUser", null)
+                    b.HasOne("Domain.DataModels.Users.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1109,7 +620,7 @@ namespace Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.DataModels.User.ApplicationUser", null)
+                    b.HasOne("Domain.DataModels.Users.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1118,67 +629,25 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
                 {
-                    b.HasOne("Domain.DataModels.User.ApplicationUser", null)
+                    b.HasOne("Domain.DataModels.Users.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Domain.DataModels.Complaints.Complaint", b =>
+            modelBuilder.Entity("Domain.DataModels.Services.Service", b =>
                 {
-                    b.Navigation("Attachments");
+                    b.Navigation("TaskAttachments");
 
-                    b.Navigation("Statuses");
-
-                    b.Navigation("Tasks");
-
-                    b.Navigation("Voters");
+                    b.Navigation("Transaction");
                 });
 
-            modelBuilder.Entity("Domain.DataModels.Complaints.ComplaintStatus", b =>
+            modelBuilder.Entity("Domain.DataModels.Users.ApplicationUser", b =>
                 {
-                    b.Navigation("Complaints");
-                });
+                    b.Navigation("Ratings");
 
-            modelBuilder.Entity("Domain.DataModels.LookUps.Department", b =>
-                {
-                    b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("Domain.DataModels.LookUps.Profession", b =>
-                {
-                    b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("Domain.DataModels.Tasks.WorkTask", b =>
-                {
-                    b.Navigation("Attachments");
-
-                    b.Navigation("Complaints");
-
-                    b.Navigation("Workers");
-                });
-
-            modelBuilder.Entity("Domain.DataModels.User.ApplicationUser", b =>
-                {
-                    b.Navigation("Complaints");
-
-                    b.Navigation("Departments");
-
-                    b.Navigation("Professions");
-
-                    b.Navigation("Tasks");
-                });
-
-            modelBuilder.Entity("Domain.DataModels.User.UserInfo", b =>
-                {
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Domain.DataModels.User.UserType", b =>
-                {
-                    b.Navigation("Users");
+                    b.Navigation("Skills");
                 });
 #pragma warning restore 612, 618
         }

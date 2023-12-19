@@ -1,4 +1,4 @@
-﻿using Domain.DataModels.Complaints;
+﻿/*using Domain.DataModels.Complaints;
 using Domain.DataModels.User;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -21,3 +21,4 @@ namespace Domain.DataModels.Intersections
         public DateTime dtmTransDate { get; set; }
     }
 }
+*/

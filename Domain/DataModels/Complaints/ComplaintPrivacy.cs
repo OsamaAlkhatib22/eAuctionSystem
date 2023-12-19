@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿/*using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.DataModels.Complaints
@@ -15,3 +15,4 @@ namespace Domain.DataModels.Complaints
         public string strName { get; set; }
     }
 }
+*/

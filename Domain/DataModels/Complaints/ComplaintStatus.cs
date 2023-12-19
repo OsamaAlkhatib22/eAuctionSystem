@@ -1,4 +1,4 @@
-﻿using Domain.DataModels.Intersections;
+﻿/*using Domain.DataModels.Intersections;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -19,3 +19,4 @@ namespace Domain.DataModels.Complaints
         public ICollection<ComplaintsStatuses> Complaints { get; set; }
     }
 }
+*/

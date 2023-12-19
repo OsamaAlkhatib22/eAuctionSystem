@@ -1,0 +1,38 @@
+
+.new-header {
+    background-color: #8b0000;
+    color: white;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .logo {
+    font-size: 28px;
+    font-weight: bold;
+  }
+  
+  .logo-img {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+  }
+  
+  .button-list {
+    display: flex;
+  }
+  
+  .header-button {
+    margin-left: 20px;
+    text-decoration: none;
+    color: white;
+  }
+  
+  .profile-link {
+    margin-left: 20px;
+    text-decoration: none;
+    color: white;
+  }
+  

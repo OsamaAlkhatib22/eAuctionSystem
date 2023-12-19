@@ -1,4 +1,4 @@
-﻿using Domain.DataModels.LookUps;
+﻿/*using Domain.DataModels.LookUps;
 using Domain.DataModels.User;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -21,3 +21,4 @@ namespace Domain.DataModels.Intersections
         public Department Department { get; set; }
     }
 }
+*/

@@ -1,4 +1,4 @@
-﻿using Domain.DataModels.User;
+﻿using Domain.DataModels.Users;
 using Microsoft.IdentityModel.Tokens;
 using Persistence;
 using System.IdentityModel.Tokens.Jwt;
@@ -26,26 +26,13 @@ namespace API.Services
                 new Claim("username", user.UserName),
                 new Claim(
                     "firstName",
-                    _context.UserInfos
-                        .Where(q => q.intId == user.intUserInfoId)
-                        .Select(p => p.strFirstName)
-                        .FirstOrDefault()
-                ),
+                      user.FirstName  ),
                 new Claim(
                     "lastName",
-                    _context.UserInfos
-                        .Where(q => q.intId == user.intUserInfoId)
-                        .Select(p => p.strLastName)
-                        .FirstOrDefault()
-                ),
-                new Claim(
-                    "phoneNumber",
-                    _context.UserInfos
-                        .Where(q => q.intId == user.intUserInfoId)
-                        .Select(p => p.strPhoneNumber)
-                        .FirstOrDefault()
-                ),
-                new Claim("userType", _context.UserTypes.Find(user.intUserTypeId).strName),
+                    user.LastName
+                     ),
+               new Claim("UserType", _context.UserTypes.Find(user.UserTypeId).Type)
+
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["TokenKey"]));

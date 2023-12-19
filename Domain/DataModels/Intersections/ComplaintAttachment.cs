@@ -1,4 +1,4 @@
-﻿using Domain.DataModels.Complaints;
+﻿/*using Domain.DataModels.Complaints;
 using Domain.DataModels.User;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -40,3 +40,4 @@ namespace Domain.DataModels.Intersections
         public Boolean blnIsVideo { get; set; }
     }
 }
+*/

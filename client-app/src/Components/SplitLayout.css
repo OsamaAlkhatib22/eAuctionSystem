@@ -1,0 +1,32 @@
+/* src/Components/SplitLayout.css */
+.split-layout-container {
+    display: flex;
+    flex-direction: row; /* Adjusted to a row layout */
+    justify-content: space-around; /* Center the split boxes horizontally */
+    align-items: center;
+    height: 80vh; /* Adjust the height as needed */
+    background-color: #f0f0f0; /* Example background color */
+  }
+  
+  .split-box {
+    width: 45%; /* Adjusted width of the split boxes */
+    padding: 20px;
+    background-color: #ffffff; /* Example box background color */
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+  
+  .get-started-link {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #8b0000; /* Dark red button color */
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-top: 10px;
+  }
+  
+  .get-started-link:hover {
+    background-color: #660000; /* Darker red on hover */
+  }
+  
