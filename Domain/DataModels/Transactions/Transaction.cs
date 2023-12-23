@@ -19,7 +19,7 @@ namespace Domain.DataModels.Transactions
         public int ServiceId { get; set; }
 
         [Column("buyer_id")]
-        [ForeignKey("Buyer")]
+        [ForeignKey("Buyer")]//userId
         public int BuyerId { get; set; }
 
         [Column("Bidder_id")]

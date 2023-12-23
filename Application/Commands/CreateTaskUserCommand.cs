@@ -7,7 +7,7 @@ using Persistence;
 
 namespace Application.Commands
 {
-    public record CreateTaskUserCommand(CreateTaskUserDTO CreateTaskUserDTO, string UserName)
+    public record CreateTaskUserCommand(CreateTaskUserDTO CreateTaskUserDTO)
         : IRequest<Result<CreateTaskUserDTO>>;
     
     

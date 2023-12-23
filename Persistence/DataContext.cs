@@ -186,6 +186,7 @@ namespace Persistence
         public DbSet<UserRating> UserRatings { get; set; }
         public DbSet<Service> Services { get; set; }
         public DbSet<Bids> Bids { get; set; }
+        public DbSet<Wallet> Wallets { get; set; }
         public DbSet<UserType> UserTypes { get; set; }
         public DbSet<UserSkill> UserSkills { get; set; }
         public DbSet<TaskAttachment> TaskAttachments { get; set; }

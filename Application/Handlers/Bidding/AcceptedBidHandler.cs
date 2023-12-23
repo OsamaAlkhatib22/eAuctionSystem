@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.ClientDTOs.Service
+namespace Application.Handlers.Bidding
 {
-    internal class DetailedServiceDTO
+    internal class AcceptedBidHandler
     {
     }
 }
