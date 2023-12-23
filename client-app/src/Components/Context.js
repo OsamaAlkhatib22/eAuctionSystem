@@ -7,6 +7,7 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
 
   const setAuthToken = (newToken) => {
+    console.log('context file: New token:', newToken);
     setToken(newToken);
   };
 

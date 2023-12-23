@@ -11,7 +11,7 @@ const ClientProfile = () => {
   useEffect(() => {
     const fetchPublicProfile = async () => {
       try {
-        const clientProfile = await authService.getPublicProfile(token); // Corrected function name
+        const clientProfile = await authService.getPublicProfile(token); 
         setPublicProfileData(clientProfile);
       } catch (error) {
         console.error('Error fetching client profile:', error.message);
