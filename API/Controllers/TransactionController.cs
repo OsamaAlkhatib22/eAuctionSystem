@@ -11,6 +11,10 @@ namespace API.Controllers
             return HandleResult(await Mediator.Send(new GetTransactionsListQuery()));
         }
 
+        //add money
+
+        //withraw money from walllet
+
 
 
     }

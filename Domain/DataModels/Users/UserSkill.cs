@@ -12,7 +12,7 @@ namespace Domain.DataModels.Users
     public class UserSkill
     {
         [Column("Skills")]
-        public string Skills { get; set; }
+        public string Skills { get; set; } //list
 
         [Column("UserId")]
         [Key]

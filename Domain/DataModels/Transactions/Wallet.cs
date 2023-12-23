@@ -13,7 +13,7 @@ namespace Domain.DataModels.Transactions
     {
         [Column("UserId")]
         [Key]
-        [ForeignKey("UserId")]
+        [ForeignKey("UserId")]//table name
         public int UserId { get; set; }
 
         [Column("Balance")]

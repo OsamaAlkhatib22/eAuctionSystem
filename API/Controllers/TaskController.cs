@@ -32,17 +32,17 @@ namespace API.Controllers
 
 
         [HttpPost("CreateTask")] // .../api/Task/CreateTask
-        public async Task<IActionResult> CreateTask([FromForm] CreateTaskUserDTO CreateTaskUserDTO) 
+        public async Task<IActionResult> CreateTask([FromForm] CreateTaskUserDTO CreateTaskUserDTO)
         {
             string authHeader = Request.Headers["Authorization"];
             JwtSecurityTokenHandler tokenHandler = new();
             JwtSecurityToken jwtToken = tokenHandler.ReadJwtToken(authHeader[7..]);
-            
 
-            string UserName = jwtToken.Claims.First(c => c.Type == "username").Value;
 
-            return HandleResult(await _mediator.Send(new CreateTaskUserCommand(CreateTaskUserDTO, UserName)));
+            CreateTaskUserDTO.UserName = jwtToken.Claims.First(c => c.Type == "username").Value;
+
+            return HandleResult(await Mediator.Send(new CreateTaskUserCommand(CreateTaskUserDTO)));
         }
-        
+
     }
 }

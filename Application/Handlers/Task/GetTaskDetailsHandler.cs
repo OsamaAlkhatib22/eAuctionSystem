@@ -28,13 +28,19 @@ namespace Application.Handlers.Task
             {
 
                 Title = t.Title,
+                FirstName = _context.Users.Where(q => q.Id == t.UserId).Select(q => q.FirstName).SingleOrDefault(),
+                LastName = _context.Users.Where(q => q.Id == t.UserId).Select(q => q.LastName).SingleOrDefault(),
                 ServiceId = t.ServiceId,
                 BidDuration = t.BidDuration,
                 starting_bid = t.starting_bid,
                 CreationDate = t.CreationDate,
                 Description = t.Description,
                 Category_name = t.Category.strCategoryName,
-                Rating = _context.UserRatings.Where(q => q.UserId == t.UserId).Select(r => r.Rating).SingleOrDefault()
+                Rating = _context.UserRatings.Where(q => q.UserId == t.UserId).Select(r => r.Rating).SingleOrDefault(),
+                lstMedia = _context.TaskAttachments
+                    .Where(q => q.ServiceId == t.ServiceId)
+                    .Select(s => File.Exists(s.MediaRef)? Convert.ToBase64String(File.ReadAllBytes(s.MediaRef)):string.Empty).ToList(),
+                
             };
 
 
