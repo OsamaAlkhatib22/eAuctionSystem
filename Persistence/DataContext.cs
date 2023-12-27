@@ -7,6 +7,7 @@ using Domain.DataModels.Reviews;
 using Domain.DataModels.Transactions;
 using Domain.DataModels.Services;
 using Domain.DataModels.UserRating;
+using Domain.DataModels.Skills;
 
 namespace Persistence
 {
@@ -26,64 +27,11 @@ namespace Persistence
                  b.Property(e => e.Id).HasColumnName("UserId");
                  b.Property(e => e.UserName).HasColumnName("UserName");
                  b.Property(e => e.UserTypeId).HasColumnName("user_type_id");
-                 //b.Property(e => e.PhoneNumberConfirmed).HasColumnName("IS_CONFIRMED");
                  b.Property(e => e.PasswordHash).HasColumnName("PASSWORD_HASH");
                  b.Property(e => e.SecurityStamp).HasColumnName("SECURITY_STAMP");
                  b.Property(e => e.ConcurrencyStamp).HasColumnName("CONCURRENCY_STAMP");
              });
-            /*
-             builder.Entity<IdentityUserClaim<int>>(b =>
-             {
-                 b.ToTable("users_claims");
-                 b.Property(e => e.Id).HasColumnName("ID");
-                 b.Property(e => e.UserId).HasColumnName("USER_ID");
-                 b.Property(e => e.ClaimType).HasColumnName("CLAIM_TYPE");
-                 b.Property(e => e.ClaimValue).HasColumnName("CLAIM_VALUE");
-             });
-
-             builder.Entity<IdentityRole<int>>(b =>
-             {
-                 b.ToTable("roles");
-                 b.Property(e => e.Id).HasColumnName("ID");
-                 b.Property(e => e.Name).HasColumnName("NAME");
-                 b.Property(e => e.NormalizedName).HasColumnName("NORMALIZED_NAME");
-                 b.Property(e => e.ConcurrencyStamp).HasColumnName("CONCURRENCY_STAMP");
-             });
-
-             builder.Entity<IdentityRoleClaim<int>>(b =>
-             {
-                 b.ToTable("roles_claims");
-                 b.Property(e => e.Id).HasColumnName("ID");
-                 b.Property(e => e.RoleId).HasColumnName("ROLE_ID");
-                 b.Property(e => e.ClaimType).HasColumnName("CLAIM_TYPE");
-                 b.Property(e => e.ClaimValue).HasColumnName("CLAIM_VALUE");
-             });
-
-             builder.Entity<IdentityUserRole<int>>(b =>
-             {
-                 b.ToTable("users_roles");
-                 b.Property(e => e.UserId).HasColumnName("USER_ID");
-                 b.Property(e => e.RoleId).HasColumnName("ROLE_ID");
-             });
-
-             builder.Entity<IdentityUserLogin<int>>(b =>
-             {
-                 b.ToTable("users_login");
-                 b.Property(e => e.UserId).HasColumnName("USER_ID");
-                 b.Property(e => e.LoginProvider).HasColumnName("LOGIN_PROVIDER");
-                 b.Property(e => e.ProviderKey).HasColumnName("PROVIDER_KEY");
-                 b.Property(e => e.ProviderDisplayName).HasColumnName("PROVIDER_DISPLAY_NAME");
-             });
-
-             builder.Entity<IdentityUserToken<int>>(b =>
-             {
-                 b.ToTable("users_tokens");
-                 b.Property(e => e.UserId).HasColumnName("USER_ID");
-                 b.Property(e => e.LoginProvider).HasColumnName("LOGIN_PROVIDER");
-                 b.Property(e => e.Name).HasColumnName("NAME");
-                 b.Property(e => e.Value).HasColumnName("VALUE");
-             });
-            */
+           
             // Ignore properties
             builder
                 .Entity<ApplicationUser>()
@@ -119,12 +67,11 @@ namespace Persistence
             builder.Entity<Transaction>(b =>
             {
                 b.ToTable("Transactions");
-                b.Property(e => e.TransactionId).HasColumnName("transaction_id");
-                b.Property(e => e.ServiceId).HasColumnName("service_id");
-                b.Property(e => e.BuyerId).HasColumnName("buyer_id");
-                b.Property(e => e.BidderId).HasColumnName("Bidder_id");
-                b.Property(e => e.TransactionDate).HasColumnName("transaction_date");
-                b.Property(e => e.Amount).HasColumnName("amount");
+                b.Property(e => e.TransactionId).HasColumnName("Transaction_id");
+                b.Property(e => e.UserId).HasColumnName("UserId");
+                b.Property(e => e.TransactionType).HasColumnName("Transaction_Type");
+                b.Property(e => e.TransactionDate).HasColumnName("Transaction_date");
+                b.Property(e => e.Amount).HasColumnName("Amount");
             });
             builder.Entity<Service>(b =>
             {
@@ -133,10 +80,11 @@ namespace Persistence
                 b.Property(e => e.UserId).HasColumnName("UserId");
                 b.Property(e => e.Title).HasColumnName("Title");
                 b.Property(e => e.Description).HasColumnName("Description");
-                b.Property(e => e.starting_bid).HasColumnName("starting_bid");
+                b.Property(e => e.starting_bid).HasColumnName("Budget");
                 b.Property(e => e.BidDuration).HasColumnName("Bid_Duration");
                 b.Property(e => e.CategoryId).HasColumnName("category_id");
                 b.Property(e => e.CreationDate).HasColumnName("creation_date");
+                b.Property(e => e.status).HasColumnName("Status");
             });
             builder.Entity<UserRating>(b =>
             {
@@ -151,7 +99,7 @@ namespace Persistence
                 b.Property(e => e.ServiceId).HasColumnName("service_id");
                 b.Property(e => e.UserId).HasColumnName("UserId");
                 b.Property(e => e.BidAmount).HasColumnName("Bid_Amount");
-             
+                b.Property(e => e.IsAccepted).HasColumnName("IsAccepted");
             });
             builder.Entity<Wallet>(b => {
                 b.ToTable("Wallet");
@@ -163,19 +111,41 @@ namespace Persistence
                 b.Property(e => e.UserTypeId).HasColumnName("user_type_id");
                 b.Property(e => e.Type).HasColumnName("Type");
             });
-            builder.Entity<UserSkill>(b => {
+           /* builder.Entity<UserSkill>(b => {
                 b.ToTable("UserSkill");
                 b.Property(e => e.UserId).HasColumnName("UserId");
-                b.Property(e => e.Skills).HasColumnName("Skills");
+                b.Property(e => e.skillId).HasColumnName("skill_id");
             });
             builder.Entity<TaskAttachment>(b => {
                 b.ToTable("TaskAttachment");
                 b.Property(e => e.ServiceId).HasColumnName("service_id");
                 b.Property(e => e.MediaRef).HasColumnName("media_ref");
                 b.Property(e => e.DateCreated).HasColumnName("date_created");
+            });*/
+            builder.Entity<Skills>(b => {
+                b.ToTable("Skills");
+                b.Property(e => e.Skill).HasColumnName("Skills");
+                b.Property(e => e.skillId).HasColumnName("skill_id");
+            });
+            builder.Entity<TaskSkills>(b => {
+                b.ToTable("TaskSkills");
+                b.Property(e => e.skillId).HasColumnName("skill_id");
+                b.Property(e => e.ServiceId).HasColumnName("service_id");
             });
 
-           
+
+
+            //intersections
+
+
+            builder.Entity<UserSkill>(
+               q => q.HasKey(q => new { q.UserId, q.skillId })
+           );
+
+            builder.Entity<TaskAttachment>(
+               q => q.HasKey(q => new { q.ServiceId, q.MediaRef })
+           );
+
 
         }
 
@@ -190,6 +160,8 @@ namespace Persistence
         public DbSet<UserType> UserTypes { get; set; }
         public DbSet<UserSkill> UserSkills { get; set; }
         public DbSet<TaskAttachment> TaskAttachments { get; set; }
+        public DbSet<Skills> Skillss { get; set; }
+        public DbSet<TaskSkills> TaskSkills { get; set; }
        
     }
 }

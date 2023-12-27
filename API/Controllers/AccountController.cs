@@ -1,5 +1,6 @@
 ﻿using API.Services;
 using Domain.ClientDTOs.User;
+using Domain.DataModels.Skills;
 using Domain.DataModels.Transactions;
 using Domain.DataModels.Users;
 using Microsoft.AspNetCore.Authorization;
@@ -95,26 +96,29 @@ namespace API.Controllers
                         LastName = register.LastName.ToLower(),
                         Email = register.Email.ToLower(),
                         RegistrationDate = DateTime.UtcNow,
-                        //  Rating = _context.UserRatings.Where(q => q.UserId == t.UserId).Select(r => r.Rating ).SingleOrDefault()
-                        //Skills = _context.UserSkills.Where(q => q.UserId == _context.)
-                        //Skills = register.Skills.ToLower(),
-                      //  Skills = user.Skills.Add(new UserSkill { Skills = skill })
+                       
             };
 
                 var result = await _userManager.CreateAsync(user, register.Password);
 
                 if (result.Succeeded)
                 {
-                    /*// Store skills in UserSkills table
-                    if (!string.IsNullOrEmpty(register.Skills))
+                    if (user.UserTypeId == 3)
                     {
-                        var skills = register.Skills.Split(',').Select(skill => skill.Trim());
-
-                        foreach (var skill in skills)
+                        if (register.Skills.Count > 0)
                         {
-                            user.Skills.Add(new UserSkill { Skills = skill });
+                            foreach (var skill in register.Skills)
+                            {
+                                var addedSkill = new UserSkill
+                                {
+                                    skillId = skill,
+                                    UserId = user.Id
+                                };
+                                await _context.UserSkills.AddAsync(addedSkill);
+                                await _context.SaveChangesAsync();
+                            }
                         }
-                    }*/
+                    }
 
                    var wallet = new Wallet  { 
                         UserId = user.Id,
@@ -158,9 +162,14 @@ namespace API.Controllers
                  return BadRequest("Email is already used.");
              }
 
+            if (await _userManager.Users.AnyAsync(q => q.UserName == register.user_name))
+            {
+                return BadRequest("Username is already used.");
+            }
 
 
-             return Ok();
+
+            return Ok();
          }
 
         

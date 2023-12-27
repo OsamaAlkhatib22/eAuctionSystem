@@ -54,7 +54,8 @@ namespace Application.Handlers.Task
                     BidDuration = request.CreateTaskUserDTO.bid_duration,
                     CategoryId = request.CreateTaskUserDTO.CategoryId,
                     Description = request.CreateTaskUserDTO.Description,
-                    Title = request.CreateTaskUserDTO.Title
+                    Title = request.CreateTaskUserDTO.Title,
+                    status = "In Auction"
                 };
 
                 var taskEntity = await _context.Services.AddAsync(task);
@@ -62,13 +63,24 @@ namespace Application.Handlers.Task
 
                 taskDTO.ServiceId = taskEntity.Entity.ServiceId;
 
+                var lstMedia = taskDTO.lstMedia;
+
+                if (lstMedia.Count == 0)
+                {
+                    await transaction.RollbackAsync();
+                    return Result<CreateTaskUserDTO>.Failure("No file was Uploaded.");
+                }
+
                 var taskAttachments = new List<TaskAttachment>();
 
-                
-
-                if (taskDTO.fileMedia != null)
+                foreach (var media in lstMedia)
                 {
-                    string extension = Path.GetExtension(taskDTO.fileMedia.FileName);
+                    if (media == null || media.fileMedia == null)
+                    {
+                        await transaction.RollbackAsync();
+                        return Result<CreateTaskUserDTO>.Failure("File was not received (null).");
+                    }
+                    string extension = Path.GetExtension(media.fileMedia.FileName);
                     string fileName = $"{DateTime.UtcNow.Ticks}{extension}";
                     string directory = _configuration["FilesPath"];
                     string path = Path.Join(
@@ -84,14 +96,15 @@ namespace Application.Handlers.Task
 
                     // Create file
                     using var stream = File.Create(filePath);
-                    await taskDTO.fileMedia.CopyToAsync(stream, cancellationToken);
+                    await media.fileMedia.CopyToAsync(stream, cancellationToken);
 
                     taskAttachments.Add(
                         new TaskAttachment
                         {
                             ServiceId = taskEntity.Entity.ServiceId,
                             MediaRef = filePath,
-                            DateCreated = DateTime.UtcNow
+                           DateCreated= DateTime.UtcNow,
+                            
                         }
                     );
                 }

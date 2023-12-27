@@ -87,6 +87,10 @@ namespace Persistence.Migrations
                         .HasColumnType("int")
                         .HasColumnName("Bidder_id");
 
+                    b.Property<bool>("IsAccepted")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("IsAccepted");
+
                     b.Property<int>("ServiceId")
                         .HasColumnType("int")
                         .HasColumnName("service_id");
@@ -136,9 +140,13 @@ namespace Persistence.Migrations
                         .HasColumnType("int")
                         .HasColumnName("UserId");
 
-                    b.Property<string>("starting_bid")
+                    b.Property<decimal>("starting_bid")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("Budget");
+
+                    b.Property<string>("status")
                         .HasColumnType("longtext")
-                        .HasColumnName("starting_bid");
+                        .HasColumnName("Status");
 
                     b.HasKey("ServiceId");
 
@@ -155,17 +163,52 @@ namespace Persistence.Migrations
                         .HasColumnType("int")
                         .HasColumnName("service_id");
 
+                    b.Property<string>("MediaRef")
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("media_ref");
+
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("date_created");
 
-                    b.Property<string>("MediaRef")
-                        .HasColumnType("longtext")
-                        .HasColumnName("media_ref");
+                    b.HasKey("ServiceId", "MediaRef");
+
+                    b.ToTable("TaskAttachment");
+                });
+
+            modelBuilder.Entity("Domain.DataModels.Services.TaskSkills", b =>
+                {
+                    b.Property<int>("ServiceId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("service_id");
+
+                    b.Property<int>("skillId")
+                        .HasColumnType("int")
+                        .HasColumnName("skill_id");
 
                     b.HasKey("ServiceId");
 
-                    b.ToTable("TaskAttachment", (string)null);
+                    b.HasIndex("skillId");
+
+                    b.ToTable("TaskSkills", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.DataModels.Skills.Skills", b =>
+                {
+                    b.Property<int>("skillId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("skill_id");
+
+                    b.Property<string>("Skill")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("Skills");
+
+                    b.HasKey("skillId");
+
+                    b.ToTable("Skills", (string)null);
                 });
 
             modelBuilder.Entity("Domain.DataModels.Transactions.Transaction", b =>
@@ -173,34 +216,27 @@ namespace Persistence.Migrations
                     b.Property<int>("TransactionId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("transaction_id");
+                        .HasColumnName("Transaction_id");
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)")
-                        .HasColumnName("amount");
-
-                    b.Property<int>("BidderId")
-                        .HasColumnType("int")
-                        .HasColumnName("Bidder_id");
-
-                    b.Property<int>("BuyerId")
-                        .HasColumnType("int")
-                        .HasColumnName("buyer_id");
-
-                    b.Property<int>("ServiceId")
-                        .HasColumnType("int")
-                        .HasColumnName("service_id");
+                        .HasColumnName("Amount");
 
                     b.Property<DateTime>("TransactionDate")
                         .HasColumnType("datetime(6)")
-                        .HasColumnName("transaction_date");
+                        .HasColumnName("Transaction_date");
+
+                    b.Property<string>("TransactionType")
+                        .HasColumnType("longtext")
+                        .HasColumnName("Transaction_Type");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int")
+                        .HasColumnName("UserId");
 
                     b.HasKey("TransactionId");
 
-                    b.HasIndex("BuyerId");
-
-                    b.HasIndex("ServiceId")
-                        .IsUnique();
+                    b.HasIndex("UserId");
 
                     b.ToTable("Transactions", (string)null);
                 });
@@ -314,13 +350,15 @@ namespace Persistence.Migrations
                         .HasColumnType("int")
                         .HasColumnName("UserId");
 
-                    b.Property<string>("Skills")
-                        .HasColumnType("longtext")
-                        .HasColumnName("Skills");
+                    b.Property<int>("skillId")
+                        .HasColumnType("int")
+                        .HasColumnName("skill_id");
 
-                    b.HasKey("UserId");
+                    b.HasKey("UserId", "skillId");
 
-                    b.ToTable("UserSkill", (string)null);
+                    b.HasIndex("skillId");
+
+                    b.ToTable("UserSkills");
                 });
 
             modelBuilder.Entity("Domain.DataModels.Users.UserType", b =>
@@ -533,23 +571,26 @@ namespace Persistence.Migrations
                     b.Navigation("Service");
                 });
 
+            modelBuilder.Entity("Domain.DataModels.Services.TaskSkills", b =>
+                {
+                    b.HasOne("Domain.DataModels.Skills.Skills", "Skills")
+                        .WithMany()
+                        .HasForeignKey("skillId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Skills");
+                });
+
             modelBuilder.Entity("Domain.DataModels.Transactions.Transaction", b =>
                 {
-                    b.HasOne("Domain.DataModels.Users.ApplicationUser", "Buyer")
+                    b.HasOne("Domain.DataModels.Users.ApplicationUser", "User")
                         .WithMany()
-                        .HasForeignKey("BuyerId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.DataModels.Services.Service", "Service")
-                        .WithOne("Transaction")
-                        .HasForeignKey("Domain.DataModels.Transactions.Transaction", "ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Buyer");
-
-                    b.Navigation("Service");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Domain.DataModels.UserRating.UserRating", b =>
@@ -581,6 +622,14 @@ namespace Persistence.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Domain.DataModels.Skills.Skills", "Skills")
+                        .WithMany()
+                        .HasForeignKey("skillId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Skills");
 
                     b.Navigation("User");
                 });
@@ -639,8 +688,6 @@ namespace Persistence.Migrations
             modelBuilder.Entity("Domain.DataModels.Services.Service", b =>
                 {
                     b.Navigation("TaskAttachments");
-
-                    b.Navigation("Transaction");
                 });
 
             modelBuilder.Entity("Domain.DataModels.Users.ApplicationUser", b =>

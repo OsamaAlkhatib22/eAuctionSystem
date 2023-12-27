@@ -10,7 +10,7 @@ namespace Domain.ClientDTOs.Service
         public string LastName { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public string starting_bid { get; set; }
+        public decimal starting_bid { get; set; }
         public TimeSpan BidDuration { get; set; }
         public string Category_name { get; set; }
         public DateTime CreationDate { get; set; }

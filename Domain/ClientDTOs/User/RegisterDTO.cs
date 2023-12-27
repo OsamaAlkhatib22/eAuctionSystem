@@ -17,7 +17,7 @@ namespace Domain.ClientDTOs.User
         public int UserTypeId { get; set; }
         public string FieldOfWork {  get; set; }
         public string JobTitle { get; set; }
-       // public string Skills { get; set; } add later
+        public List<int> Skills  { get; set; } //= new List<int>();
 
     }
 }

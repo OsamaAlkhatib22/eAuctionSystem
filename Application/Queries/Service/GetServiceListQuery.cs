@@ -4,5 +4,5 @@ using MediatR;
 
 namespace Application.Queries.Service
 {
-    public record GetServiceListQuery() : IRequest<Result<List<TaskListDTO>>>;
+    public record GetServiceListQuery(string username) : IRequest<Result<List<TaskListDTO>>>;
 }

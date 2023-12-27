@@ -13,12 +13,12 @@ namespace Domain.DataModels.Services
     {
 
         [Column("service_id")]
-        [Key]
         [ForeignKey("Service")] 
         public int ServiceId { get; set; }
         public Service Service { get; set; }
 
         [Column("media_ref")]
+        [Required]
         public string MediaRef { get; set; }
 
         [Column("date_created")]

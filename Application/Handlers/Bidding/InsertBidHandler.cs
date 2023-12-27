@@ -36,7 +36,12 @@ public class InsertBidHandler : IRequestHandler<AddBidCommand, Result<AddBidDTO>
     {
         try
         {
-            
+            if (request.AddBidDTO.Bid_Amount <= 0)
+            {
+                return Result<AddBidDTO>.Failure("Bid amount must be more than Zero.");
+            }
+
+
             var service = await _context.Services.FindAsync(request.id);
 
             if (service == null)
@@ -50,18 +55,25 @@ public class InsertBidHandler : IRequestHandler<AddBidCommand, Result<AddBidDTO>
 
             // Check if the same bidder has placed a previous bid
             var previousBid = await _context.Bids.Where(b => b.ServiceId == request.id && b.BidderId == UserId)
-                                                 .OrderByDescending(b => b.BidAmount).FirstOrDefaultAsync();
+                                                 .OrderBy(b => b.BidAmount).FirstOrDefaultAsync();
 
             if (previousBid != null && previousBid.BidAmount <= request.AddBidDTO.Bid_Amount)
             {
                 return Result<AddBidDTO>.Failure("Bid amount must be lower than the previous bid.");
             }
 
+
+
             // Check if bid duration has expired
             DateTime bidExpiration = service.CreationDate.Add(service.BidDuration);
             if (DateTime.UtcNow > bidExpiration)
             {
                 return Result<AddBidDTO>.Failure("Bid duration has expired. No more bids can be placed.");
+            }
+
+            if (service.starting_bid < request.AddBidDTO.Bid_Amount)
+            {
+                return Result<AddBidDTO>.Failure("Bid Amount cant be higher then the service budget.");
             }
 
 
@@ -71,7 +83,7 @@ public class InsertBidHandler : IRequestHandler<AddBidCommand, Result<AddBidDTO>
                 BidAmount = request.AddBidDTO.Bid_Amount,
                 ServiceId = request.id,// to Assign the spicfic service ID to the bid
                 UserId = _context.Services.Where(q => q.ServiceId == request.id).Select(q => q.UserId).FirstOrDefault(),
-
+                IsAccepted = false,
 
 
               

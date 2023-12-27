@@ -21,14 +21,17 @@ namespace Domain.DataModels.Services
 
 
         [Column("Bidder_id")]
-     //   [ForeignKey("User")]
+    
         public int BidderId { get; set; }
 
         [Column("Bid_Amount")]
         public decimal BidAmount { get; set; }
 
+        [Column("IsAccepted")]
+        public Boolean IsAccepted { get; set; }
 
-        
+
+
 
 
         //Intersection

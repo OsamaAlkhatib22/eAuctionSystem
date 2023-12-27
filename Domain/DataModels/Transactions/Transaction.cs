@@ -14,26 +14,21 @@ namespace Domain.DataModels.Transactions
         [Key]
         public int TransactionId { get; set; }
 
-        [Column("service_id")]
-        [ForeignKey("Service")]
-        public int ServiceId { get; set; }
+        [Column("UserId")]
+        [ForeignKey("User")]
+        public int UserId { get; set; }
 
-        [Column("buyer_id")]
-        [ForeignKey("Buyer")]//userId
-        public int BuyerId { get; set; }
-
-        [Column("Bidder_id")]
-        [ForeignKey("Bidder")]
-        public int BidderId { get; set; }
+        [Column("TransactionType")]
+        public string TransactionType { get; set; }
 
         [Column("transaction_date")]
         public DateTime TransactionDate { get; set; }
 
+        [Column("Amount")]
         public decimal Amount { get; set; }
 
-        public  Service Service { get; set; }
 
-        public ApplicationUser Buyer { get; set; }
+        public ApplicationUser User { get; set; }
 
         
     }
