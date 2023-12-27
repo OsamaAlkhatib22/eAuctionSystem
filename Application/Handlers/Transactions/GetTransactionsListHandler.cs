@@ -25,40 +25,22 @@ namespace Application.Handlers.Transaction
             CancellationToken cancellationToken
         )
         {
+            int userid = await _context.Users.Where(t => t.UserName == request.username).Select(q => q.Id).SingleOrDefaultAsync();
+
             var query =
             from t in _context.Transactions
+            where t.UserId == userid
             select new TransactionDTO
             {
 
                 TransactionId = t.TransactionId,
                 TransactionDate = t.TransactionDate,
                 Amount = t.Amount,
-                Bidder = _context.Users.Where(q => q.Id == t.BidderId)
-                .Select(q => new BidderDTO {
-                    FirstName = q.FirstName,
-                    LastName = q.LastName,
-                    BidderId = t.BidderId
-                }).FirstOrDefault(),
-                Buyer = _context.Users.Where(q => q.Id == t.BuyerId)
-                .Select(q => new BuyerDTO
-                {
-                    FirstName = q.FirstName,
-                    LastName = q.LastName,
-                    BuyerID = t.BuyerId
-                }).FirstOrDefault(),
-                Service = _context.Services.Where(q => q.ServiceId == t.ServiceId)
-                .Select(q => new ServiceDTO { 
-                    ServiceId = q.ServiceId,
-                    //Budget = q.Budget,
-                    starting_bid = q.starting_bid,
-                    BidDuration = q.BidDuration,
-                    Category_name = CategoriesConstant.GetCategoryName(q.CategoryId),
-                    CreationDate = q.CreationDate,
-                    Description = q.Description,
-                    Title = q.Title,
-                    Rating = q.User.Ratings.Where(f => f.UserId == q.UserId).Select(f => f.Rating).FirstOrDefault()
-                    
-                }).FirstOrDefault()
+                //UserId = _context.Users.Where(q => q.Id == t.UserId).Select(w => w.Id).SingleOrDefault(),
+                UserId = t.UserId,
+                Transaction_Type = t.TransactionType,
+                
+            
 
             };
 

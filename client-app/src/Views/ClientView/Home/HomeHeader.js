@@ -19,7 +19,10 @@ const HomeHeader = ({ showProfileLink = true }) => {
           Explore Tasks
         </Link>
         <Link to="/ClientTransactions" className="header-button">
-          Transactions
+          My Transactions
+        </Link>
+        <Link to="/MyTasks" className="header-button">
+          My Tasks
         </Link>
         
       </div>

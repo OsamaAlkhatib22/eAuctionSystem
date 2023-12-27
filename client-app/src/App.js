@@ -17,7 +17,8 @@ import FreeLancerHomeHeader from './Views/FreeLancerView/Home/FreeLancerHomeHead
 import ProfileHeader from './Views/FreeLancerView/Profile/ProfileHeader';
 import ClientProfileHeader from './Views/ClientView/Profile/ClientProfileHeader';
 import TaskDetails from './Views/FreeLancerView/Home/TaskDetails';
-
+import ClientTaskDetails from './Views/ClientView/Tasks/ClientTaskDetails';
+import MyTasks from './Views/ClientView/Tasks/MyTasks';
 
 
 //app  AuthProvider 
@@ -46,6 +47,8 @@ function App() {
           <Route path="/ProfileHeader" element = {<ProfileHeader />} />
           <Route path="/ClientProfileHeader" element = {<ClientProfileHeader />} />
           <Route path="/task/:ServiceId" element={<TaskDetails />} />
+          <Route path="/ctask/:ServiceId" element={<ClientTaskDetails />} />
+          <Route path="/MyTasks" element = {<MyTasks />} />
 
           <Route path="/" element={<SplitLayout />} />
         </Routes>

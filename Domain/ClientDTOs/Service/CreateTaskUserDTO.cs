@@ -17,10 +17,11 @@ namespace Domain.ClientDTOs.Service
         public string Title { get; set; }
         public string Description { get; set; }
         public TimeSpan bid_duration { get; set; }
-        public string starting_bid { get; set; }
+        public decimal starting_bid { get; set; }
         public int CategoryId { get; set; }
         public DateTime CreationDate { get; set; }
-        public IFormFile fileMedia { get; set; }
+        
+
 
 
         public ICollection<AttachmentsDTO> lstMedia { get; set; }

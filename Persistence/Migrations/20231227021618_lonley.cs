@@ -7,7 +7,7 @@ using MySql.EntityFrameworkCore.Metadata;
 namespace Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class addedBiding : Migration
+    public partial class lonley : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -46,26 +46,44 @@ namespace Persistence.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "users",
+                name: "Skills",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "int", nullable: false)
+                    skill_id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
-                    first_name = table.Column<string>(type: "longtext", nullable: true),
-                    last_name = table.Column<string>(type: "longtext", nullable: true),
-                    registration_date = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    bio = table.Column<string>(type: "longtext", nullable: true),
-                    type = table.Column<string>(type: "longtext", nullable: true),
-                    UserName = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true),
-                    NormalizedUserName = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true),
-                    Email = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true),
-                    PASSWORD_HASH = table.Column<string>(type: "longtext", nullable: true),
-                    SECURITY_STAMP = table.Column<string>(type: "longtext", nullable: true),
-                    CONCURRENCY_STAMP = table.Column<string>(type: "longtext", nullable: true)
+                    Skills = table.Column<string>(type: "longtext", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_users", x => x.UserId);
+                    table.PrimaryKey("PK_Skills", x => x.skill_id);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "UserType",
+                columns: table => new
+                {
+                    user_type_id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    Type = table.Column<string>(type: "longtext", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserType", x => x.user_type_id);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Wallet",
+                columns: table => new
+                {
+                    user_id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    Balance = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Wallet", x => x.user_id);
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
@@ -87,6 +105,58 @@ namespace Persistence.Migrations
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "TaskSkills",
+                columns: table => new
+                {
+                    service_id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    skill_id = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TaskSkills", x => x.service_id);
+                    table.ForeignKey(
+                        name: "FK_TaskSkills_Skills_skill_id",
+                        column: x => x.skill_id,
+                        principalTable: "Skills",
+                        principalColumn: "skill_id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "users",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    first_name = table.Column<string>(type: "longtext", nullable: true),
+                    last_name = table.Column<string>(type: "longtext", nullable: true),
+                    registration_date = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    bio = table.Column<string>(type: "longtext", nullable: true),
+                    Field_of_work = table.Column<string>(type: "longtext", nullable: true),
+                    Job_title = table.Column<string>(type: "longtext", nullable: true),
+                    user_type_id = table.Column<int>(type: "int", nullable: false),
+                    UserName = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true),
+                    PASSWORD_HASH = table.Column<string>(type: "longtext", nullable: true),
+                    SECURITY_STAMP = table.Column<string>(type: "longtext", nullable: true),
+                    CONCURRENCY_STAMP = table.Column<string>(type: "longtext", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_users", x => x.UserId);
+                    table.ForeignKey(
+                        name: "FK_users_UserType_user_type_id",
+                        column: x => x.user_type_id,
+                        principalTable: "UserType",
+                        principalColumn: "user_type_id",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
@@ -189,10 +259,11 @@ namespace Persistence.Migrations
                     UserId = table.Column<int>(type: "int", nullable: false),
                     Title = table.Column<string>(type: "longtext", nullable: false),
                     Description = table.Column<string>(type: "longtext", nullable: true),
-                    starting_bid = table.Column<string>(type: "longtext", nullable: true),
+                    Budget = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Bid_Duration = table.Column<TimeSpan>(type: "time(6)", nullable: false),
                     category_id = table.Column<int>(type: "int", nullable: false),
-                    creation_date = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                    creation_date = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    Status = table.Column<string>(type: "longtext", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -213,6 +284,29 @@ namespace Persistence.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "Transactions",
+                columns: table => new
+                {
+                    Transaction_id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    Transaction_Type = table.Column<string>(type: "longtext", nullable: true),
+                    Transaction_date = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Transactions", x => x.Transaction_id);
+                    table.ForeignKey(
+                        name: "FK_Transactions_users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "UserRating",
                 columns: table => new
                 {
@@ -224,6 +318,61 @@ namespace Persistence.Migrations
                     table.PrimaryKey("PK_UserRating", x => x.UserId);
                     table.ForeignKey(
                         name: "FK_UserRating_users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "UserSkills",
+                columns: table => new
+                {
+                    skill_id = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserSkills", x => new { x.UserId, x.skill_id });
+                    table.ForeignKey(
+                        name: "FK_UserSkills_Skills_skill_id",
+                        column: x => x.skill_id,
+                        principalTable: "Skills",
+                        principalColumn: "skill_id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserSkills_users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Bids",
+                columns: table => new
+                {
+                    Bid_id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    service_id = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    Bidder_id = table.Column<int>(type: "int", nullable: false),
+                    Bid_Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    IsAccepted = table.Column<bool>(type: "tinyint(1)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Bids", x => x.Bid_id);
+                    table.ForeignKey(
+                        name: "FK_Bids_Services_service_id",
+                        column: x => x.service_id,
+                        principalTable: "Services",
+                        principalColumn: "service_id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Bids_users_UserId",
                         column: x => x.UserId,
                         principalTable: "users",
                         principalColumn: "UserId",
@@ -262,72 +411,21 @@ namespace Persistence.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Transactions",
+                name: "TaskAttachment",
                 columns: table => new
                 {
-                    transaction_id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     service_id = table.Column<int>(type: "int", nullable: false),
-                    buyer_id = table.Column<int>(type: "int", nullable: false),
-                    Bidder_id = table.Column<int>(type: "int", nullable: false),
-                    transaction_date = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    SellerId = table.Column<int>(type: "int", nullable: true)
+                    media_ref = table.Column<string>(type: "varchar(255)", nullable: false),
+                    date_created = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Transactions", x => x.transaction_id);
+                    table.PrimaryKey("PK_TaskAttachment", x => new { x.service_id, x.media_ref });
                     table.ForeignKey(
-                        name: "FK_Transactions_Services_service_id",
+                        name: "FK_TaskAttachment_Services_service_id",
                         column: x => x.service_id,
                         principalTable: "Services",
                         principalColumn: "service_id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Transactions_users_SellerId",
-                        column: x => x.SellerId,
-                        principalTable: "users",
-                        principalColumn: "UserId");
-                    table.ForeignKey(
-                        name: "FK_Transactions_users_buyer_id",
-                        column: x => x.buyer_id,
-                        principalTable: "users",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySQL:Charset", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "Bids",
-                columns: table => new
-                {
-                    Bid_id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
-                    service_id = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    Bidder_id = table.Column<int>(type: "int", nullable: false),
-                    Bid_Amount = table.Column<string>(type: "longtext", nullable: true),
-                    TransactionId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Bids", x => x.Bid_id);
-                    table.ForeignKey(
-                        name: "FK_Bids_Services_service_id",
-                        column: x => x.service_id,
-                        principalTable: "Services",
-                        principalColumn: "service_id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Bids_Transactions_TransactionId",
-                        column: x => x.TransactionId,
-                        principalTable: "Transactions",
-                        principalColumn: "transaction_id");
-                    table.ForeignKey(
-                        name: "FK_Bids_users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "users",
-                        principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
@@ -364,11 +462,6 @@ namespace Persistence.Migrations
                 column: "service_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Bids_TransactionId",
-                table: "Bids",
-                column: "TransactionId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Bids_UserId",
                 table: "Bids",
                 column: "UserId");
@@ -394,26 +487,30 @@ namespace Persistence.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Transactions_buyer_id",
-                table: "Transactions",
-                column: "buyer_id");
+                name: "IX_TaskSkills_skill_id",
+                table: "TaskSkills",
+                column: "skill_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Transactions_SellerId",
+                name: "IX_Transactions_UserId",
                 table: "Transactions",
-                column: "SellerId");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Transactions_service_id",
-                table: "Transactions",
-                column: "service_id",
-                unique: true);
+                name: "IX_users_user_type_id",
+                table: "users",
+                column: "user_type_id");
 
             migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
                 table: "users",
                 column: "NormalizedUserName",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserSkills_skill_id",
+                table: "UserSkills",
+                column: "skill_id");
         }
 
         /// <inheritdoc />
@@ -441,22 +538,40 @@ namespace Persistence.Migrations
                 name: "Reviews");
 
             migrationBuilder.DropTable(
-                name: "UserRating");
+                name: "TaskAttachment");
 
             migrationBuilder.DropTable(
-                name: "AspNetRoles");
+                name: "TaskSkills");
 
             migrationBuilder.DropTable(
                 name: "Transactions");
 
             migrationBuilder.DropTable(
+                name: "UserRating");
+
+            migrationBuilder.DropTable(
+                name: "UserSkills");
+
+            migrationBuilder.DropTable(
+                name: "Wallet");
+
+            migrationBuilder.DropTable(
+                name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
                 name: "Services");
+
+            migrationBuilder.DropTable(
+                name: "Skills");
 
             migrationBuilder.DropTable(
                 name: "Categories");
 
             migrationBuilder.DropTable(
                 name: "users");
+
+            migrationBuilder.DropTable(
+                name: "UserType");
         }
     }
 }

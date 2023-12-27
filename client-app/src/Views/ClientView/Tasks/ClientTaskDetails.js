@@ -12,25 +12,21 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  TextField,
-  Snackbar,
 } from "@mui/material";
-import FreeLancerHomeHeader from "./FreeLancerHomeHeader";
-import { fetchTaskDetails, addBid } from "./Service/Auth";
+import HomeHeader from '../Home/HomeHeader';
+import { fetchTaskDetails, addBidAcceptance } from "../../FreeLancerView/Home/Service/Auth"; // Make sure to import addBidAcceptance
 import { useParams, useNavigate } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useAuth } from "../../../Components/Context";
 
-const TaskDetails = () => {
+const ClientTaskDetails = () => {
   const { ServiceId } = useParams();
   const [taskDetails, setTaskDetails] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
-  const [openImageModal, setOpenImageModal] = useState(false);
-  const [openBidModal, setOpenBidModal] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedBid, setSelectedBid] = useState(null);
+  const [openAcceptDialog, setOpenAcceptDialog] = useState(false);
   const { token } = useAuth();
-  const [bidAmount, setBidAmount] = useState('');
-  const [isSnackbarOpen, setSnackbarOpen] = useState(false);
-
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -46,55 +42,43 @@ const TaskDetails = () => {
     fetchData();
   }, [ServiceId]);
 
+  const handleAcceptConfirmation = async () => {
+    try {
+      // Make the API call to accept the bid using selectedBid
+      const response = await addBidAcceptance(ServiceId, selectedBid.bidAmount, selectedBid.bidId, token);
+
+      // Handle the response or update the UI as needed
+      console.log('Bid accepted successfully:', response);
+
+      // Close the confirmation dialog
+      setOpenAcceptDialog(false);
+    } catch (error) {
+      console.error('Error accepting bid:', error.message);
+      // Handle the error or show an error message
+    }
+  };
+
+  const handleAcceptBid = (bid) => {
+    setSelectedBid(bid);
+    setOpenAcceptDialog(true);
+  };
+
   const handleGoBack = () => {
-    navigate("/FreeLancerHome");
+    navigate("/ClientExploreTasks"); // Change the route to the desired client page
   };
 
   const handleImageClick = (image) => {
     setSelectedImage(image);
-    setOpenImageModal(true);
+    setOpenModal(true);
   };
 
-  const handleCloseImageModal = () => {
-    setOpenImageModal(false);
-  };
-
-  const handleAddBidButtonClick = () => {
-    setOpenBidModal(true);
-  };
-
-  const handleCloseBidModal = () => {
-    setOpenBidModal(false);
-  };
-
-  const handleAddBid = async () => {
-    try {
-      if (!isNaN(parseFloat(bidAmount)) && isFinite(bidAmount)) {
-        const newBid = await addBid(ServiceId, parseFloat(bidAmount), token);
-
-        setTaskDetails((prevDetails) => ({
-          ...prevDetails,
-          bids: [...prevDetails.bids, newBid],
-        }));
-
-        setBidAmount('');
-        setSnackbarOpen(true);
-        handleCloseBidModal();
-      } else {
-        console.error('Invalid bid amount');
-      }
-    } catch (error) {
-      console.error('Error adding bid:', error.message);
-    }
-  };
-
-  const handleCloseSnackbar = () => {
-    setSnackbarOpen(false);
+  const handleCloseModal = () => {
+    setOpenModal(false);
   };
 
   return (
     <div>
-      <FreeLancerHomeHeader />
+      <HomeHeader />
       {taskDetails && (
         <Box sx={{ p: 3, fontFamily: "Roboto, sans-serif" }}>
           <IconButton onClick={handleGoBack} color="primary">
@@ -141,24 +125,6 @@ const TaskDetails = () => {
                     />
                   ))}
               </Box>
-               {/* Selected Image Dialog */}
-                  <Dialog open={openImageModal} onClose={handleCloseImageModal}>
-                    <DialogTitle>Full Image</DialogTitle>
-                    <DialogContent>
-                      {selectedImage && (
-                        <img
-                          alt="Full Image"
-                          src={`data:image/png;base64,${selectedImage}`}
-                          style={{ width: "100%", height: "auto" }}
-                        />
-                      )}
-                    </DialogContent>
-                    <DialogActions>
-                      <Button onClick={handleCloseImageModal} color="primary">
-                        Close
-                      </Button>
-                    </DialogActions>
-                  </Dialog>
             </Grid>
             <Grid item xs={4}>
               <Typography variant="h6" gutterBottom>
@@ -186,38 +152,24 @@ const TaskDetails = () => {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={12} textAlign="center">
-              <Button variant="contained" color="primary" onClick={handleAddBidButtonClick}>
-                Add Bid
-              </Button>
-            </Grid>
           </Grid>
-          <Dialog open={openBidModal} onClose={handleCloseBidModal}>
-            <DialogTitle>Add Bid</DialogTitle>
+
+          <Dialog open={openModal} onClose={handleCloseModal}>
+            <DialogTitle>Full-size Image</DialogTitle>
             <DialogContent>
-              <TextField
-                label="Bid Amount"
-                variant="outlined"
-                value={bidAmount}
-                onChange={(e) => setBidAmount(e.target.value)}
-                type="number"
+              <img
+                src={`data:image/png;base64,${selectedImage}`}
+                alt="Full-size Image"
+                style={{ width: "100%" }}
               />
             </DialogContent>
             <DialogActions>
-              <Button onClick={handleCloseBidModal} color="primary">
-                Cancel
-              </Button>
-              <Button onClick={handleAddBid} color="primary">
-                Add Bid
+              <Button onClick={handleCloseModal} color="primary">
+                Close
               </Button>
             </DialogActions>
           </Dialog>
-          <Snackbar
-            open={isSnackbarOpen}
-            autoHideDuration={6000}
-            onClose={handleCloseSnackbar}
-            message="Bid added successfully!"
-          />
+
           <Box mt={3}>
             <Typography variant="h6" gutterBottom>
               Received Bids
@@ -239,6 +191,7 @@ const TaskDetails = () => {
                         </Typography>
                       </>
                     )}
+                    <Button onClick={() => handleAcceptBid(bid)}>Accept Bid</Button>
                   </CardContent>
                 </Card>
               ))
@@ -246,10 +199,31 @@ const TaskDetails = () => {
               <Typography variant="body2">No bids received for this task.</Typography>
             )}
           </Box>
+
+          <Dialog open={openAcceptDialog} onClose={() => setOpenAcceptDialog(false)}>
+            <DialogTitle>Accept Bid Confirmation</DialogTitle>
+            <DialogContent>
+              <Typography variant="body1">
+                Are you sure you want to accept this bid?
+              </Typography>
+              <Typography variant="body1">
+                Bid Amount: {selectedBid?.bidAmount}
+              </Typography>
+              {/* Add more bid details as needed */}
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => setOpenAcceptDialog(false)} color="primary">
+                Cancel
+              </Button>
+              <Button onClick={handleAcceptConfirmation} color="primary">
+                Accept Bid
+              </Button>
+            </DialogActions>
+          </Dialog>
         </Box>
       )}
     </div>
   );
 };
 
-export default TaskDetails;
+export default ClientTaskDetails;

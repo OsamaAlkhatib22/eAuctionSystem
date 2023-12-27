@@ -37,8 +37,22 @@ namespace API.Controllers
         }
 
 
+
+
         //accepted bid
-     
+
+        [HttpPost("AcceptBid/{id}")]//  ../api/Bidding/AcceptBid/1     
+        public async Task<IActionResult> AcceptBid(int id)
+        {
+            string authHeader = Request.Headers["Authorization"];
+            JwtSecurityTokenHandler tokenHandler = new();
+            JwtSecurityToken jwtToken = tokenHandler.ReadJwtToken(authHeader[7..]);
+
+            var UserName = jwtToken.Claims.First(c => c.Type == "username").Value;
+
+            return HandleResult(await _mediator.Send(new AcceptedBidCommand(id,  UserName )));
+        }
+
 
     }
 

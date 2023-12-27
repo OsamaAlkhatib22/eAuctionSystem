@@ -1,6 +1,7 @@
 ﻿using Domain.DataModels.Categories;
 using Domain.DataModels.Transactions;
 using Domain.DataModels.Users;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -25,8 +26,8 @@ namespace Domain.DataModels.Services
         [Column("Description")]
         public string Description { get; set; }
 
-        [Column("starting_bid")]
-        public string starting_bid { get; set; }
+        [Column("Budget")]
+        public decimal starting_bid { get; set; }
 
 
         [Column("bid_duration")]
@@ -41,10 +42,13 @@ namespace Domain.DataModels.Services
         [Column("creation_date")]
         public DateTime CreationDate { get; set; }
 
+        [Column("Status")]
+        public string status { get; set; }
+
 
         //Intersection
         public ApplicationUser User { get; set; }
-        public Transaction Transaction { get; set; }
+        
         public Category Category { get; set; }
 
         public ICollection<TaskAttachment> TaskAttachments { get; set; }

@@ -12,7 +12,28 @@ namespace API.Controllers
         [HttpGet("TaskList")] // .../api/Task/TaskList
         public async Task<IActionResult> GetTaskList()
         {
-            return HandleResult(await Mediator.Send(new GetServiceListQuery()));
+            string authHeader = Request.Headers["Authorization"];
+            JwtSecurityTokenHandler tokenHandler = new();
+            JwtSecurityToken jwtToken = tokenHandler.ReadJwtToken(authHeader[7..]);
+
+
+            var UserName = jwtToken.Claims.First(c => c.Type == "username").Value;
+
+            return HandleResult(await Mediator.Send(new GetServiceListQuery(UserName)));
+        }
+
+
+        [HttpGet("CompletedTaskList")] // .../api/Task/CompletedTaskList
+        public async Task<IActionResult> CompletedTaskList()
+        {
+            string authHeader = Request.Headers["Authorization"];
+            JwtSecurityTokenHandler tokenHandler = new();
+            JwtSecurityToken jwtToken = tokenHandler.ReadJwtToken(authHeader[7..]);
+
+
+            var UserName = jwtToken.Claims.First(c => c.Type == "username").Value;
+
+            return HandleResult(await Mediator.Send(new GetCompletedTaskListQuery(UserName)));
         }
 
 

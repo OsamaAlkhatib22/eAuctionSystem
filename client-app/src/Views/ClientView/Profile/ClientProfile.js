@@ -49,7 +49,7 @@ const ClientProfile = () => {
             <p>
               <strong>Field of Work:</strong> {publicProfileData?.fieldOfWork}
             </p>
-            {/* Add more fields as needed */}
+          
             <button onClick={handleButtonClick}>
               Print Token
             </button>
