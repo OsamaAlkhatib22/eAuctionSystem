@@ -41,7 +41,7 @@ const ExploreTasks = () => {
       <Box sx={{ display: "grid", gap: 2 }}>
         <Box sx={{ display: "flex", justifyContent: "start" }}>
           <IconButton onClick={handleGoBack} color="primary">
-            <ArrowBackIcon />
+            <ArrowBackIcon />home
           </IconButton>
         </Box>
         {tasks.map((task) => (

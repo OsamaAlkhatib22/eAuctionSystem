@@ -85,6 +85,7 @@ namespace Persistence
                 b.Property(e => e.CategoryId).HasColumnName("category_id");
                 b.Property(e => e.CreationDate).HasColumnName("creation_date");
                 b.Property(e => e.status).HasColumnName("Status");
+                b.Property(e => e.TaskSubmissionTime).HasColumnName("TaskSubmissionTime");
             });
             builder.Entity<UserRating>(b =>
             {
@@ -127,10 +128,16 @@ namespace Persistence
                 b.Property(e => e.Skill).HasColumnName("Skills");
                 b.Property(e => e.skillId).HasColumnName("skill_id");
             });
-            builder.Entity<TaskSkills>(b => {
+           /* builder.Entity<TaskSkills>(b => {
                 b.ToTable("TaskSkills");
                 b.Property(e => e.skillId).HasColumnName("skill_id");
                 b.Property(e => e.ServiceId).HasColumnName("service_id");
+            });*/
+
+            builder.Entity<TransactionService>(b => {
+                b.ToTable("TransactionService");
+                b.Property(e => e.ServiceId).HasColumnName("ServiceId");
+                b.Property(e => e.TransactionId).HasColumnName("TransactionId");
             });
 
 
@@ -145,6 +152,11 @@ namespace Persistence
             builder.Entity<TaskAttachment>(
                q => q.HasKey(q => new { q.ServiceId, q.MediaRef })
            );
+
+            builder.Entity<TaskSkills>(
+               q => q.HasKey(q => new { q.ServiceId, q.skillId })
+           );
+           
 
 
         }
@@ -162,6 +174,7 @@ namespace Persistence
         public DbSet<TaskAttachment> TaskAttachments { get; set; }
         public DbSet<Skills> Skillss { get; set; }
         public DbSet<TaskSkills> TaskSkills { get; set; }
+        public DbSet<TransactionService> TransactionServices { get; set; }
        
     }
 }

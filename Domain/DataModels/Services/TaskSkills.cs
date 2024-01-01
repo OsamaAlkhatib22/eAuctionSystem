@@ -14,12 +14,14 @@ namespace Domain.DataModels.Services
     {
 
         [Column("service_id")]
-        [Key]
+        [Required]
         [ForeignKey("Service")]
         public int ServiceId { get; set; }
+        public Service Service { get; set; }
 
 
         [Column("skill_id")]
+        [Required]
         [ForeignKey("Skills")]
         public int skillId { get; set; }
 

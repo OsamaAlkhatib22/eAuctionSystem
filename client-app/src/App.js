@@ -19,6 +19,9 @@ import ClientProfileHeader from './Views/ClientView/Profile/ClientProfileHeader'
 import TaskDetails from './Views/FreeLancerView/Home/TaskDetails';
 import ClientTaskDetails from './Views/ClientView/Tasks/ClientTaskDetails';
 import MyTasks from './Views/ClientView/Tasks/MyTasks';
+import ClientCreateTask from './Views/ClientView/Tasks/ClientCreateTask';
+import MyTaskDetails from './Views/ClientView/Tasks/MyTaskDetails';
+
 
 
 //app  AuthProvider 
@@ -49,6 +52,9 @@ function App() {
           <Route path="/task/:ServiceId" element={<TaskDetails />} />
           <Route path="/ctask/:ServiceId" element={<ClientTaskDetails />} />
           <Route path="/MyTasks" element = {<MyTasks />} />
+          <Route path="/ClientCreateTask" element = {<ClientCreateTask />} />
+          <Route path="/mtask/:ServiceId" element={<MyTaskDetails />} />
+          <Route path="/SplitLayout" element={<SplitLayout />} />
 
           <Route path="/" element={<SplitLayout />} />
         </Routes>

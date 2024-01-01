@@ -13,6 +13,7 @@ namespace Domain.ClientDTOs.User
         public string LastName { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
+        public string ConfirmPassword { get; set; }
         public string Bio { get; set; }
         public int UserTypeId { get; set; }
         public string FieldOfWork {  get; set; }

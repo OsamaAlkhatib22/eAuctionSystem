@@ -10,7 +10,9 @@ namespace Domain.ClientDTOs.Service
     public class AttachmentsDTO
     {
         public IFormFile fileMedia { get; set; }
-        
+
+        public Boolean blnIsVideo { get; set; }
+
 
     }
 }

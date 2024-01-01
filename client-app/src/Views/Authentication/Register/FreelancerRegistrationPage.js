@@ -3,6 +3,7 @@ import Header from '../../../Components/Header';
 import Auth from '../Service/Auth';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../Components/Context';
+import { useSkills } from '../../../Components/FreeLancerSkillsContext';
 import {
   Container,
   Typography,
@@ -11,15 +12,61 @@ import {
   Grid,
   Paper,
   Box,
-  InputLabel,
-  Select,
+  Snackbar,
   MenuItem,
-  FormControl,
 } from '@mui/material';
+import Autocomplete from '@mui/material/Autocomplete';
 
 const FreelancerRegistrationPage = () => {
   const navigate = useNavigate();
   const { setAuthToken } = useAuth();
+
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+
+  const [loading, setLoading] = useState(false);
+
+  const {  setSkills } = useSkills();
+  const [selectedSkills, setSelectedSkills] = useState([]);
+  
+
+  const skillsOptions = [
+    { id: 1, name: 'HTML' },
+    { id: 2, name: 'CSS' },
+    { id: 3, name: 'JavaScript' },
+    { id: 4, name: 'React.js' },
+    { id: 5, name: 'Angular' },
+    { id: 6, name: 'Vue.js' },
+    { id: 7, name: 'Node.js' },
+    { id: 8, name: 'Express.js' },
+    { id: 9, name: 'Python' },
+    { id: 10, name: 'Django' },
+    { id: 11, name: 'Flask' },
+    { id: 12, name: 'Java' },
+    { id: 13, name: 'Spring Framework' },
+    { id: 14, name: 'OOP' },
+    { id: 15, name: '.NET' },
+    { id: 16, name: 'SQL' },
+    { id: 17, name: 'MySQL' },
+    { id: 18, name: 'PostgreSQL' },
+    { id: 19, name: 'MongoDB' },
+    { id: 20, name: 'Git' },
+    { id: 21, name: 'DevOps' },
+    { id: 22, name: 'Mobile App Development' },
+    { id: 23, name: 'iOS Development' },
+    { id: 24, name: 'Android Development' },
+    { id: 25, name: 'Unity' },
+    { id: 26, name: 'Data Science' },
+    { id: 27, name: 'Machine Learning' },
+    { id: 28, name: 'TensorFlow' },
+    { id: 29, name: 'PyTorch' },
+    { id: 30, name: 'Game Development' },
+    { id: 31, name: 'C++' },
+    { id: 32, name: 'C#' },
+    { id: 33, name: 'Unity3D' },
+    
+];
+
 
   const [registrationData, setRegistrationData] = useState({
     firstName: '',
@@ -31,7 +78,7 @@ const FreelancerRegistrationPage = () => {
     confirmPassword: '',
     jobTitle: '',
     fieldOfWork: '',
-    skill_id: [],// Added for skills
+    Skills:[]
   });
 
   const [errors, setErrors] = useState({
@@ -44,7 +91,6 @@ const FreelancerRegistrationPage = () => {
     confirmPassword: '',
     jobTitle: '',
     fieldOfWork: '',
-    skill_id: '', // Added for skills
   });
 
   const handleInputChange = (e) => {
@@ -52,16 +98,24 @@ const FreelancerRegistrationPage = () => {
     setErrors({ ...errors, [e.target.name]: '' });
   };
 
-  const handleSkillsChange = (e) => {
-    const selectedOptions = Array.from(e.target.selectedOptions, (option) => option.value);
-    setRegistrationData({ ...registrationData, skill_id: selectedOptions });
-    setErrors({ ...errors, skill_id: '' });
-  };
 
   const handleRegistration = async (e) => {
     e.preventDefault();
 
+    for (const key in registrationData) {
+      if (registrationData[key] === '') {
+        setErrors((prevErrors) => ({ ...prevErrors, [key]: 'This field is required.' }));
+      }
+    }
+
     try {
+
+      if (Object.values(errors).some((error) => error !== '')) {
+        setSnackbarMessage('Please fill in all the required fields.');
+        setSnackbarOpen(true);
+        return;
+      }
+
       setErrors({
         firstName: '',
         lastName: '',
@@ -72,7 +126,7 @@ const FreelancerRegistrationPage = () => {
         confirmPassword: '',
         jobTitle: '',
         fieldOfWork: '',
-        skills: '',
+
       });
 
       if (!/^[a-zA-Z ]{2,}$/.test(registrationData.firstName)) {
@@ -158,10 +212,13 @@ const FreelancerRegistrationPage = () => {
         setErrors((prevErrors) => ({ ...prevErrors, fieldOfWork: errorText }));
       }
 
-      // If there are validation errors, stop the registration
       if (Object.values(errors).some((error) => error !== '')) {
+        setSnackbarMessage('There are validation errors. Please check the form.');
+        setSnackbarOpen(true);
         return;
       }
+
+      setLoading(true);
 
       const result = await Auth.register({
         FirstName: registrationData.firstName,
@@ -173,7 +230,7 @@ const FreelancerRegistrationPage = () => {
         UserTypeId: 3,
         JobTitle: registrationData.jobTitle,
         FieldOfWork: registrationData.fieldOfWork,
-        skill_id: registrationData.skill_id,
+        Skills: selectedSkills.map((skill) => skill.id),
       });
 
       setAuthToken(result);
@@ -181,15 +238,33 @@ const FreelancerRegistrationPage = () => {
       navigate('/FreeLancerHome');
     } catch (error) {
       console.error('Registration error:', error.message);
+
+      
+      if (error.response && error.response.status === 400) {
+        setSnackbarMessage(error.response.data); // Assuming the error message is in the response data
+        setSnackbarOpen(true);
+      }
+
+    }finally {
+      setLoading(false); // Reset loading state when registration is complete (whether success or failure)
     }
+
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
   };
   
+  const handleSkillsChange = (event, value) => {
+    setSelectedSkills(value);
+    setSkills(value);
+  };
 
   return (
     <Box>
       <Header showLoginLink={true} />
       <Container maxWidth="lg" style={{ marginTop: 70 }}>
-        <Paper elevation={3} style={{ width: '101%' }}>
+        <Paper elevation={3} style={{ width: '101%', padding: '30px' }}>
           <Grid container spacing={3} direction="row" alignItems="center" component="form" onSubmit={handleRegistration}>
             <Grid item xs={6}>
               <Typography variant="h4">Freelancer Registration</Typography>
@@ -318,32 +393,36 @@ const FreelancerRegistrationPage = () => {
               />
             </Grid>
             <Grid item xs={6}>
-  <Typography variant="caption" color="error">
-    {errors.skill_id}
-  </Typography>
-  <FormControl fullWidth>
-    <InputLabel>Skills</InputLabel>
-    <Select
-      name="skill_id"
-      multiple
-      value={registrationData.skill_id}
-      onChange={handleSkillsChange}
-      renderValue={(selected) => selected.join(', ')}
-    >
-      <MenuItem value={1}>Backend Developer</MenuItem>
-      <MenuItem value={2}>Frontend Developer</MenuItem>
-      <MenuItem value={3}>Full Stack Developer</MenuItem>
-    </Select>
-  </FormControl>
-</Grid>
+              <Typography variant="caption" color="error">
+                Skills
+              </Typography>
+              <Autocomplete
+                multiple
+                id="skills"
+                options={skillsOptions}
+                getOptionLabel={(option) => option.name}
+                value={selectedSkills}
+                onChange={handleSkillsChange}
+                renderInput={(params) => (
+                  <TextField {...params} variant="outlined" fullWidth placeholder="Add Skills" />
+                )}
+                renderOption={(props, option) => (
+                  <MenuItem {...props} key={option.id}>
+                    {option.name}
+                  </MenuItem>
+                )}
+              />
+            </Grid>
+          
             <Grid item xs={12}>
-              <Button variant="contained" color="primary" type="submit">
-                Register
+              <Button variant="contained" color="primary" type="submit" style={{ backgroundColor: '#8b0000', color: '#fff' }}>
+              {loading ? 'Registering...' : 'Register'}
               </Button>
             </Grid>
           </Grid>
         </Paper>
       </Container>
+      <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose} message={snackbarMessage} />
     </Box>
   );
 };

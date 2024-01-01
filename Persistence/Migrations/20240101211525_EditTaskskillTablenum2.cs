@@ -7,7 +7,7 @@ using MySql.EntityFrameworkCore.Metadata;
 namespace Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class lonley : Migration
+    public partial class EditTaskskillTablenum2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -113,13 +113,12 @@ namespace Persistence.Migrations
                 name: "TaskSkills",
                 columns: table => new
                 {
-                    service_id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    service_id = table.Column<int>(type: "int", nullable: false),
                     skill_id = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TaskSkills", x => x.service_id);
+                    table.PrimaryKey("PK_TaskSkills", x => new { x.service_id, x.skill_id });
                     table.ForeignKey(
                         name: "FK_TaskSkills_Skills_skill_id",
                         column: x => x.skill_id,
@@ -263,6 +262,7 @@ namespace Persistence.Migrations
                     Bid_Duration = table.Column<TimeSpan>(type: "time(6)", nullable: false),
                     category_id = table.Column<int>(type: "int", nullable: false),
                     creation_date = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    TaskSubmissionTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     Status = table.Column<string>(type: "longtext", nullable: true)
                 },
                 constraints: table =>
@@ -430,6 +430,26 @@ namespace Persistence.Migrations
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
+            migrationBuilder.CreateTable(
+                name: "TransactionService",
+                columns: table => new
+                {
+                    TransactionId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    ServiceId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TransactionService", x => x.TransactionId);
+                    table.ForeignKey(
+                        name: "FK_TransactionService_Services_ServiceId",
+                        column: x => x.ServiceId,
+                        principalTable: "Services",
+                        principalColumn: "service_id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -497,6 +517,11 @@ namespace Persistence.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_TransactionService_ServiceId",
+                table: "TransactionService",
+                column: "ServiceId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_users_user_type_id",
                 table: "users",
                 column: "user_type_id");
@@ -545,6 +570,9 @@ namespace Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "Transactions");
+
+            migrationBuilder.DropTable(
+                name: "TransactionService");
 
             migrationBuilder.DropTable(
                 name: "UserRating");
