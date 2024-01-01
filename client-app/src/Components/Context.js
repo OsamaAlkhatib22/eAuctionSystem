@@ -12,6 +12,11 @@ export const AuthProvider = ({ children }) => {
     setToken(newToken);
   };
 
+  const clearAuthToken = () => {
+    localStorage.removeItem('token');
+    setToken(null);
+  };
+
   useEffect(() => {
     // Optional: Add logic to handle token expiration or cleanup
     // For example, you can check the token's expiration date and remove it if it's expired.
@@ -24,7 +29,7 @@ export const AuthProvider = ({ children }) => {
   }, [token]);
 
   return (
-    <AuthContext.Provider value={{ token, setAuthToken }}>
+    <AuthContext.Provider value={{ token, setAuthToken, clearAuthToken }}>
       {children}
     </AuthContext.Provider>
   );

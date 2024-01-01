@@ -35,4 +35,39 @@
     text-decoration: none;
     color: white;
   }
+
+  
+/* Add the following styles for the sign-out confirmation */
+.sign-out-confirmation {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #8b0000;
+  color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(241, 239, 239, 0.2);
+  z-index: 1000; /* Ensure the dialog appears above other elements */
+  font-family: 'spicfile', sans-serif;
+}
+
+.sign-out-confirmation p {
+  margin-bottom: 10px;
+}
+
+.sign-out-confirmation button {
+  margin-right: 10px;
+  padding: 8px 16px;
+  background-color: white;
+  color: #8b0000;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.sign-out-confirmation button:hover {
+  background-color: #e0e0e0;
+}
+
   

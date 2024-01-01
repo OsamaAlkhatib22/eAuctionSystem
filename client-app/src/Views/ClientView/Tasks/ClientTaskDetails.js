@@ -14,7 +14,7 @@ import {
   DialogActions,
 } from "@mui/material";
 import HomeHeader from '../Home/HomeHeader';
-import { fetchTaskDetails, addBidAcceptance } from "../../FreeLancerView/Home/Service/Auth"; // Make sure to import addBidAcceptance
+import { fetchTaskDetails } from "../../FreeLancerView/Home/Service/Auth"; 
 import { useParams, useNavigate } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useAuth } from "../../../Components/Context";
@@ -24,8 +24,8 @@ const ClientTaskDetails = () => {
   const [taskDetails, setTaskDetails] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [openModal, setOpenModal] = useState(false);
-  const [selectedBid, setSelectedBid] = useState(null);
   const [openAcceptDialog, setOpenAcceptDialog] = useState(false);
+  const [selectedBid, setSelectedBid] = useState(null);
   const { token } = useAuth();
   const navigate = useNavigate();
 
@@ -42,29 +42,8 @@ const ClientTaskDetails = () => {
     fetchData();
   }, [ServiceId]);
 
-  const handleAcceptConfirmation = async () => {
-    try {
-      // Make the API call to accept the bid using selectedBid
-      const response = await addBidAcceptance(ServiceId, selectedBid.bidAmount, selectedBid.bidId, token);
-
-      // Handle the response or update the UI as needed
-      console.log('Bid accepted successfully:', response);
-
-      // Close the confirmation dialog
-      setOpenAcceptDialog(false);
-    } catch (error) {
-      console.error('Error accepting bid:', error.message);
-      // Handle the error or show an error message
-    }
-  };
-
-  const handleAcceptBid = (bid) => {
-    setSelectedBid(bid);
-    setOpenAcceptDialog(true);
-  };
-
   const handleGoBack = () => {
-    navigate("/ClientExploreTasks"); // Change the route to the desired client page
+    navigate("/ClientExploreTasks");
   };
 
   const handleImageClick = (image) => {
@@ -191,7 +170,6 @@ const ClientTaskDetails = () => {
                         </Typography>
                       </>
                     )}
-                    <Button onClick={() => handleAcceptBid(bid)}>Accept Bid</Button>
                   </CardContent>
                 </Card>
               ))
@@ -199,27 +177,6 @@ const ClientTaskDetails = () => {
               <Typography variant="body2">No bids received for this task.</Typography>
             )}
           </Box>
-
-          <Dialog open={openAcceptDialog} onClose={() => setOpenAcceptDialog(false)}>
-            <DialogTitle>Accept Bid Confirmation</DialogTitle>
-            <DialogContent>
-              <Typography variant="body1">
-                Are you sure you want to accept this bid?
-              </Typography>
-              <Typography variant="body1">
-                Bid Amount: {selectedBid?.bidAmount}
-              </Typography>
-              {/* Add more bid details as needed */}
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={() => setOpenAcceptDialog(false)} color="primary">
-                Cancel
-              </Button>
-              <Button onClick={handleAcceptConfirmation} color="primary">
-                Accept Bid
-              </Button>
-            </DialogActions>
-          </Dialog>
         </Box>
       )}
     </div>

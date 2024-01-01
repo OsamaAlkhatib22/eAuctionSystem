@@ -22,6 +22,7 @@
   
   .button-list {
     display: flex;
+    color: white;
   }
   
   .header-button {

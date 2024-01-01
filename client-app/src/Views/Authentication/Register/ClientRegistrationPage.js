@@ -21,6 +21,8 @@ const ClientRegistrationPage = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
 
+  const [loading, setLoading] = useState(false);
+
   const [registrationData, setRegistrationData] = useState({
     firstName: '',
     lastName: '',
@@ -51,8 +53,10 @@ const ClientRegistrationPage = () => {
   };
   const handleRegistration = async (e) => {
     e.preventDefault();
-  
+
+
     try {
+
       // Reset errors
       setErrors({
         firstName: '',
@@ -171,6 +175,8 @@ const ClientRegistrationPage = () => {
         setSnackbarOpen(true);
         return;
       }
+
+      setLoading(true);// Set loading state to true while waiting for registration
   
       // If no errors, proceed with registration
       const result = await Auth.register({
@@ -194,6 +200,8 @@ const ClientRegistrationPage = () => {
         setSnackbarMessage(error.response.data); // Assuming the error message is in the response data
         setSnackbarOpen(true);
       }
+    } finally {
+      setLoading(false); // Reset loading state when registration is complete (whether success or failure)
     }
 
 
@@ -318,8 +326,8 @@ const ClientRegistrationPage = () => {
               />
             </Grid>
             <Grid item xs={12}>
-              <Button variant="contained" color="primary" type="submit">
-                Register
+              <Button variant="contained" color="primary" type="submit" style={{ backgroundColor: '#8b0000', color: '#fff' }}>
+              {loading ? 'Registering...' : 'Register'}
               </Button>
             </Grid>
           </Grid>

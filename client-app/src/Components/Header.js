@@ -1,13 +1,20 @@
 // src/Components/Header.js
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './Header.css';
 import logo from '../Assets/Images/auction.png';
 
 const Header = ({ showLoginLink = true }) => {
+  const navigate = useNavigate();
+
+  const handleLogoClick = () => {
+    // Go back to the previous page when the logo is clicked
+    navigate(-1);
+  };
+
   return (
     <div className="header">
-      <div className="logo">
+      <div className="logo" onClick={handleLogoClick} style={{ cursor: 'pointer' }}>
         <img src={logo} alt="Auction Logo" />
         eAuction
       </div>
