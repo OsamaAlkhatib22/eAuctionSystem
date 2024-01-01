@@ -11,8 +11,8 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20231227021618_lonley")]
-    partial class lonley
+    [Migration("20240101214504_time")]
+    partial class time
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -134,6 +134,10 @@ namespace Persistence.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("Description");
 
+                    b.Property<DateTime>("TaskSubmissionTime")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("TaskSubmissionTime");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("longtext")
@@ -182,7 +186,6 @@ namespace Persistence.Migrations
             modelBuilder.Entity("Domain.DataModels.Services.TaskSkills", b =>
                 {
                     b.Property<int>("ServiceId")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("service_id");
 
@@ -190,11 +193,11 @@ namespace Persistence.Migrations
                         .HasColumnType("int")
                         .HasColumnName("skill_id");
 
-                    b.HasKey("ServiceId");
+                    b.HasKey("ServiceId", "skillId");
 
                     b.HasIndex("skillId");
 
-                    b.ToTable("TaskSkills", (string)null);
+                    b.ToTable("TaskSkills");
                 });
 
             modelBuilder.Entity("Domain.DataModels.Skills.Skills", b =>
@@ -242,6 +245,24 @@ namespace Persistence.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Transactions", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.DataModels.Transactions.TransactionService", b =>
+                {
+                    b.Property<int>("TransactionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("TransactionId");
+
+                    b.Property<int>("ServiceId")
+                        .HasColumnType("int")
+                        .HasColumnName("ServiceId");
+
+                    b.HasKey("TransactionId");
+
+                    b.HasIndex("ServiceId");
+
+                    b.ToTable("TransactionService", (string)null);
                 });
 
             modelBuilder.Entity("Domain.DataModels.Transactions.Wallet", b =>
@@ -576,11 +597,19 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Domain.DataModels.Services.TaskSkills", b =>
                 {
+                    b.HasOne("Domain.DataModels.Services.Service", "Service")
+                        .WithMany()
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Domain.DataModels.Skills.Skills", "Skills")
                         .WithMany()
                         .HasForeignKey("skillId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Service");
 
                     b.Navigation("Skills");
                 });
@@ -594,6 +623,17 @@ namespace Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.DataModels.Transactions.TransactionService", b =>
+                {
+                    b.HasOne("Domain.DataModels.Services.Service", "Service")
+                        .WithMany()
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Service");
                 });
 
             modelBuilder.Entity("Domain.DataModels.UserRating.UserRating", b =>

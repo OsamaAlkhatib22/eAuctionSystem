@@ -20,7 +20,12 @@ namespace Domain.ClientDTOs.Service
         public decimal starting_bid { get; set; }
         public int CategoryId { get; set; }
         public DateTime CreationDate { get; set; }
-        
+
+        public DateTime TaskSubmissionTime { get; set; }
+
+        public List<int> SkillId { get; set; } = new List<int>();
+
+
 
 
 

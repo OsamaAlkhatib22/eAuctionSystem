@@ -40,6 +40,7 @@ namespace Application.Handlers.Task
                 lstMedia = _context.TaskAttachments
                     .Where(q => q.ServiceId == t.ServiceId)
                     .Select(s => File.Exists(s.MediaRef)? Convert.ToBase64String(File.ReadAllBytes(s.MediaRef)):string.Empty).ToList(),
+                Skills = _context.TaskSkills.Where(q => q.ServiceId == t.ServiceId).Select(w=>w.Skills.Skill).ToList(),
                 
             };
 

@@ -4,13 +4,14 @@ using MediatR;
 using Application.Commands;
 using System.IdentityModel.Tokens.Jwt;
 using Domain.ClientDTOs.Service;
+using Application.Core;
 
 namespace API.Controllers
 {
     public class TaskController : BaseApiController
     {
-        [HttpGet("TaskList")] // .../api/Task/TaskList
-        public async Task<IActionResult> GetTaskList()
+        [HttpGet("TaskListProcess")] // .../api/Task/TaskListProcess
+        public async Task<IActionResult> TaskListProcess()
         {
             string authHeader = Request.Headers["Authorization"];
             JwtSecurityTokenHandler tokenHandler = new();
@@ -20,6 +21,14 @@ namespace API.Controllers
             var UserName = jwtToken.Claims.First(c => c.Type == "username").Value;
 
             return HandleResult(await Mediator.Send(new GetServiceListQuery(UserName)));
+        }
+
+        [HttpGet("TaskList")] // .../api/Task/TaskList
+        public async Task<IActionResult> GetTaskList([FromQuery]TasksFilter TasksFilter)
+        {
+        
+
+            return HandleResult(await Mediator.Send(new GetTaskListQuery(TasksFilter)));
         }
 
 
@@ -55,6 +64,7 @@ namespace API.Controllers
         [HttpPost("CreateTask")] // .../api/Task/CreateTask
         public async Task<IActionResult> CreateTask([FromForm] CreateTaskUserDTO CreateTaskUserDTO)
         {
+
             string authHeader = Request.Headers["Authorization"];
             JwtSecurityTokenHandler tokenHandler = new();
             JwtSecurityToken jwtToken = tokenHandler.ReadJwtToken(authHeader[7..]);

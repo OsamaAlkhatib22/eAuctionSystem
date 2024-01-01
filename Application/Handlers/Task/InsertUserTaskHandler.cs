@@ -35,6 +35,7 @@ namespace Application.Handlers.Task
         )
         {
             var taskDTO = request.CreateTaskUserDTO;
+            var lstMedia = taskDTO.lstMedia;
 
             var userId = await _context.Users
                 .Where(u => u.UserName == request.CreateTaskUserDTO.UserName)
@@ -55,63 +56,85 @@ namespace Application.Handlers.Task
                     CategoryId = request.CreateTaskUserDTO.CategoryId,
                     Description = request.CreateTaskUserDTO.Description,
                     Title = request.CreateTaskUserDTO.Title,
+                    TaskSubmissionTime = request.CreateTaskUserDTO.TaskSubmissionTime,
                     status = "In Auction"
                 };
 
+                
+
                 var taskEntity = await _context.Services.AddAsync(task);
                 await _context.SaveChangesAsync(cancellationToken);
+              
 
                 taskDTO.ServiceId = taskEntity.Entity.ServiceId;
+               
 
-                var lstMedia = taskDTO.lstMedia;
 
-                if (lstMedia.Count == 0)
-                {
-                    await transaction.RollbackAsync();
-                    return Result<CreateTaskUserDTO>.Failure("No file was Uploaded.");
+                //fornt add
+                if (request.CreateTaskUserDTO.SkillId.Count != 0)
+                    {
+                        foreach (var skill in request.CreateTaskUserDTO.SkillId)
+                        {
+
+                            await _context.TaskSkills.AddAsync(new TaskSkills
+                            {
+                                ServiceId = taskEntity.Entity.ServiceId,
+                                skillId = skill
+
+                            });
+                        }
+
+                    await _context.SaveChangesAsync();
+                    
                 }
+
 
                 var taskAttachments = new List<TaskAttachment>();
-
-                foreach (var media in lstMedia)
+                if (lstMedia != null)
                 {
-                    if (media == null || media.fileMedia == null)
+                    foreach (var media in lstMedia)
                     {
-                        await transaction.RollbackAsync();
-                        return Result<CreateTaskUserDTO>.Failure("File was not received (null).");
-                    }
-                    string extension = Path.GetExtension(media.fileMedia.FileName);
-                    string fileName = $"{DateTime.UtcNow.Ticks}{extension}";
-                    string directory = _configuration["FilesPath"];
-                    string path = Path.Join(
-                        DateTime.UtcNow.Year.ToString(),
-                        DateTime.UtcNow.Month.ToString(),
-                        DateTime.UtcNow.Day.ToString(),
-                        taskEntity.Entity.ServiceId.ToString()
-                    );
-                    string filePath = Path.Join(directory, path, fileName);
-
-                    // Create directory if it doesn't exist
-                    Directory.CreateDirectory(Path.Combine(directory, path));
-
-                    // Create file
-                    using var stream = File.Create(filePath);
-                    await media.fileMedia.CopyToAsync(stream, cancellationToken);
-
-                    taskAttachments.Add(
-                        new TaskAttachment
+                        if (media == null || media.fileMedia == null)
                         {
-                            ServiceId = taskEntity.Entity.ServiceId,
-                            MediaRef = filePath,
-                           DateCreated= DateTime.UtcNow,
-                            
+                            await transaction.RollbackAsync();
+                            return Result<CreateTaskUserDTO>.Failure("File was not received (null).");
                         }
-                    );
-                }
+                        string extension = Path.GetExtension(media.fileMedia.FileName);
+                        string fileName = $"{DateTime.UtcNow.Ticks}{extension}";
+                        string directory = _configuration["FilesPath"];
+                        string path = Path.Join(
+                            DateTime.UtcNow.Year.ToString(),
+                            DateTime.UtcNow.Month.ToString(),
+                            DateTime.UtcNow.Day.ToString(),
+                            taskEntity.Entity.ServiceId.ToString()
+                        );
+                        string filePath = Path.Join(directory, path, fileName);
 
-                await _context.TaskAttachments.AddRangeAsync(taskAttachments);
+                        // Create directory if it doesn't exist
+                        Directory.CreateDirectory(Path.Combine(directory, path));
+
+                        // Create file
+                        using var stream = File.Create(filePath);
+                        await media.fileMedia.CopyToAsync(stream, cancellationToken);
+
+                        taskAttachments.Add(
+                            new TaskAttachment
+                            {
+                                ServiceId = taskEntity.Entity.ServiceId,
+                                MediaRef = filePath,
+                                DateCreated = DateTime.UtcNow,
+
+                            }
+                        );
+                    }
+
+                    await _context.TaskAttachments.AddRangeAsync(taskAttachments);
+                   
+                }
                 await _context.SaveChangesAsync(cancellationToken);
                 await transaction.CommitAsync();
+
+
             }
             catch (Exception e)
             {
@@ -119,6 +142,7 @@ namespace Application.Handlers.Task
                 return Result<CreateTaskUserDTO>.Failure("Unknown Error" + e);
             }
 
+            taskDTO.CreationDate = DateTime.UtcNow;
             return Result<CreateTaskUserDTO>.Success(taskDTO);
         }
     }

@@ -13,6 +13,7 @@ using Persistence;
 using System.IdentityModel.Tokens.Jwt;
 using System.Runtime.InteropServices;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 
 namespace API.Controllers 
 {
@@ -165,6 +166,97 @@ namespace API.Controllers
             if (await _userManager.Users.AnyAsync(q => q.UserName == register.user_name))
             {
                 return BadRequest("Username is already used.");
+            }
+
+
+            //white space validation
+
+            if (string.IsNullOrWhiteSpace(register.FirstName))
+            {
+                return BadRequest("First name cannot be empty.");
+            }
+
+            if (string.IsNullOrWhiteSpace(register.LastName))
+            {
+                return BadRequest("Last name cannot be empty.");
+            }
+
+            if (string.IsNullOrWhiteSpace(register.user_name))
+            {
+                return BadRequest("UserName cannot be empty.");
+            }
+
+            if (string.IsNullOrWhiteSpace(register.Email))
+            {
+                return BadRequest("Email cannot be empty.");
+            }
+
+            if (string.IsNullOrWhiteSpace(register.FieldOfWork))
+            {
+                return BadRequest("Field of work cannot be empty.");
+            }
+
+            if (string.IsNullOrWhiteSpace(register.JobTitle))
+            {
+                return BadRequest("Job Title cannot be empty.");
+            }
+
+            //FreeLancer extra validation
+
+            //also make the skill not empty
+
+            if (register.UserTypeId == 3)
+            {
+
+                if (string.IsNullOrWhiteSpace(register.Bio))
+                {
+                    return BadRequest("Description cannot be empty.");
+                }
+
+            }
+
+
+            //regex
+
+            if (!Regex.IsMatch(register.FirstName, "^[a-zA-Z ]{2,}$"))
+            {
+                return BadRequest("First name must contain at least 2 characters, no numbers, and no special characters.");
+            }
+
+            if (!Regex.IsMatch(register.LastName, "^[a-zA-Z ]{2,}$"))
+            {
+                return BadRequest("Last name must contain at least 2 characters, no numbers, and no special characters.");
+            }
+
+            if (register.user_name.Length < 4)
+            {
+                return BadRequest("Username must be at least 4 characters long.");
+            }
+
+            if (!Regex.IsMatch(register.Email, @"^[^\s@]+@[^\s@]+\.[^\s@]+$"))
+            {
+                return BadRequest("Invalid email format.");
+            }
+
+
+            if (register.Password.Length < 8 || !Regex.IsMatch(register.Password, "(?=.*\\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}"))
+            {
+                return BadRequest("Password must be at least 8 characters long and include one digit, one special character, one lowercase letter, and one uppercase letter.");
+            }
+            //front add
+            if (register.Password != register.ConfirmPassword)
+            {
+                return BadRequest("Password does not match Confirm Password");
+            }
+
+            if (!Regex.IsMatch(register.JobTitle, "^[a-zA-Z ]{4,}$"))
+            {
+                return BadRequest("Job title must be at least 4 characters long, no numbers, and no special characters.");
+            }
+
+            if (!Regex.IsMatch(register.FieldOfWork, "^[a-zA-Z ]{4,}$"))
+            {
+                return BadRequest("Field of work must be at least 4 characters long, no numbers, and no special characters.");
             }
 
 

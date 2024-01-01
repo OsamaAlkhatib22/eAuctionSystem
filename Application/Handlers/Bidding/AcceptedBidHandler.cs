@@ -66,11 +66,22 @@ public class AcceptedBidHandler : IRequestHandler<AcceptedBidCommand, Result<Tra
                 TransactionType = "Transfer",
             };
 
-          
+            Transaction newTranBidder = new Transaction
+            {
+                TransactionDate = DateTime.UtcNow,
+                Amount = bid.BidAmount,
+                UserId = receiver,
+                TransactionType = "Addition",
+            };
+
+            
+
             await _context.SaveChangesAsync(cancellationToken);
          
-            var TranEntity = await _context.Transactions.AddAsync(newTran);
-            newTran.TransactionId = TranEntity.Entity.TransactionId;
+            
+           var tranEntitySender =  await _context.Transactions.AddAsync(newTran);
+
+            var tranEntityReciver = await _context.Transactions.AddAsync(newTranBidder);
             await _context.SaveChangesAsync(cancellationToken);
 
          
@@ -81,6 +92,8 @@ public class AcceptedBidHandler : IRequestHandler<AcceptedBidCommand, Result<Tra
             _context.Wallets.Attach(receiverWallet);
             receiverWallet.Balance += bid.BidAmount;
 
+            
+
             var bidEntity = await _context.Bids.FindAsync(bidId);
             _context.Bids.Attach(bidEntity);
             bidEntity.IsAccepted = true;
@@ -89,8 +102,21 @@ public class AcceptedBidHandler : IRequestHandler<AcceptedBidCommand, Result<Tra
             _context.Services.Attach(service);
             service.status = "In Process"; //freelancer working on task
 
+            TransactionService newTranServiceSender = new TransactionService
+            {
+                ServiceId = ServiceId,
+                TransactionId = tranEntitySender.Entity.TransactionId
+            };
 
-            
+            TransactionService newTranServiceReciver = new TransactionService
+            {
+                ServiceId = ServiceId,
+                TransactionId = tranEntityReciver.Entity.TransactionId
+            };
+
+            await _context.TransactionServices.AddAsync(newTranServiceSender);
+            await _context.TransactionServices.AddAsync(newTranServiceReciver);
+
 
 
             await _context.SaveChangesAsync(cancellationToken);

@@ -42,6 +42,9 @@ namespace Domain.DataModels.Services
         [Column("creation_date")]
         public DateTime CreationDate { get; set; }
 
+        [Column("TaskSubmissionTime")]
+        public DateTime TaskSubmissionTime { get; set; }
+
         [Column("Status")]
         public string status { get; set; }
 

@@ -19,6 +19,7 @@ namespace Domain.ClientDTOs.Profile
         public DateTime RegistrationDate { get; set; }
         public string FieldOfWork { get; set; }
         public string JobTitle { get; set; }
+        public List<string> Skills { get; set; }
 
         //add skills later 
 
