@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import FreeLancerHomeHeader from "./FreeLancerHomeHeader";
 import { fetchTaskDetails, addBid } from "./Service/Auth";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate ,Link} from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useAuth } from "../../../Components/Context";
 
@@ -52,11 +52,11 @@ const TaskDetails = () => {
     };
 
     fetchData();
-  }, [ServiceId]);
+  }, [ServiceId, bidAmount]);
 
 
   const handleGoBack = () => {
-    navigate("/FreeLancerHome");
+    navigate(-1);
   };
 
   const handleImageClick = (image) => {
@@ -120,6 +120,11 @@ const TaskDetails = () => {
               taskDetails.lastName || "Unknown"
             }`}
           </Typography>
+          <Typography>
+          <Link to={`/SelectedProfileUserNameInfo/${taskDetails.clientUserName}`}>
+            {taskDetails.clientUserName}
+            </Link>
+          </Typography>
           <Divider sx={{ my: 1 }} />
           <Grid container spacing={3}>
             <Grid item xs={8}>
@@ -179,7 +184,7 @@ const TaskDetails = () => {
               <Card>
                 <CardContent>
                   <Typography variant="body1">
-                    Starting Bid: {taskDetails.starting_bid || "No Starting Bid"}
+                    Budget: {taskDetails.starting_bid || "No Starting Bid"}
                   </Typography>
                   <Typography variant="body1">
                     Bid Duration: {taskDetails.bidDuration || "No Bid Duration"}
@@ -197,7 +202,30 @@ const TaskDetails = () => {
                   </Typography>
                 </CardContent>
               </Card>
+                  <Grid item xs={12}>
+                  <Typography variant="h6" gutterBottom>
+                    Skills Required for this Task
+                  </Typography>
+                  <Card>
+                    <CardContent>
+                      {taskDetails.skills ? (
+                        taskDetails.skills.length > 0 ? (
+                          taskDetails.skills.map((skill, index) => (
+                            <Typography key={index} variant="body1">
+                             - {skill}
+                            </Typography>
+                          ))
+                        ) : (
+                          <Typography variant="body2">No skills specified for this task.</Typography>
+                        )
+                      ) : (
+                        <Typography variant="body2">Skills information not available for this task.</Typography>
+                      )}
+                    </CardContent>
+                  </Card>
+                </Grid>
             </Grid>
+            
             <Grid item xs={12} textAlign="center">
               <Button variant="contained" color="primary" onClick={handleAddBidButtonClick}>
                 Add Bid
@@ -245,6 +273,11 @@ const TaskDetails = () => {
                       <>
                         <Typography variant="body1">
                           Bidder: {`${bid.bidder.firstName || 'Unknown'} ${bid.bidder.lastName || 'Unknown'}`}
+                        </Typography>
+                        <Typography variant="body1" gutterBottom>
+                          <Link to={`/SelectedProfileUserNameInfo/${bid.bidder.userName}`}>
+                            {bid.bidder.userName}
+                          </Link>
                         </Typography>
                         <Typography variant="body1">
                           Rating: {bid.bidder.rating || 'No Rating'}

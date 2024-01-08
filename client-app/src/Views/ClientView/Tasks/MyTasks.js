@@ -65,6 +65,15 @@ function MyTasks() {
     navigate(`/mtask/${ServiceId}`);
   };
 
+  const HandleTaskProcessClick =  (ServiceId) => {
+    console.log("Task clicked. Navigating to:", `/task/${ServiceId}`);
+    navigate(`/ClientProcesstask/${ServiceId}`);
+  };
+  const HandleTaskCompletedClick =  (ServiceId) => {
+    console.log("Task clicked. Navigating to:", `/task/${ServiceId}`);
+    navigate(`/ClientCompletedtask/${ServiceId}`);
+  };
+
   return (
     <div>
       <HomeHeader />
@@ -102,7 +111,9 @@ function MyTasks() {
                                 Title: {task.title}{'\n'}
                                 Created by: {task.firstName} {task.lastName}{'\n'}
                                 Creation Date: {task.creationDate ? new Date(task.creationDate).toLocaleDateString() : 'Invalid Date'}{'\n'}
-                                Description: {task.description}{'\n'}
+                                Description: {task.description.length > 100
+                                              ? `${task.description.substring(0, 100)}...`
+                                               : task.description}{'\n'}             
                                 Status: {task.status}
                               </Typography>
                             </TaskBox>
@@ -125,7 +136,7 @@ function MyTasks() {
                           <div
                             key={task.ServiceId}
                             onClick={() => {
-                              console.log(`Clicked task ${task.ServiceId}`);
+                              HandleTaskProcessClick(task.serviceId)
                             }}
                           >
                             <TaskBox>
@@ -155,10 +166,7 @@ function MyTasks() {
 
                           <div
                             key={task.ServiceId}
-                            onClick={() => {
-
-                              console.log(`Clicked task ${task.ServiceId}`);
-                            }}
+                            onClick={() => {HandleTaskCompletedClick(task.serviceId)}}
                           >
                             <TaskBox>
                               <Typography variant="body1">

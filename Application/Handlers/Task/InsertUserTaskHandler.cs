@@ -70,7 +70,6 @@ namespace Application.Handlers.Task
                
 
 
-                //fornt add
                 if (request.CreateTaskUserDTO.SkillId.Count != 0)
                     {
                         foreach (var skill in request.CreateTaskUserDTO.SkillId)
@@ -123,6 +122,7 @@ namespace Application.Handlers.Task
                                 ServiceId = taskEntity.Entity.ServiceId,
                                 MediaRef = filePath,
                                 DateCreated = DateTime.UtcNow,
+                                FromFreeLancer = false,
 
                             }
                         );

@@ -38,7 +38,9 @@ namespace Application.Handlers.Profile
                 UserType = _context.UserTypes.Where(q => q.UserTypeId == t.UserTypeId).Select(w => w.Type).SingleOrDefault(),
                 Rating = _context.UserRatings.Where(q => q.UserId == t.Id).Select(r => r.Rating).SingleOrDefault(),
                 Skills = _context.UserSkills.Where(q=> q.UserId == t.Id).Select(r =>r.Skills.Skill).ToList(),
-                
+                Email = t.Email,
+                Username = t.UserName,
+                             
 
             };
 

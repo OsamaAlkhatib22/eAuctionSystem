@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import HomeHeader from '../Home/HomeHeader';
 import { fetchTaskDetails, addBidAcceptance } from "./Service/Auth"; 
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate,Link } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useAuth } from "../../../Components/Context";
 
@@ -76,6 +76,25 @@ const ClientTaskDetails = () => {
     setOpenModal(false);
   };
 
+  const calculateTimeLeft = (deadline) => {
+    const now = new Date();
+    const targetDate = new Date(deadline);
+    const timeDifference = targetDate - now;
+  
+    if (timeDifference <= 0) {
+      return 'Expired';
+    }
+  
+    const weeks = Math.floor(timeDifference / (1000 * 60 * 60 * 24 * 7));
+    const days = Math.floor((timeDifference % (1000 * 60 * 60 * 24 * 7)) / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+  
+  
+    return `${weeks} weeks, ${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds left`;
+  };
+
   return (
     <div>
       <HomeHeader />
@@ -133,7 +152,7 @@ const ClientTaskDetails = () => {
               <Card>
                 <CardContent>
                   <Typography variant="body1">
-                    Starting Bid: {taskDetails.starting_bid || "No Starting Bid"}
+                    Budget: {taskDetails.starting_bid || "No Starting Bid"}
                   </Typography>
                   <Typography variant="body1">
                     Bid Duration: {taskDetails.bidDuration || "No Bid Duration"}
@@ -144,6 +163,9 @@ const ClientTaskDetails = () => {
                   <Typography variant="body1">
                     Rating: {taskDetails.rating || "No Rating"}
                   </Typography>
+                  <Typography variant="body1">
+                   DeadLine: {calculateTimeLeft(taskDetails.taskSubmissionTime) || "No specific DeadLine"}
+                  </Typography>
                   <Typography variant="body2" color="textSecondary">
                     {`Created on: ${new Date(
                       taskDetails.creationDate
@@ -151,6 +173,28 @@ const ClientTaskDetails = () => {
                   </Typography>
                 </CardContent>
               </Card>
+              <Grid item xs={12}>
+                  <Typography variant="h6" gutterBottom>
+                    Skills Required for this Task
+                  </Typography>
+                  <Card>
+                    <CardContent>
+                      {taskDetails.skills ? (
+                        taskDetails.skills.length > 0 ? (
+                          taskDetails.skills.map((skill, index) => (
+                            <Typography key={index} variant="body1">
+                             - {skill}
+                            </Typography>
+                          ))
+                        ) : (
+                          <Typography variant="body2">No skills specified for this task.</Typography>
+                        )
+                      ) : (
+                        <Typography variant="body2">Skills information not available for this task.</Typography>
+                      )}
+                    </CardContent>
+                  </Card>
+                </Grid>
             </Grid>
           </Grid>
 
@@ -185,6 +229,11 @@ const ClientTaskDetails = () => {
                       <>
                         <Typography variant="body1">
                           Bidder: {`${bid.bidder.firstName || 'Unknown'} ${bid.bidder.lastName || 'Unknown'}`}
+                        </Typography>
+                        <Typography variant="body1" gutterBottom>
+                          <Link to={`/SelectedProfileUserNameInfo/${bid.bidder.userName}`}>
+                            {bid.bidder.userName}
+                          </Link>
                         </Typography>
                         <Typography variant="body1">
                           Rating: {bid.bidder.rating || 'No Rating'}

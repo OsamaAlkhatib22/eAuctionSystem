@@ -21,6 +21,12 @@ namespace Domain.DataModels.Services
         [Required]
         public string MediaRef { get; set; }
 
+        [Column("FromFreeLancer")]
+        public bool FromFreeLancer { get; set; }
+
+        [Column("Comment")]
+        public string Comment { get; set; }
+
         [Column("date_created")]
         [Required]
         public DateTime DateCreated { get; set; }

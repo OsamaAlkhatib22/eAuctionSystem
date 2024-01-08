@@ -1,11 +1,7 @@
-﻿using System;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
-using Application.Commands;
+﻿using Application.Commands;
 using Application.Core;
-using Domain.ClientDTOs.Bidding;
-using Domain.ClientDTOs.Transaction;
+using Application.Handlers.Notification;
+using Domain.ClientDTOs.Notification;
 using Domain.DataModels.Transactions;
 using Domain.DataModels.Users;
 using MediatR;
@@ -19,12 +15,17 @@ public class AcceptedBidHandler : IRequestHandler<AcceptedBidCommand, Result<Tra
     private readonly DataContext _context;
     private readonly IConfiguration _configuration;
     private readonly UserManager<ApplicationUser> _userManager;
+    public readonly NotificationHandler _notificationHandler;
 
-    public AcceptedBidHandler(DataContext context, IConfiguration configuration, UserManager<ApplicationUser> userManager)
+    public AcceptedBidHandler(DataContext context,
+        IConfiguration configuration, 
+        UserManager<ApplicationUser> userManager,
+        NotificationHandler notificationHandler)
     {
         _context = context;
         _configuration = configuration;
         _userManager = userManager;
+        _notificationHandler = notificationHandler;
     }
 
     public async Task<Result<Transaction>> Handle(AcceptedBidCommand request, CancellationToken cancellationToken)
@@ -40,6 +41,7 @@ public class AcceptedBidHandler : IRequestHandler<AcceptedBidCommand, Result<Tra
 
             var bidId = request.Bidid;
             var user = await _context.Users.Where(q => q.UserName == request.UserName).Select(r => r.Id).SingleOrDefaultAsync();//the client who selects which bid
+            var acceptingBidderUsername = await _context.Users.Where(q => q.UserName == request.UserName).Select(u => u.UserName).SingleOrDefaultAsync();
             var ServiceAcceptedBidCount = await _context.Bids.Where(q => q.ServiceId == ServiceId && q.IsAccepted == true).CountAsync(); 
             
             if (receiver == 0)
@@ -116,6 +118,19 @@ public class AcceptedBidHandler : IRequestHandler<AcceptedBidCommand, Result<Tra
 
             await _context.TransactionServices.AddAsync(newTranServiceSender);
             await _context.TransactionServices.AddAsync(newTranServiceReciver);
+
+
+            //notification
+
+            await _notificationHandler.Handle(new NotificationCommand(
+               new NotificationDTO
+               {
+                   UserId = receiver,
+                   Notification = $"Your bid has been Accepted By (Clinet: {acceptingBidderUsername}) (Service Number: {ServiceId})",
+                   NotificationDate = DateTime.UtcNow,
+               }
+
+               ), cancellationToken);
 
 
 

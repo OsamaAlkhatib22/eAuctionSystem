@@ -29,7 +29,10 @@ namespace Domain.DataModels.Users
         [ForeignKey("UserType")]
         public int UserTypeId { get; set; }
 
-        
+        [Column("profile_media_ref")]
+        public string ProfileMediaRef { get; set; }
+
+
         public UserType UserType { get; set; }
 
         

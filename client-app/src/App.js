@@ -21,11 +21,18 @@ import ClientTaskDetails from './Views/ClientView/Tasks/ClientTaskDetails';
 import MyTasks from './Views/ClientView/Tasks/MyTasks';
 import ClientCreateTask from './Views/ClientView/Tasks/ClientCreateTask';
 import MyTaskDetails from './Views/ClientView/Tasks/MyTaskDetails';
-
-
+import FreeLancerMyTask from './Views/FreeLancerView/Tasks/FreeLancerMyTask';
+import MyTaskProcessDetails from './Views/ClientView/Tasks/MyTaskProcessDetails'
+import MyTaskCompletedDetails from './Views/ClientView/Tasks/MyTaskCompletedDetails'
+import ClientTransactionDetails from './Views/ClientView/Transactions/ClientTransactionDetails';
+import FreeLancerMyTaskProceesDetails from './Views/FreeLancerView/Tasks/FreeLancerMyTaskProceesDetails';
+import FreeLancerMyTaskCompletedDetails from './Views/FreeLancerView/Tasks/FreeLancerMyTaskCompletedDetails';
+import FreeLancerMyTaskDetails from './Views/FreeLancerView/Tasks/FreeLancerMyTaskDetails';
+import SelectedProfileUserNameInfo from './Components/SelectedProfileUserNameInfo';
 
 //app  AuthProvider 
 import { AuthProvider } from './Components/Context';
+
 
 
 function App() {
@@ -55,6 +62,14 @@ function App() {
           <Route path="/ClientCreateTask" element = {<ClientCreateTask />} />
           <Route path="/mtask/:ServiceId" element={<MyTaskDetails />} />
           <Route path="/SplitLayout" element={<SplitLayout />} />
+          <Route path="/FreeLancerMyTask" element={<FreeLancerMyTask />} />
+          <Route path="/ClientProcesstask/:ServiceId" element={<MyTaskProcessDetails />} />
+          <Route path="/ClientCompletedtask/:ServiceId" element={<MyTaskCompletedDetails />} />
+          <Route path="/TransferTransaction/:TransactionId" element={<ClientTransactionDetails />} />
+          <Route path="/FreeLancerTaskInProcessDetails/:ServiceId" element={<FreeLancerMyTaskProceesDetails/>}/>
+          <Route path="/FreeLancerTaskCompletedDetails/:ServiceId" element={<FreeLancerMyTaskCompletedDetails/>}/>
+          <Route path="/FreeLancerMyTaskDetails/:ServiceId" element={<FreeLancerMyTaskDetails/>}/>
+          <Route path="/SelectedProfileUserNameInfo/:UserName" element={<SelectedProfileUserNameInfo/>}/>
 
           <Route path="/" element={<SplitLayout />} />
         </Routes>

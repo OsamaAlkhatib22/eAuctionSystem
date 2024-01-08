@@ -74,6 +74,43 @@ export const fetchTasksCompleted = async (token) => {
     }
   };
 
+  export const fetchTaskProcessDetails = async (ServiceId) => {
+    try {
+      const response = await axios.get(`https://localhost:5000/api/Task/TaskInProcessDetails/${ServiceId}`);
+      console.log("API Response:", response.data);
+  
+      if (!response.data) {
+        throw new Error(`Failed to fetch details for Process type tasks with ServiceId ${ServiceId}`);
+      }
+  
+      const taskProcessDetails = response.data;
+      console.log("Fetched Process task details:", taskProcessDetails);
+
+      return taskProcessDetails;
+    } catch (error) {
+      console.error(`Error fetching details for task with ServiceId ${ServiceId}:`, error.message);
+      throw error;
+    }
+  };
+
+  export const fetchTaskCompletedDetails = async (ServiceId) => {
+    try {
+      const response = await axios.get(`https://localhost:5000/api/Task/TaskCompletedDetails/${ServiceId}`);
+      console.log("API Response:", response.data);
+  
+      if (!response.data) {
+        throw new Error(`Failed to fetch details for Completed tasks with ServiceId ${ServiceId}`);
+      }
+  
+      const taskCompletedDetails = response.data;
+      console.log("Fetched Process task details:", taskCompletedDetails);
+
+      return taskCompletedDetails;
+    } catch (error) {
+      console.error(`Error fetching details for Completed task with ServiceId ${ServiceId}:`, error.message);
+      throw error;
+    }
+  };
   
   
 export const addBidAcceptance = async (ServiceId, bidAmount, bidId, token) => {

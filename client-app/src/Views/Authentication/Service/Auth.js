@@ -4,6 +4,9 @@ import axios from 'axios';
 const LOGIN_URL = 'https://localhost:5000/api/Account/Login';
 const REGISTER_URL = 'https://localhost:5000/api/Account/Register';
 const PROFILE_API_URL = 'https://localhost:5000/api/Profile';
+const WALLET_API_URL = 'https://localhost:5000/api/Transaction/UserWallet';
+const ADD_MONEY_URL = 'https://localhost:5000/api/Transaction/Add';
+const SUB_MONEY_URL = 'https://localhost:5000/api/Transaction/Subtract';
 
 const authService = {
   login: async (loginData) => {
@@ -25,6 +28,9 @@ const authService = {
     }
   },
 
+
+
+
   register: async (registrationData) => {
     try {
       const response = await axios.post(REGISTER_URL, registrationData);
@@ -42,6 +48,11 @@ const authService = {
       throw error;
     }
   },
+
+
+
+
+
   getPublicProfile: async (token) => {
     try {
       console.log("token:",token);
@@ -58,17 +69,92 @@ const authService = {
       throw error;
     }
   },
-/* 
-  getPrivateProfile: async () => {
+
+
+
+
+
+  getUserWallet: async (token) => {
     try {
-      const response = await axios.get(`${PROFILE_API_URL}/PrivateInfo`);
+      const response = await axios.get(WALLET_API_URL, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      console.log('User Wallet response:', response);
+
+      if (!response) {
+        throw new Error('Failed to retrieve user wallet.');
+      }
+
       return response.data;
     } catch (error) {
-      console.error('Error fetching private profile:', error.message);
+      console.error('Error fetching user wallet:', error.message);
       throw error;
     }
   },
-  */
+
+
+
+
+
+  addMoneyToWallet: async (token, amount) => {
+    try {
+      const response = await axios.post(
+        `${ADD_MONEY_URL}?amount=${amount}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      
+
+      console.log('Add Money response:', response);
+
+      if (!response) {
+        throw new Error('Failed to add money to wallet.');
+      }
+
+      return response.data;
+    } catch (error) {
+      console.error('Error adding money to wallet:', error.message);
+      throw error;
+    }
+  },
+
+
+
+  subMoneyFromWallet: async (token, amount) => {
+    try {
+      const response = await axios.post(
+        `${SUB_MONEY_URL}?amount=${amount}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log('Subtract Money response:', response);
+
+      if (!response) {
+        throw new Error('Failed to subtract money from wallet.');
+      }
+
+      return response.data;
+    } catch (error) {
+      console.error('Error subtracting money from wallet:', error.message);
+      throw error;
+    }
+  },
+
+
+
+
 };
 
 export default authService;

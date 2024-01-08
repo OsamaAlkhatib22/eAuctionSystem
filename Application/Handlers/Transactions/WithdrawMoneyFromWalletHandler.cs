@@ -63,7 +63,7 @@ public class WithdrawMoneyFromWalletHandler : IRequestHandler<WithdrawMoneyFromW
             newTran.TransactionId = TranEntity.Entity.TransactionId;
             await _context.SaveChangesAsync(cancellationToken);
 
-            //walet shit here check if correct
+           
             _context.Wallets.Attach(wallet);
             wallet.Balance -= request.Amount;
 

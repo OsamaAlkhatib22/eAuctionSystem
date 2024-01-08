@@ -109,3 +109,19 @@ export const addBidAcceptance = async (ServiceId, bidAmount, bidId, token) => {
     throw error;
   }
 };
+
+
+export const fetchNotifications  = async (token) => {
+  try {
+    const response = await axios.get('https://localhost:5000/api/Notification/NotificationList', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching notifications:', error);
+    throw error;
+  }
+};

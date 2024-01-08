@@ -1,6 +1,9 @@
 ﻿using Application.Commands;
 using Application.Core;
+using Application.Handlers.Notification;
 using Domain.ClientDTOs.Bidding;
+using Domain.ClientDTOs.Notification;
+using Domain.DataModels.Notifications;
 using Domain.DataModels.Services;
 using Domain.DataModels.Users;
 using MediatR;
@@ -14,18 +17,20 @@ public class InsertBidHandler : IRequestHandler<AddBidCommand, Result<AddBidDTO>
     private readonly DataContext _context;
     private readonly IConfiguration _configuration;
     public readonly UserManager<ApplicationUser> _userManager;
+    public readonly NotificationHandler _notificationHandler;
 
 
     public InsertBidHandler(
             DataContext context,
             IConfiguration configuration,
-            UserManager<ApplicationUser> userManager
+            UserManager<ApplicationUser> userManager,
+            NotificationHandler notificationHandler
         )
     {
         _context = context;
         _configuration = configuration;
         _userManager = userManager;
-
+        _notificationHandler = notificationHandler;
 
         
     }
@@ -34,10 +39,12 @@ public class InsertBidHandler : IRequestHandler<AddBidCommand, Result<AddBidDTO>
 
     public async Task<Result<AddBidDTO>> Handle(AddBidCommand request, CancellationToken cancellationToken)
     {
+        using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
         try
         {
             if (request.AddBidDTO.Bid_Amount <= 0)
             {
+                await transaction.RollbackAsync();
                 return Result<AddBidDTO>.Failure("Bid amount must be more than Zero.");
             }
 
@@ -46,6 +53,7 @@ public class InsertBidHandler : IRequestHandler<AddBidCommand, Result<AddBidDTO>
 
             if (service == null)
             {
+                await transaction.RollbackAsync();
                 return Result<AddBidDTO>.Failure("Service not found.");
             }
 
@@ -59,6 +67,7 @@ public class InsertBidHandler : IRequestHandler<AddBidCommand, Result<AddBidDTO>
 
             if (previousBid != null && previousBid.BidAmount <= request.AddBidDTO.Bid_Amount)
             {
+                await transaction.RollbackAsync();
                 return Result<AddBidDTO>.Failure("Bid amount must be lower than the previous bid.");
             }
 
@@ -68,11 +77,13 @@ public class InsertBidHandler : IRequestHandler<AddBidCommand, Result<AddBidDTO>
             DateTime bidExpiration = service.CreationDate.Add(service.BidDuration);
             if (DateTime.UtcNow > bidExpiration)
             {
+                await transaction.RollbackAsync();
                 return Result<AddBidDTO>.Failure("Bid duration has expired. No more bids can be placed.");
             }
 
             if (service.starting_bid < request.AddBidDTO.Bid_Amount)
             {
+                await transaction.RollbackAsync();
                 return Result<AddBidDTO>.Failure("Bid Amount cant be higher then the service budget.");
             }
 
@@ -81,7 +92,7 @@ public class InsertBidHandler : IRequestHandler<AddBidCommand, Result<AddBidDTO>
             {
                 BidderId = UserId,
                 BidAmount = request.AddBidDTO.Bid_Amount,
-                ServiceId = request.id,// to Assign the spicfic service ID to the bid
+                ServiceId = request.id,// to Assign the spicfic serviceID to the bid
                 UserId = _context.Services.Where(q => q.ServiceId == request.id).Select(q => q.UserId).FirstOrDefault(),
                 IsAccepted = false,
 
@@ -93,10 +104,28 @@ public class InsertBidHandler : IRequestHandler<AddBidCommand, Result<AddBidDTO>
             await _context.Bids.AddAsync(newBid);
             await _context.SaveChangesAsync(cancellationToken);
 
+            await _notificationHandler.Handle(new NotificationCommand(
+                new NotificationDTO
+                {
+                    UserId = _context.Services.Where(q => q.ServiceId == request.id).Select(q => q.UserId).FirstOrDefault(),
+                    Notification = $"New bid placed for your service (Service Number: {request.id}).",
+                    NotificationDate = DateTime.UtcNow,
+                }
+
+                ), cancellationToken);
+
+            await _context.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync();
+
+
             return Result<AddBidDTO>.Success(request.AddBidDTO);
         }
         catch (Exception ex)
         {
+            await transaction.RollbackAsync();
+            Console.WriteLine($"An error occurred: {ex.Message}");
+            Console.WriteLine($"Stack Trace: {ex.StackTrace}");
+            Console.WriteLine($"Inner Exception: {ex.InnerException?.Message}");
             return Result<AddBidDTO>.Failure($"An error occurred: {ex.Message}");
         }
     }

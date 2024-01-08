@@ -3,7 +3,7 @@ import Header from '../../../Components/Header';
 import Auth from '../Service/Auth';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../Components/Context';
-import { useSkills } from '../../../Components/FreeLancerSkillsContext';
+
 import {
   Container,
   Typography,
@@ -26,7 +26,7 @@ const FreelancerRegistrationPage = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const {  setSkills } = useSkills();
+
   const [selectedSkills, setSelectedSkills] = useState([]);
   
 
@@ -227,6 +227,7 @@ const FreelancerRegistrationPage = () => {
         Email: registrationData.email,
         Bio: registrationData.bio,
         Password: registrationData.password,
+        confirmPassword: registrationData.confirmPassword,
         UserTypeId: 3,
         JobTitle: registrationData.jobTitle,
         FieldOfWork: registrationData.fieldOfWork,
@@ -257,7 +258,6 @@ const FreelancerRegistrationPage = () => {
   
   const handleSkillsChange = (event, value) => {
     setSelectedSkills(value);
-    setSkills(value);
   };
 
   return (

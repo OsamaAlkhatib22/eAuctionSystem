@@ -1,87 +1,81 @@
-// FreeLancerHome.js
-import React, { useState, useEffect } from "react";
-import { Box, Card, CardContent, Divider, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Box, Button, Card, CardContent, Divider, Typography } from '@mui/material';
 import FreeLancerHomeHeader from "./FreeLancerHomeHeader";
-import TaskDetails from "./TaskDetails";
-import { fetchTasks, fetchTaskDetails } from "./Service/Auth";
-import "./Styling/FreeLancerHome.css";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import ExploreIcon from '@mui/icons-material/Explore';
+import { fetchTasks } from "./Service/Auth";
 
 const FreeLancerHome = () => {
-  const [tasks, setTasks] = useState([]);
-  const [selectedTaskId, setSelectedTaskId] = useState(null);
-  const navigate = useNavigate(); // Initialize useNavigate
+  const [featuredTasks, setFeaturedTasks] = useState([]);
 
   useEffect(() => {
-    loadData();
+    const fetchFeaturedTasks = async () => {
+      try {
+        const tasks = await fetchTasks();
+        // Get the first two tasks
+        const firstTwoTasks = tasks.slice(0, 2);
+        setFeaturedTasks(firstTwoTasks);
+      } catch (error) {
+        console.error("Error fetching featured tasks:", error.message);
+      }
+    };
+
+    fetchFeaturedTasks();
   }, []);
-
-  const loadData = async () => {
-    try {
-      const data = await fetchTasks();
-      setTasks(data);
-    } catch (error) {
-      console.error("Error fetching tasks:", error.message);
-    }
-  };
-
-  const handleTaskClick = (ServiceId) => {
-    // Use navigate to go to the TaskDetails page
-    console.log("Task clicked. Navigating to:", `/task/${ServiceId}`);
-    navigate(`/task/${ServiceId}`);
-  };
 
   return (
     <div>
       <FreeLancerHomeHeader />
-      <Box
-        sx={{
-          display: "grid",
-          gap: 2,
-          fontFamily: "Roboto, sans-serif",
-          placeItems: "left",
-        }}
-      >
-        {tasks.map((task) => (
-          <Card
-            key={task.serviceId}
-            sx={{
-              borderRadius: "15px",
-              cursor: "pointer",
-              backgroundColor: "#F5F5F5",
-              padding: "10px",
-              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-              transition: "transform 0.3s",
-              width: "1000px", // Set the width as per your requirement
-              margin: "10px", // Add margin for spacing between cards
-              "&:hover": {
-                transform: "scale(1.03)",
-                boxShadow: "0 8px 16px rgba(0, 0, 0, 0.2)",
-              },
-            }}
-            onClick={() => handleTaskClick(task.serviceId)}
-          >
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                {task.title || "No Title"}
-              </Typography>
-              <Typography variant="body2" color="textSecondary">
-                {`${task.firstName || "Unknown"} ${
-                  task.lastName || "Unknown"
-                }`}
-              </Typography>
-              <Divider sx={{ my: 1 }} />
-              <Typography variant="body2" color="textSecondary">
-                {`Created on: ${new Date(
-                  task.creationDate
-                ).toLocaleString() || "Unknown Date"}`}
-              </Typography>
-              <Typography variant="body1">
-                {task.description || "No Description"}
-              </Typography>
-            </CardContent>
-          </Card>
-        ))}
+      <Box m={4}>
+        <Card>
+          <CardContent>
+            <Typography variant="h4" gutterBottom>
+              Welcome to Your FreeLancer Dashboard!
+            </Typography>
+            <Typography variant="body1" paragraph>
+              Discover new opportunities and manage your freelance projects seamlessly. Connect with clients and showcase your skills to excel in your freelance journey.
+            </Typography>
+            <Divider sx={{ my: 2 }} />
+            <Typography variant="h6" gutterBottom>
+              What would you like to do?
+            </Typography>
+            <Box display="flex" justifyContent="space-between">
+            <Button
+                variant="contained"
+                style={{ backgroundColor: '#8b0000', color: '#fff' }}
+                component={Link}
+                to="/FreeLancerTask"
+                startIcon={<ExploreIcon />}
+              >
+                Explore Tasks
+              </Button>
+            </Box>
+            <Divider sx={{ my: 2 }} />
+            <Typography variant="h6" gutterBottom>
+              Featured Tasks
+            </Typography>
+            <Box display="flex" flexDirection="column" gap={2}>
+  {featuredTasks.map((task) => (
+    <Card key={task.serviceId} sx={{ marginBottom: 2, width: '100%' }}>
+      <CardContent>
+        <Typography variant="h6">
+          {task.title}
+        </Typography>
+        <Typography variant="body2" noWrap>
+          {task.description.length > 150
+            ? task.description
+                .substring(0, 150)
+                .match(/(?:\S+\s*){1,50}/g)
+                .join('\n') + '...'
+            : task.description}
+        </Typography>
+      </CardContent>
+    </Card>
+  ))}
+</Box>
+
+          </CardContent>
+        </Card>
       </Box>
     </div>
   );

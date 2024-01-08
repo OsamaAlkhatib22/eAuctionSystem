@@ -39,7 +39,9 @@ namespace Application.Handlers.Transaction
                 //UserId = _context.Users.Where(q => q.Id == t.UserId).Select(w => w.Id).SingleOrDefault(),
                 UserId = t.UserId,
                 Transaction_Type = t.TransactionType,
-                
+               // ClientUserName = _context.Users.Where(q => q.Id == t.UserId && t.TransactionType=="Transfer").Select(r => r.UserName).FirstOrDefault(),
+            
+               // ClientUserName = t.User.UserName,
             
 
             };
