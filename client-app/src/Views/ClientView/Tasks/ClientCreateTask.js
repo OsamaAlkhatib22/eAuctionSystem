@@ -20,6 +20,7 @@ import {
   IconButton,
   Autocomplete,
   Grid,
+  InputAdornment,
 } from '@mui/material';
 
 function ClientCreateTask() {
@@ -31,6 +32,7 @@ function ClientCreateTask() {
     bid_duration: '',
     starting_bid: 0,
     CategoryId: 1,
+    TaskSubmissionTime: '',
     media_ref: '',
 
   });
@@ -102,10 +104,17 @@ function ClientCreateTask() {
       }));
     }
   };
+  const handleSkillSelection = (event, values) => {
+    setSelectedSkills(values);
+  };
+  
 
   const handleCreateTask = async () => {
     try {
       const formData = new FormData();
+
+      const uniqueSelectedSkills = Array.from(new Set(selectedSkills.map(skill => skill.id)))
+      .map(id => TaskskillsOptions.find(skill => skill.id === id));
 
       // Use selectedFiles array
       selectedFiles.forEach((attachment, index) => {
@@ -119,12 +128,10 @@ function ClientCreateTask() {
           formData.append(key, value);
         }
       });
-      selectedSkills.forEach((skill, index) => {
-        // Ensure that SkillId is present before appending to form data
-        if (skill && skill.id) {
-          formData.append(`SkillId[${index}]`, skill.id);
-        }
+      uniqueSelectedSkills.forEach((skill, index) => {
+        formData.append(`skillId[${index}]`, skill.id);
       });
+    
 
       const response = await fetch('https://localhost:5000/api/Task/CreateTask', {
         method: 'POST',
@@ -143,14 +150,6 @@ function ClientCreateTask() {
     } catch (error) {
       console.error('Error creating task:', error.message);
     }
-  };
-  const handleSkillSelection = (event, values) => {
-    // Filter the selected values to ensure they are present in the skillsOptions array
-    const validSelectedSkills = values.filter((selectedSkill) =>
-    TaskskillsOptions.some((option) => option.id === selectedSkill.id)
-    );
-  
-    setSelectedSkills(validSelectedSkills);
   };
   
   
@@ -197,7 +196,7 @@ function ClientCreateTask() {
           <Box mt={2} mb={2}>
             <TextField
               fullWidth
-              label="Bid Duration"
+              label="Biding Duration (hh:mm:ss)"
               name="bid_duration"
               value={taskData.bid_duration}
               onChange={handleInputChange}
@@ -206,15 +205,24 @@ function ClientCreateTask() {
           <Box mt={2} mb={2}>
             <TextField
               fullWidth
-              label="Starting Bid"
+              label="Budget"
               name="starting_bid"
               value={taskData.starting_bid}
               onChange={handleInputChange}
             />
           </Box>
           <Box mt={2} mb={2}>
+            <TextField
+              fullWidth
+              label="DeadLine (YYYY-MM-DDTHH:mm:ssZ)"
+              name="TaskSubmissionTime"
+              value={taskData.TaskSubmissionTime}
+              onChange={handleInputChange}
+            />
+          </Box>
+          <Box mt={2} mb={2}>
             <FormControl fullWidth>
-              <InputLabel>Category ID</InputLabel>
+              <InputLabel>Category</InputLabel>
               <Select
                 name="CategoryId"
                 value={taskData.CategoryId}

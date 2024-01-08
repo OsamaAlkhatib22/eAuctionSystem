@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import FreeLancerHomeHeader from '../Home/FreeLancerHomeHeader'
 import {
   Typography,
   Box,
@@ -13,26 +14,25 @@ import {
   DialogContent,
   DialogActions,
 } from "@mui/material";
-import HomeHeader from '../Home/HomeHeader';
-import { fetchTaskDetails, addBidAcceptance } from "./Service/Auth"; 
-import { useParams, useNavigate,Link } from "react-router-dom";
+import {fetchFreeLancerTaskCompletedDetails} from './Service/Auth';
+import { useParams, useNavigate, Link } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useAuth } from "../../../Components/Context";
 
-const ClientTaskDetails = () => {
+const  FreeLancerMyTaskCompletedDetails = () => {
+
   const { ServiceId } = useParams();
   const [taskDetails, setTaskDetails] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [openModal, setOpenModal] = useState(false);
-  const [selectedBid, setSelectedBid] = useState(null);
-  const [openAcceptDialog, setOpenAcceptDialog] = useState(false);
+
   const { token } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const details = await fetchTaskDetails(ServiceId);
+        const details = await fetchFreeLancerTaskCompletedDetails(ServiceId);
         setTaskDetails(details);
       } catch (error) {
         console.error("Error fetching task details:", error.message);
@@ -42,29 +42,8 @@ const ClientTaskDetails = () => {
     fetchData();
   }, [ServiceId]);
 
-  const handleAcceptConfirmation = async () => {
-    try {
-      // Make the API call to accept the bid using selectedBid
-      const response = await addBidAcceptance(ServiceId, selectedBid.bidAmount, selectedBid.bidId, token);
-
-      // Handle the response or update the UI as needed
-      console.log('Bid accepted successfully:', response);
-
-      // Close the confirmation dialog
-      setOpenAcceptDialog(false);
-    } catch (error) {
-      console.error('Error accepting bid:', error.message);
-      // Handle the error or show an error message
-    }
-  };
-
-  const handleAcceptBid = (bid) => {
-    setSelectedBid(bid);
-    setOpenAcceptDialog(true);
-  };
-
   const handleGoBack = () => {
-    navigate("/MyTasks"); 
+    navigate(-1); 
   };
 
   const handleImageClick = (image) => {
@@ -76,28 +55,9 @@ const ClientTaskDetails = () => {
     setOpenModal(false);
   };
 
-  const calculateTimeLeft = (deadline) => {
-    const now = new Date();
-    const targetDate = new Date(deadline);
-    const timeDifference = targetDate - now;
-  
-    if (timeDifference <= 0) {
-      return 'Expired';
-    }
-  
-    const weeks = Math.floor(timeDifference / (1000 * 60 * 60 * 24 * 7));
-    const days = Math.floor((timeDifference % (1000 * 60 * 60 * 24 * 7)) / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
-  
-  
-    return `${weeks} weeks, ${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds left`;
-  };
-
   return (
     <div>
-      <HomeHeader />
+      <FreeLancerHomeHeader />
       {taskDetails && (
         <Box sx={{ p: 3, fontFamily: "Roboto, sans-serif" }}>
           <IconButton onClick={handleGoBack} color="primary">
@@ -152,10 +112,13 @@ const ClientTaskDetails = () => {
               <Card>
                 <CardContent>
                   <Typography variant="body1">
-                    Budget: {taskDetails.starting_bid || "No Starting Bid"}
+                    Accepted Bid: {taskDetails.accepted_Bid || "No Bid was Accepted"}
                   </Typography>
                   <Typography variant="body1">
-                    Bid Duration: {taskDetails.bidDuration || "No Bid Duration"}
+                  Client: 
+                   <Link to={`/SelectedProfileUserNameInfo/${taskDetails.clientUserName}`}>
+                     {taskDetails.clientUserName}
+                    </Link>
                   </Typography>
                   <Typography variant="body1">
                     Category: {taskDetails.category_name || "No Category"}
@@ -164,7 +127,7 @@ const ClientTaskDetails = () => {
                     Rating: {taskDetails.rating || "No Rating"}
                   </Typography>
                   <Typography variant="body1">
-                   DeadLine: {calculateTimeLeft(taskDetails.taskSubmissionTime) || "No specific DeadLine"}
+                   Status: {(taskDetails.status) || "No specific status"}
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
                     {`Created on: ${new Date(
@@ -214,65 +177,14 @@ const ClientTaskDetails = () => {
             </DialogActions>
           </Dialog>
 
-          <Box mt={3}>
-            <Typography variant="h6" gutterBottom>
-              Received Bids
-            </Typography>
-            {taskDetails.bids && taskDetails.bids.length > 0 ? (
-              taskDetails.bids.map((bid) => (
-                <Card key={bid.bidId}>
-                  <CardContent>
-                    <Typography variant="body1">
-                      Bid Amount: {bid.bidAmount}
-                    </Typography>
-                    {bid.bidder && (
-                      <>
-                        <Typography variant="body1">
-                          Bidder: {`${bid.bidder.firstName || 'Unknown'} ${bid.bidder.lastName || 'Unknown'}`}
-                        </Typography>
-                        <Typography variant="body1" gutterBottom>
-                          <Link to={`/SelectedProfileUserNameInfo/${bid.bidder.userName}`}>
-                            {bid.bidder.userName}
-                          </Link>
-                        </Typography>
-                        <Typography variant="body1">
-                          Rating: {bid.bidder.rating || 'No Rating'}
-                        </Typography>
-                      </>
-                    )}
-                    <Button onClick={() => handleAcceptBid(bid)}>Accept Bid</Button>
-                  </CardContent>
-                </Card>
-              ))
-            ) : (
-              <Typography variant="body2">No bids received for this task.</Typography>
-            )}
-          </Box>
 
-          <Dialog open={openAcceptDialog} onClose={() => setOpenAcceptDialog(false)}>
-            <DialogTitle>Accept Bid Confirmation</DialogTitle>
-            <DialogContent>
-              <Typography variant="body1">
-                Are you sure you want to accept this bid?
-              </Typography>
-              <Typography variant="body1">
-                Bid Amount: {selectedBid?.bidAmount}
-              </Typography>
-              {/* Add more bid details as needed */}
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={() => setOpenAcceptDialog(false)} color="primary">
-                Cancel
-              </Button>
-              <Button onClick={handleAcceptConfirmation} color="primary">
-                Accept Bid
-              </Button>
-            </DialogActions>
-          </Dialog>
+          
         </Box>
       )}
     </div>
   );
 };
 
-export default ClientTaskDetails;
+
+
+export default FreeLancerMyTaskCompletedDetails

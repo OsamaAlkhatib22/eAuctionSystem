@@ -1,9 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from "react-router-dom";
-import HomeHeader from '../Home/HomeHeader';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../Components/Context';
-import { Box, Card, CardContent, Divider, Typography, CircularProgress, Paper, Grid, styled } from '@mui/material';
-import { fetchTasksProcess, fetchTasksCompleted } from './Service/Auth';
+import { fetchFreeLancerTaskList, fetchFreeLancerCompletedTaskList } from './Service/Auth';
+import {
+  Box,
+  Card,
+  CardContent,
+  Divider,
+  Typography,
+  CircularProgress,
+  Paper,
+  Grid,
+  styled,
+} from '@mui/material';
+import FreeLancerHomeHeader from '../Home/FreeLancerHomeHeader';
 
 const StyledDiv = styled('div')({
   display: 'flex',
@@ -18,17 +28,21 @@ const TaskBox = styled(Paper)(({ theme }) => ({
   whiteSpace: 'pre-wrap',
   cursor: 'pointer',
   transition: 'transform 0.3s',
-  width: '1000px', 
-  margin: '10px', 
+  width: '100%',
+  margin: '10px',
 
   "&:hover": {
     transform: 'scale(1.03)',
     boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)',
   },
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  display: '-webkit-box',
+  WebkitBoxOrient: 'vertical',
+  WebkitLineClamp: 5, // Adjust the number of lines to display
 }));
 
-
-function MyTasks() {
+function FreeLancerMyTask() {
   const { token } = useAuth();
   const [tasks, setTasks] = useState([]);
   const [completedTasks, setCompletedTasks] = useState([]);
@@ -39,8 +53,8 @@ function MyTasks() {
     const fetchData = async () => {
       try {
         if (token) {
-          const processTasks = await fetchTasksProcess(token);
-          const completedTasks = await fetchTasksCompleted(token);
+          const processTasks = await fetchFreeLancerTaskList(token);
+          const completedTasks = await fetchFreeLancerCompletedTaskList(token);
           setTasks(processTasks);
           setCompletedTasks(completedTasks);
         }
@@ -54,29 +68,26 @@ function MyTasks() {
     fetchData();
   }, [token]);
 
-  
-
   // Separate tasks based on status
   const inAuctionTasks = tasks.filter((task) => task.status === 'In Auction');
   const inProcessTasks = tasks.filter((task) => task.status === 'In Process');
 
-  const handleTaskClick = (ServiceId) => {
-    console.log("Task clicked. Navigating to:", `/task/${ServiceId}`);
-    navigate(`/mtask/${ServiceId}`);
+  const HandleTaskInAuctionClick = (ServiceId) => {
+    navigate(`/FreeLancerMyTaskDetails/${ServiceId}`)
   };
 
-  const HandleTaskProcessClick =  (ServiceId) => {
-    console.log("Task clicked. Navigating to:", `/task/${ServiceId}`);
-    navigate(`/ClientProcesstask/${ServiceId}`);
+  const HandleTaskProcessClick = (ServiceId) => {
+    navigate(`/FreeLancerTaskInProcessDetails/${ServiceId}`);
+   
   };
-  const HandleTaskCompletedClick =  (ServiceId) => {
-    console.log("Task clicked. Navigating to:", `/task/${ServiceId}`);
-    navigate(`/ClientCompletedtask/${ServiceId}`);
+  const HandleTaskCompletedClick = (ServiceId) => {
+    console.log('Task clicked. Navigating to:', `/task/${ServiceId}`);
+    navigate(`/FreeLancerTaskCompletedDetails/${ServiceId}`);
   };
 
   return (
     <div>
-      <HomeHeader />
+      <FreeLancerHomeHeader />
 
       <Box m={4}>
         <Card>
@@ -91,7 +102,7 @@ function MyTasks() {
                 <CircularProgress />
               </StyledDiv>
             ) : (
-              <Grid container spacing={3}>
+              <Grid container spacing={2}>
                 {inAuctionTasks.length > 0 && (
                   <Grid item xs={12} md={6}>
                     <Card>
@@ -104,7 +115,7 @@ function MyTasks() {
                           <div
                             key={task.ServiceId}
                             
-                            onClick={() => handleTaskClick(task.serviceId)}
+                            onClick={() => HandleTaskInAuctionClick(task.serviceId) }
                           >
                             <TaskBox>
                               <Typography variant="body1">
@@ -132,18 +143,21 @@ function MyTasks() {
                           In Process Status
                         </Typography>
                         {inProcessTasks.map((task) => (
-
                           <div
                             key={task.ServiceId}
                             onClick={() => {
-                              HandleTaskProcessClick(task.serviceId)
+                              HandleTaskProcessClick(task.serviceId);
                             }}
                           >
                             <TaskBox>
                               <Typography variant="body1">
                                 Title: {task.title}{'\n'}
                                 Created by: {task.firstName} {task.lastName}{'\n'}
-                                Creation Date: {task.creationDate ? new Date(task.creationDate).toLocaleDateString() : 'Invalid Date'}{'\n'}
+                                Creation Date:{' '}
+                                {task.creationDate
+                                  ? new Date(task.creationDate).toLocaleDateString()
+                                  : 'Invalid Date'}
+                                {'\n'}
                                 Description: {task.description}{'\n'}
                                 Status: {task.status}
                               </Typography>
@@ -156,23 +170,28 @@ function MyTasks() {
                 )}
 
                 {completedTasks.length > 0 && (
-                  <Grid item xs={12}>
+                  <Grid item xs={12} md={6}>
                     <Card>
                       <CardContent>
                         <Typography variant="h6" gutterBottom>
                           Completed Tasks
                         </Typography>
                         {completedTasks.map((task) => (
-
                           <div
                             key={task.ServiceId}
-                            onClick={() => {HandleTaskCompletedClick(task.serviceId)}}
+                            onClick={() => {
+                              HandleTaskCompletedClick(task.serviceId);
+                            }}
                           >
                             <TaskBox>
                               <Typography variant="body1">
                                 Title: {task.title}{'\n'}
                                 Created by: {task.firstName} {task.lastName}{'\n'}
-                                Creation Date: {task.creationDate ? new Date(task.creationDate).toLocaleDateString() : 'Invalid Date'}{'\n'}
+                                Creation Date:{' '}
+                                {task.creationDate
+                                  ? new Date(task.creationDate).toLocaleDateString()
+                                  : 'Invalid Date'}
+                                {'\n'}
                                 Description: {task.description}{'\n'}
                                 Status: {task.status}
                               </Typography>
@@ -184,11 +203,13 @@ function MyTasks() {
                   </Grid>
                 )}
 
-                {inAuctionTasks.length === 0 && inProcessTasks.length === 0 && completedTasks.length === 0 && (
-                  <Grid item xs={12}>
-                    <Typography variant="body1">No tasks available.</Typography>
-                  </Grid>
-                )}
+                {inAuctionTasks.length === 0 &&
+                  inProcessTasks.length === 0 &&
+                  completedTasks.length === 0 && (
+                    <Grid item xs={12}>
+                      <Typography variant="body1">No tasks available.</Typography>
+                    </Grid>
+                  )}
               </Grid>
             )}
           </CardContent>
@@ -198,4 +219,4 @@ function MyTasks() {
   );
 }
 
-export default MyTasks;
+export default FreeLancerMyTask;

@@ -186,6 +186,7 @@ const ClientRegistrationPage = () => {
         Email: registrationData.email,
         Bio: registrationData.bio,
         Password: registrationData.password,
+        confirmPassword: registrationData.confirmPassword,
         UserTypeId: 2,
         JobTitle: registrationData.jobTitle,
         FieldOfWork: registrationData.fieldOfWork,
