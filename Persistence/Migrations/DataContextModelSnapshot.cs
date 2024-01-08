@@ -36,6 +36,25 @@ namespace Persistence.Migrations
                     b.ToTable("Categories", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.DataModels.Notifications.Notifications", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int")
+                        .HasColumnName("UserId");
+
+                    b.Property<string>("Notification")
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("Notification");
+
+                    b.Property<DateTime>("NotificationDate")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("NotificationDate");
+
+                    b.HasKey("UserId", "Notification");
+
+                    b.ToTable("Notifications");
+                });
+
             modelBuilder.Entity("Domain.DataModels.Reviews.Review", b =>
                 {
                     b.Property<int>("ReviewId")
@@ -171,9 +190,17 @@ namespace Persistence.Migrations
                         .HasColumnType("varchar(255)")
                         .HasColumnName("media_ref");
 
+                    b.Property<string>("Comment")
+                        .HasColumnType("longtext")
+                        .HasColumnName("Comment");
+
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("date_created");
+
+                    b.Property<bool>("FromFreeLancer")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("FromFreeLancer");
 
                     b.HasKey("ServiceId", "MediaRef");
 
@@ -336,6 +363,10 @@ namespace Persistence.Migrations
                     b.Property<string>("PasswordHash")
                         .HasColumnType("longtext")
                         .HasColumnName("PASSWORD_HASH");
+
+                    b.Property<string>("ProfileMediaRef")
+                        .HasColumnType("longtext")
+                        .HasColumnName("profile_media_ref");
 
                     b.Property<DateTime>("RegistrationDate")
                         .HasColumnType("datetime(6)")
@@ -522,6 +553,17 @@ namespace Persistence.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.DataModels.Notifications.Notifications", b =>
+                {
+                    b.HasOne("Domain.DataModels.Users.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Domain.DataModels.Reviews.Review", b =>

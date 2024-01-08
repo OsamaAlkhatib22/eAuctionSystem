@@ -24,7 +24,7 @@ namespace Application.Handlers.Task
             CancellationToken cancellationToken
         )
         {
-            
+
 
 
             var query =
@@ -39,8 +39,10 @@ namespace Application.Handlers.Task
                 LastName = _context.Users.Where(q => q.Id == t.UserId).Select(q => q.LastName).SingleOrDefault(),
                 CreationDate = t.CreationDate,
                 Description = t.Description,
+                strCategoryName = t.Category.strCategoryName,
                 intCategoryId = t.CategoryId,
                 intSkillIds = _context.TaskSkills.Where(q => q.ServiceId == t.ServiceId).Select(w => w.skillId).ToList(),
+                strSkills = _context.TaskSkills.Where(q => q.ServiceId == t.ServiceId).Select(w => w.Skills.Skill).ToList(),
                 Budget = t.starting_bid,
                 TaskSubmissionTime = t.TaskSubmissionTime,
 

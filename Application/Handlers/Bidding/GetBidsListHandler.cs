@@ -38,6 +38,7 @@ namespace Application.Handlers.Bidding
                     {
                         FirstName = q.FirstName,
                         LastName = q.LastName,
+                        UserName = q.UserName,
                         Rating = q.Ratings.Where(r => r.UserId == q.Id).Select(r => r.Rating).FirstOrDefault(),
                         BidderId = q.Id,
                         

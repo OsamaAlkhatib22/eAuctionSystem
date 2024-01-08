@@ -8,6 +8,7 @@ using Domain.DataModels.Transactions;
 using Domain.DataModels.Services;
 using Domain.DataModels.UserRating;
 using Domain.DataModels.Skills;
+using Domain.DataModels.Notifications;
 
 namespace Persistence
 {
@@ -27,6 +28,7 @@ namespace Persistence
                  b.Property(e => e.Id).HasColumnName("UserId");
                  b.Property(e => e.UserName).HasColumnName("UserName");
                  b.Property(e => e.UserTypeId).HasColumnName("user_type_id");
+                 b.Property(e => e.ProfileMediaRef).HasColumnName("profile_media_ref");
                  b.Property(e => e.PasswordHash).HasColumnName("PASSWORD_HASH");
                  b.Property(e => e.SecurityStamp).HasColumnName("SECURITY_STAMP");
                  b.Property(e => e.ConcurrencyStamp).HasColumnName("CONCURRENCY_STAMP");
@@ -156,7 +158,12 @@ namespace Persistence
             builder.Entity<TaskSkills>(
                q => q.HasKey(q => new { q.ServiceId, q.skillId })
            );
-           
+            builder.Entity<Notifications>(
+                q => q.HasKey(q => new {q.UserId, q.Notification})
+                );
+
+            
+
 
 
         }
@@ -175,6 +182,7 @@ namespace Persistence
         public DbSet<Skills> Skillss { get; set; }
         public DbSet<TaskSkills> TaskSkills { get; set; }
         public DbSet<TransactionService> TransactionServices { get; set; }
+        public DbSet<Notifications> Notifications { get; set; }
        
     }
 }

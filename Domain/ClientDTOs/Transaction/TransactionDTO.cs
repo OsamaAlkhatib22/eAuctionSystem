@@ -9,6 +9,8 @@ namespace Domain.ClientDTOs.Transaction
         public DateTime TransactionDate { get; set; }
         public decimal Amount { get; set; }
 
+        public string ClientUserName { get; set; }
+
         public int UserId { get; set; }
         public string Transaction_Type { get; set; }
 

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 // Remove unused using directives related to authorization
 
 using Domain.DataModels.Users;
+using Application.Handlers.Notification;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,7 @@ builder.Services.AddControllers();
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddCorsService(builder.Configuration, builder.Environment);
 builder.Services.AddIdentityService(builder.Configuration);
+builder.Services.AddTransient<NotificationHandler>();
 
 
 var app = builder.Build();
