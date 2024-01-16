@@ -24,5 +24,12 @@ namespace Domain.ClientDTOs.Service
         public string status { get; set; }
         public List<String> lstMedia { get; set; }
 
+
+        //free lancer submission.
+
+        public string freeLancerComment { get; set; }
+
+        public List<String> freeLancerSubmittedlstMedia { get; set; }
+
     }
 }

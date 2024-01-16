@@ -49,9 +49,19 @@ namespace Application.Handlers.Task
                 status = t.status,
                 Skills = _context.TaskSkills.Where(q => q.ServiceId == t.ServiceId).Select(w => w.Skills.Skill).ToList(),
                 lstMedia = _context.TaskAttachments
-                    .Where(q => q.ServiceId == t.ServiceId)
+                    .Where(q => q.ServiceId == t.ServiceId && q.FromFreeLancer == false)
                     .Select(s => File.Exists(s.MediaRef) ? Convert.ToBase64String(File.ReadAllBytes(s.MediaRef)) : string.Empty).ToList(),
                 TaskSubmissionTime = t.TaskSubmissionTime,
+
+
+                //freelancer things 
+                freeLancerComment = _context.TaskAttachments.
+                Where(q => q.ServiceId == t.ServiceId && q.FromFreeLancer ==true).
+                Select(e => e.Comment).SingleOrDefault(),
+                freeLancerSubmittedlstMedia = _context.TaskAttachments
+                .Where(q => q.ServiceId == t.ServiceId && q.FromFreeLancer == true)
+                .Select(s => File.Exists(s.MediaRef) ? Convert.ToBase64String(File.ReadAllBytes(s.MediaRef)) : string.Empty).ToList(),
+
 
             };
 

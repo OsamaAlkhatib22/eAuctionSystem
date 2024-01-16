@@ -62,7 +62,7 @@ public class AcceptedBidHandler : IRequestHandler<AcceptedBidCommand, Result<Tra
             }
             Transaction newTran = new Transaction
             {
-                TransactionDate = DateTime.UtcNow,
+                TransactionDate = DateTime.Now,
                 Amount = bid.BidAmount,
                 UserId = user,
                 TransactionType = "Transfer",
@@ -70,7 +70,7 @@ public class AcceptedBidHandler : IRequestHandler<AcceptedBidCommand, Result<Tra
 
             Transaction newTranBidder = new Transaction
             {
-                TransactionDate = DateTime.UtcNow,
+                TransactionDate = DateTime.Now,
                 Amount = bid.BidAmount,
                 UserId = receiver,
                 TransactionType = "Addition",
@@ -126,8 +126,8 @@ public class AcceptedBidHandler : IRequestHandler<AcceptedBidCommand, Result<Tra
                new NotificationDTO
                {
                    UserId = receiver,
-                   Notification = $"Your bid has been Accepted By (Clinet: {acceptingBidderUsername}) (Service Number: {ServiceId})",
-                   NotificationDate = DateTime.UtcNow,
+                   Notification = $"Your bid has been Accepted By (Client: {acceptingBidderUsername}))",
+                   NotificationDate = DateTime.Now,
                }
 
                ), cancellationToken);

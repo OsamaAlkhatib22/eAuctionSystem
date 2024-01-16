@@ -7,7 +7,7 @@ using MySql.EntityFrameworkCore.Metadata;
 namespace Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class EditTaskskillTablenum2 : Migration
+    public partial class Notificationsid : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -110,25 +110,6 @@ namespace Persistence.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "TaskSkills",
-                columns: table => new
-                {
-                    service_id = table.Column<int>(type: "int", nullable: false),
-                    skill_id = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TaskSkills", x => new { x.service_id, x.skill_id });
-                    table.ForeignKey(
-                        name: "FK_TaskSkills_Skills_skill_id",
-                        column: x => x.skill_id,
-                        principalTable: "Skills",
-                        principalColumn: "skill_id",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySQL:Charset", "utf8mb4");
-
-            migrationBuilder.CreateTable(
                 name: "users",
                 columns: table => new
                 {
@@ -141,6 +122,7 @@ namespace Persistence.Migrations
                     Field_of_work = table.Column<string>(type: "longtext", nullable: true),
                     Job_title = table.Column<string>(type: "longtext", nullable: true),
                     user_type_id = table.Column<int>(type: "int", nullable: false),
+                    profile_media_ref = table.Column<string>(type: "longtext", nullable: true),
                     UserName = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true),
@@ -242,6 +224,28 @@ namespace Persistence.Migrations
                     table.PrimaryKey("PK_AspNetUserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
                     table.ForeignKey(
                         name: "FK_AspNetUserTokens_users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Notifications",
+                columns: table => new
+                {
+                    NotificationId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    Notification = table.Column<string>(type: "longtext", nullable: false),
+                    NotificationDate = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notifications", x => x.NotificationId);
+                    table.ForeignKey(
+                        name: "FK_Notifications_users_UserId",
                         column: x => x.UserId,
                         principalTable: "users",
                         principalColumn: "UserId",
@@ -416,6 +420,8 @@ namespace Persistence.Migrations
                 {
                     service_id = table.Column<int>(type: "int", nullable: false),
                     media_ref = table.Column<string>(type: "varchar(255)", nullable: false),
+                    FromFreeLancer = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    Comment = table.Column<string>(type: "longtext", nullable: true),
                     date_created = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
@@ -426,6 +432,31 @@ namespace Persistence.Migrations
                         column: x => x.service_id,
                         principalTable: "Services",
                         principalColumn: "service_id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "TaskSkills",
+                columns: table => new
+                {
+                    service_id = table.Column<int>(type: "int", nullable: false),
+                    skill_id = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TaskSkills", x => new { x.service_id, x.skill_id });
+                    table.ForeignKey(
+                        name: "FK_TaskSkills_Services_service_id",
+                        column: x => x.service_id,
+                        principalTable: "Services",
+                        principalColumn: "service_id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TaskSkills_Skills_skill_id",
+                        column: x => x.skill_id,
+                        principalTable: "Skills",
+                        principalColumn: "skill_id",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
@@ -484,6 +515,11 @@ namespace Persistence.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Bids_UserId",
                 table: "Bids",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Notifications_UserId",
+                table: "Notifications",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -558,6 +594,9 @@ namespace Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "Bids");
+
+            migrationBuilder.DropTable(
+                name: "Notifications");
 
             migrationBuilder.DropTable(
                 name: "Reviews");

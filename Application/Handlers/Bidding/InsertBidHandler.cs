@@ -75,7 +75,7 @@ public class InsertBidHandler : IRequestHandler<AddBidCommand, Result<AddBidDTO>
 
             // Check if bid duration has expired
             DateTime bidExpiration = service.CreationDate.Add(service.BidDuration);
-            if (DateTime.UtcNow > bidExpiration)
+            if (DateTime.Now > bidExpiration)
             {
                 await transaction.RollbackAsync();
                 return Result<AddBidDTO>.Failure("Bid duration has expired. No more bids can be placed.");
@@ -109,7 +109,7 @@ public class InsertBidHandler : IRequestHandler<AddBidCommand, Result<AddBidDTO>
                 {
                     UserId = _context.Services.Where(q => q.ServiceId == request.id).Select(q => q.UserId).FirstOrDefault(),
                     Notification = $"New bid placed for your service (Service Number: {request.id}).",
-                    NotificationDate = DateTime.UtcNow,
+                    NotificationDate = DateTime.Now,
                 }
 
                 ), cancellationToken);
@@ -123,9 +123,9 @@ public class InsertBidHandler : IRequestHandler<AddBidCommand, Result<AddBidDTO>
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            Console.WriteLine($"An error occurred: {ex.Message}");
+            /*Console.WriteLine($"An error occurred: {ex.Message}");
             Console.WriteLine($"Stack Trace: {ex.StackTrace}");
-            Console.WriteLine($"Inner Exception: {ex.InnerException?.Message}");
+            Console.WriteLine($"Inner Exception: {ex.InnerException?.Message}");*/
             return Result<AddBidDTO>.Failure($"An error occurred: {ex.Message}");
         }
     }
