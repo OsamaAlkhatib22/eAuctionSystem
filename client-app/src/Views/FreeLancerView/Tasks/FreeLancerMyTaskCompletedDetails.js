@@ -29,11 +29,23 @@ const  FreeLancerMyTaskCompletedDetails = () => {
   const { token } = useAuth();
   const navigate = useNavigate();
 
+  const [freelancerSubmission, setFreelancerSubmission] = useState({
+    comment: "",
+    lstMedia: [],
+  });
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const details = await fetchFreeLancerTaskCompletedDetails(ServiceId);
         setTaskDetails(details);
+
+        //free lancer task submission
+        const freelancerSubmissionData = {
+          comment: details?.freeLancerComment || "",
+          lstMedia: details?.freeLancerSubmittedlstMedia || [],
+        };
+        setFreelancerSubmission(freelancerSubmissionData);
       } catch (error) {
         console.error("Error fetching task details:", error.message);
       }
@@ -123,9 +135,7 @@ const  FreeLancerMyTaskCompletedDetails = () => {
                   <Typography variant="body1">
                     Category: {taskDetails.category_name || "No Category"}
                   </Typography>
-                  <Typography variant="body1">
-                    Rating: {taskDetails.rating || "No Rating"}
-                  </Typography>
+                  
                   <Typography variant="body1">
                    Status: {(taskDetails.status) || "No specific status"}
                   </Typography>
@@ -176,6 +186,35 @@ const  FreeLancerMyTaskCompletedDetails = () => {
               </Button>
             </DialogActions>
           </Dialog>
+          <Typography variant="h6" gutterBottom>
+            Your Submissions
+          </Typography>
+          <Card>
+            <CardContent>
+              <Typography variant="body1">Comment: {freelancerSubmission.comment || "No comment"}</Typography>
+              {freelancerSubmission.lstMedia.length > 0 ? (
+  freelancerSubmission.lstMedia.map((media, index) => (
+    <React.Fragment key={index}>
+      {media.trim() !== "" && (
+        <img
+          alt={`Freelancer Submission ${index + 1}`}
+          src={`data:image/png;base64,${media}`}
+          style={{
+            width: "20%",
+            height: "20%",
+            marginBottom: 10,
+          }}
+          onClick={() => handleImageClick(media)}
+        />
+      )}
+    </React.Fragment>
+  ))
+) : (
+  <Typography variant="body2">No images were added by the freelancer.</Typography>
+)}
+
+            </CardContent>
+          </Card>
 
 
           

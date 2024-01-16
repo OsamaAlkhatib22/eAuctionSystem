@@ -253,10 +253,10 @@ const FreeLancerTask = () => {
 
            <Card>
             <CardContent>
-              <Typography variant="h6">Date Created </Typography>
+              <Typography variant="h6">Date From </Typography>
 
               <FormControl fullWidth>
-                <InputLabel>Date</InputLabel>
+                <InputLabel></InputLabel>
                 <Input
                   type="date"
                   value={selectedDate ? selectedDate.toISOString().split("T")[0] : ""}
@@ -270,10 +270,10 @@ const FreeLancerTask = () => {
           </Card>
           <Card>
             <CardContent>
-              <Typography variant="h6">Date To Filter</Typography>
+              <Typography variant="h6">Date To </Typography>
 
               <FormControl fullWidth>
-                <InputLabel>Date</InputLabel>
+                <InputLabel></InputLabel>
                 <Input
                   type="date"
                   value={selectedDateTo ? selectedDateTo.toISOString().split("T")[0] : ""}

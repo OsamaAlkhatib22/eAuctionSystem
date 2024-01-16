@@ -203,13 +203,44 @@ function FreeLancerMyTask() {
                   </Grid>
                 )}
 
-                {inAuctionTasks.length === 0 &&
-                  inProcessTasks.length === 0 &&
-                  completedTasks.length === 0 && (
-                    <Grid item xs={12}>
+            {inAuctionTasks.length === 0 && (
+                <Grid item xs={12} md={6}>
+                  <Card>
+                    <CardContent>
+                      <Typography variant="h6" gutterBottom>
+                        In Auction Status
+                      </Typography>
                       <Typography variant="body1">No tasks available.</Typography>
-                    </Grid>
-                  )}
+                    </CardContent>
+                  </Card>
+                </Grid>
+              )}
+
+              {inProcessTasks.length === 0 && (
+                <Grid item xs={12} md={6}>
+                  <Card>
+                    <CardContent>
+                      <Typography variant="h6" gutterBottom>
+                        In Process Status
+                      </Typography>
+                      <Typography variant="body1">No tasks available.</Typography>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              )}
+
+              {completedTasks.length === 0 && (
+                <Grid item xs={12} md={6}>
+                  <Card>
+                    <CardContent>
+                      <Typography variant="h6" gutterBottom>
+                        Completed Tasks
+                      </Typography>
+                      <Typography variant="body1">No tasks available.</Typography>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              )}
               </Grid>
             )}
           </CardContent>

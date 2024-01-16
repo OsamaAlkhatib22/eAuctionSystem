@@ -117,9 +117,12 @@ const [submissionAttachments, setSubmissionAttachments] = useState([]);
         body: formData,
       });
   
-      // Optionally, you can close the modal and update the task details
       handleCloseModal();
-      // Fetch updated task details or update the state
+
+      setTimeout(() => {
+        navigate('/FreeLancerMyTask');
+      }, 1000);
+
     } catch (error) {
       console.error("Error submitting task:", error.message);
     }
@@ -196,9 +199,7 @@ const [submissionAttachments, setSubmissionAttachments] = useState([]);
                   <Typography variant="body1">
                     Category: {taskDetails.category_name || "No Category"}
                   </Typography>
-                  <Typography variant="body1">
-                    Rating: {taskDetails.rating || "No Rating"}
-                  </Typography>
+                  
                   <Typography variant="body1">
                    DeadLine: {calculateTimeLeft(taskDetails.taskSubmissionTime) || "No specific DeadLine"}
                   </Typography>
@@ -274,6 +275,7 @@ const [submissionAttachments, setSubmissionAttachments] = useState([]);
         type="file"
         onChange={handleFileInputChange}
         multiple
+        accept="image/*"
       />
       {submissionAttachments.map((file, index) => (
         <div key={index}>{file.name}</div>

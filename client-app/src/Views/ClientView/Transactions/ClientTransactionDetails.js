@@ -70,9 +70,11 @@ function ClientTransactionDetails() {
                   </Paper>
                 </Grid>
                 <Grid item xs={6}>
-                  <Paper elevation={3} style={{ padding: '20px' }}>
-                    <Typography variant="subtitle1">Transaction Date: {transactionDetails.transactionDate}</Typography>
-                  </Paper>
+                <Paper elevation={3} style={{ padding: '20px' }}>
+                <Typography variant="subtitle1">
+                  Transaction Date: {new Date(transactionDetails.transactionDate).toLocaleString()}
+                </Typography>
+              </Paper>
                 </Grid>
                 <Grid item xs={6}>
                   <Paper elevation={3} style={{ padding: '20px' }}>

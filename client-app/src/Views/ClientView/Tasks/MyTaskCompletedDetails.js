@@ -29,11 +29,23 @@ const MyTaskCompletedDetails = () => {
   const { token } = useAuth();
   const navigate = useNavigate();
 
+  const [freelancerSubmission, setFreelancerSubmission] = useState({
+    comment: "",
+    lstMedia: [],
+  });
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const details = await fetchTaskCompletedDetails(ServiceId);
         setTaskDetails(details);
+
+        //freelancer task submission
+        const freelancerSubmissionData = {
+          comment: details?.freeLancerComment || "",
+          lstMedia: details?.freeLancerSubmittedlstMedia || [],
+        };
+        setFreelancerSubmission(freelancerSubmissionData);
       } catch (error) {
         console.error("Error fetching task details:", error.message);
       }
@@ -114,14 +126,12 @@ const MyTaskCompletedDetails = () => {
                     Accepted Bid: {taskDetails.accepted_Bid || "No Bid was Accepted"}
                   </Typography>
                   <Typography variant="body1">
-                    Accepted Bidder: <Link to={`/SelectedProfileUserNameInfo/${taskDetails.freeLancerUserName}`}>{taskDetails.freeLancerUserName}</Link>
+                    Completed by: <Link to={`/SelectedProfileUserNameInfo/${taskDetails.freeLancerUserName}`}>{taskDetails.freeLancerUserName}</Link>
                   </Typography>
                   <Typography variant="body1">
                     Category: {taskDetails.category_name || "No Category"}
                   </Typography>
-                  <Typography variant="body1">
-                    Rating: {taskDetails.rating || "No Rating"}
-                  </Typography>
+                  
                   <Typography variant="body1">
                    Status: {(taskDetails.status) || "No specific status"}
                   </Typography>
@@ -172,6 +182,27 @@ const MyTaskCompletedDetails = () => {
               </Button>
             </DialogActions>
           </Dialog>
+          <Typography variant="h6" gutterBottom>
+            Freelancer Submissions
+          </Typography>
+          <Card>
+            <CardContent>
+              <Typography variant="body1">Comment: {freelancerSubmission.comment || "No comment"}</Typography>
+              {freelancerSubmission.lstMedia.map((media, index) => (
+                <img
+                  key={index}
+                  alt={`Freelancer Submission ${index + 1}`}
+                  src={`data:image/png;base64,${media}`}
+                  style={{
+                    width: "20%",
+                    height: "20%",
+                    marginBottom: 10,
+                  }}
+                  onClick={() => handleImageClick(media)}
+                />
+              ))}
+            </CardContent>
+          </Card>
 
 
           

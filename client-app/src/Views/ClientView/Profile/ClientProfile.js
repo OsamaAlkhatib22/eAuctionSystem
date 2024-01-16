@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import authService from '../../Authentication/Service/Auth';
 import ClientProfileHeader from './ClientProfileHeader';
 import { useAuth } from '../../../Components/Context';
+import { useNavigate } from 'react-router-dom';
 import {
   Avatar,
   Box,
@@ -14,14 +15,34 @@ import {
   DialogContent,
   DialogActions,
   TextField,
+  Snackbar,
+
 } from '@mui/material';
 
 const ClientProfile = () => {
   const { token } = useAuth();
+  const { clearAuthToken } = useAuth();
+
+  const navigate = useNavigate();
+
+  const [isUsernameTaken, setIsUsernameTaken] = useState(false);
+
   const [publicProfileData, setPublicProfileData] = useState(null);
   const [userWallet, setUserWallet] = useState(null);
   const [amountToAdd, setAmountToAdd] = useState(0);
   const [isAddingMoney, setIsAddingMoney] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [updatedInfo, setUpdatedInfo] = useState({
+    strNewUsername: '',
+    strOldPassword: '',
+    strNewPassword: '',
+    strNewBio: '',
+    strNewFieldOfWork: '',
+    strNewJobTitle: '',
+  });
 
   useEffect(() => {
     const fetchPublicProfile = async () => {
@@ -44,6 +65,13 @@ const ClientProfile = () => {
     try {
       setIsAddingMoney(true);
 
+      if (amountToAdd < 1) {
+        setSnackbarMessage('Amount must be 1$ or more.');
+        setSnackbarOpen(true);
+        setIsAddingMoney(false);
+        return;
+      }
+
       console.log('Amount to Add:', amountToAdd);
       // Send a request to add money to the wallet
       await authService.addMoneyToWallet(token, amountToAdd);
@@ -58,6 +86,87 @@ const ClientProfile = () => {
     } catch (error) {
       console.error('Error adding money to wallet:', error.message);
       setIsAddingMoney(false);
+    }
+  };
+
+  const handleEditPersonalInfo = () => {
+    setIsEditing(!isEditing);
+    // Reset the updatedInfo state when entering edit mode
+    if (!isEditing) {
+      setUpdatedInfo({
+        strNewUsername: '',
+        strOldPassword: '',
+        strNewPassword: '',
+        strNewBio: publicProfileData?.bio || '',
+        strNewFieldOfWork: publicProfileData?.fieldOfWork || '',
+        strNewJobTitle: publicProfileData?.jobTitle || '',
+      });
+    }
+  };
+
+  const handleUpdatePersonalInfo = async () => {
+    try {
+      if (updatedInfo.strNewUsername) {
+        // Check if the new username is already used
+        const usernameTaken = await authService.isUsernameTaken(updatedInfo.strNewUsername);
+  
+        if (usernameTaken) {
+          setSnackbarMessage('Username is already used.');
+          setSnackbarOpen(true);
+          setIsUsernameTaken(true); // Set the state to handle UI indication if needed
+          return;
+        } else {
+          setIsUsernameTaken(false); // Reset the state
+        }
+      }
+
+      if (
+        updatedInfo.strNewFieldOfWork.length < 5 ||
+        !/^[a-zA-Z& ]+$/.test(updatedInfo.strNewFieldOfWork)
+      ) {
+        setSnackbarMessage(
+          'Field of work must be at least 5 characters long, and can only contain letters and the "&" character.'
+        );
+        setSnackbarOpen(true);
+        return;
+      }
+
+      if (
+        updatedInfo.strNewJobTitle.length < 5 ||
+        !/^[a-zA-Z& ]+$/.test(updatedInfo.strNewJobTitle)
+      ) {
+        setSnackbarMessage(
+          'Job title must be at least 5 characters long, and can only contain letters and the "&" character.'
+        );
+        setSnackbarOpen(true);
+        return;
+      }
+
+
+
+      console.log('Updating personal info with:', updatedInfo);
+
+      await authService.updatePersonalInfo(token, updatedInfo);
+
+      setIsEditing(false);
+      setSnackbarMessage('Personal information updated successfully.');
+      setSnackbarOpen(true);
+
+      if (updatedInfo.strNewUsername) {
+        setTimeout(() => {
+          // Clear authentication token and navigate to login page
+          clearAuthToken();
+          navigate('/login');
+        }, 1000);
+      } else {
+        // Fetch updated public profile if the username is not updated
+        const updatedPublicProfile = await authService.getPublicProfile(token);
+        setPublicProfileData(updatedPublicProfile);
+      }
+    } catch (error) {
+      console.error('Error updating personal information:', error.message);
+      setSnackbarMessage(`Error updating personal information`);
+    setSnackbarOpen(true);
     }
   };
 
@@ -88,22 +197,29 @@ const ClientProfile = () => {
               <Typography variant="h5" gutterBottom>
                 Additional Information
               </Typography>
-              <Typography variant="body1" sx={{ marginBottom: 2 }}>
+              <Typography variant="body1" sx={{ marginBottom: 1, minHeight: 10 }}>
+                
+              </Typography>
+              <Typography variant="body1" sx={{ marginBottom: 2, minHeight: 20 }}>
                 <strong>Field of Work:</strong> {publicProfileData?.fieldOfWork}
               </Typography>
-              <Typography variant="body1" sx={{ marginBottom: 2 }}>
+              <Typography variant="body1" sx={{ marginBottom: 1, minHeight: 10 }}>
+                
+              </Typography>
+              <Typography variant="body1" sx={{ marginBottom: 2, minHeight: 20 }}>
                 <strong>Job Title:</strong> {publicProfileData?.jobTitle}
               </Typography>
-              <Typography variant="body1" sx={{ marginBottom: 2 }}>
-                <strong>Rating:</strong> {publicProfileData?.rating}
+              <Typography variant="body1" sx={{ marginBottom: 1, minHeight: 10 }}>
+                
               </Typography>
-              <Typography variant="body1" sx={{ marginBottom: 2 }}>
+              
+
+              <Typography variant="body1" sx={{ marginBottom: 2, minHeight: 20 }}>
                 <strong>Registration Date:</strong>{' '}
                 {publicProfileData?.registrationDate
                   ? new Date(publicProfileData.registrationDate).toLocaleDateString()
                   : 'N/A'}
               </Typography>
-
             </Paper>
           </Grid>
           <Grid item xs={12}>
@@ -124,7 +240,7 @@ const ClientProfile = () => {
               {userWallet ? (
                 <>
                   <Typography variant="body1">
-                    <strong>Balance:</strong> {userWallet.balance}
+                    <strong>Balance:</strong> {userWallet.balance} $
                   </Typography>
                   <Button
                     variant="contained"
@@ -163,6 +279,91 @@ const ClientProfile = () => {
           </Grid>
         </Grid>
       </Box>
+
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2, mb: 2 }}>
+        <Button
+          variant="contained"
+          style={{ backgroundColor: '#8b0000', color: '#fff' }}
+          onClick={() => handleEditPersonalInfo()}
+        >
+          Edit Personal Info
+        </Button>
+      </Box>
+
+        
+          <Dialog open={isEditing} onClose={() => setIsEditing(false)} maxWidth="md" fullWidth>
+  <DialogTitle>Edit Personal Information</DialogTitle>
+  <DialogContent>
+    <Paper sx={{ width: '100%', padding: 2 }}>
+      {/* Input fields for editing personal information */}
+      <TextField
+        label="New Username"
+        fullWidth
+        value={updatedInfo.strNewUsername}
+        onChange={(e) => setUpdatedInfo({ ...updatedInfo, strNewUsername: e.target.value })}
+      />
+
+      <Box sx={{ mt: 2, display: 'flex', gap: 2 }}>
+        <TextField
+          label="Old Password"
+          type="password"
+          fullWidth
+          value={updatedInfo.strOldPassword}
+          onChange={(e) => setUpdatedInfo({ ...updatedInfo, strOldPassword: e.target.value })}
+        />
+        <TextField
+          label="New Password"
+          type="password"
+          fullWidth
+          value={updatedInfo.strNewPassword}
+          onChange={(e) => setUpdatedInfo({ ...updatedInfo, strNewPassword: e.target.value })}
+        />
+      </Box>
+
+      <Box sx={{ mt: 2 }}>
+        <TextField
+          label="Bio"
+          fullWidth
+          multiline
+          rows={4}
+          value={updatedInfo.strNewBio}
+          onChange={(e) => setUpdatedInfo({ ...updatedInfo, strNewBio: e.target.value })}
+        />
+      </Box>
+
+      <Box sx={{ mt: 2, display: 'flex', gap: 2 }}>
+        <TextField
+          label="Field of Work"
+          fullWidth
+          value={updatedInfo.strNewFieldOfWork}
+          onChange={(e) => setUpdatedInfo({ ...updatedInfo, strNewFieldOfWork: e.target.value })}
+        />
+        <TextField
+          label="Job Title"
+          fullWidth
+          value={updatedInfo.strNewJobTitle}
+          onChange={(e) => setUpdatedInfo({ ...updatedInfo, strNewJobTitle: e.target.value })}
+        />
+      </Box>
+
+     
+    </Paper>
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={() => setIsEditing(false)} style={{ color: '#8b0000' }}>
+      Cancel
+      </Button>
+    <Button onClick={handleUpdatePersonalInfo} color="primary" style={{ color: '#8b0000' }}>
+      Save Changes
+    </Button>
+  </DialogActions>
+</Dialog>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={2000}
+        onClose={() => setSnackbarOpen(false)}
+        message={snackbarMessage}
+      />
     </div>
   );
 };
