@@ -34,7 +34,7 @@ namespace Application.Handlers.Notification
             {
                 Notification = t.Notification,
                 UserId = userid,
-                NotificationDate = DateTime.UtcNow,
+                NotificationDate = DateTime.Now,
             };
 
 

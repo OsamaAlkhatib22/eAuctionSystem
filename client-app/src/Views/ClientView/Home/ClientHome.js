@@ -40,14 +40,13 @@ function ClientHome() {
             </Typography>
             <Divider />
 
-            {/* Your existing content for creating tasks */}
-            {/* For example: */}
             <Box mt={2}>
               <Button
                 component={Link}
                 to="/ClientCreateTask"
                 variant="contained"
                 color="primary"
+                style={{ backgroundColor: '#8b0000', color: 'white' }}
               >
                 Create Task
               </Button>

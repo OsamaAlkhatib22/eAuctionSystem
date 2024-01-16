@@ -37,7 +37,7 @@ namespace Application.Handlers.Notification
 
                 var notification = new Notifications
                 {
-                    NotificationDate = DateTime.UtcNow,
+                    NotificationDate = DateTime.Now,
                     UserId = request.NotificationDTO.UserId,
                     Notification = request.NotificationDTO.Notification,
                 };
@@ -52,7 +52,7 @@ namespace Application.Handlers.Notification
             {
                 return Result<NotificationDTO>.Failure("Unknown Error" + e);
             }
-            notificationDto.NotificationDate = DateTime.UtcNow;
+            notificationDto.NotificationDate = DateTime.Now;
             return Result<NotificationDTO>.Success(notificationDto);
         }
     }

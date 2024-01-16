@@ -42,8 +42,9 @@ function FreeLancerTransactions() {
   }, [token]);
 
   return (
-    <div><FreeLancerHomeHeader />
-   <Box m={4}>
+    <div>
+      <FreeLancerHomeHeader />
+      <Box m={4}>
         <Card>
           <CardContent>
             <Typography variant="h5" gutterBottom>
@@ -67,7 +68,10 @@ function FreeLancerTransactions() {
                           Transaction Number: {transaction.transactionId}{'\n'}
                           Amount: {transaction.amount}{'\n'}
                           Date: {new Date(transaction.transactionDate).toLocaleDateString()}{'\n'}
-                          Type: {transaction.transaction_Type}
+                          Type: {transaction.transaction_Type}{'\n'}
+                          {transaction.serviceId !== 0 && (
+                            <>Service: {transaction.serviceId}{'\n'}</>
+                          )}
                         </Typography>
                       </TransactionBox>
                     ))}
@@ -81,4 +85,5 @@ function FreeLancerTransactions() {
     </div>
   );
 }
-export default FreeLancerTransactions
+
+export default FreeLancerTransactions;

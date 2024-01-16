@@ -8,6 +8,7 @@ using Domain.Resources;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
+using ZstdNet;
 
 namespace Application.Handlers.Transaction
 {
@@ -39,9 +40,7 @@ namespace Application.Handlers.Transaction
                 //UserId = _context.Users.Where(q => q.Id == t.UserId).Select(w => w.Id).SingleOrDefault(),
                 UserId = t.UserId,
                 Transaction_Type = t.TransactionType,
-               // ClientUserName = _context.Users.Where(q => q.Id == t.UserId && t.TransactionType=="Transfer").Select(r => r.UserName).FirstOrDefault(),
-            
-               // ClientUserName = t.User.UserName,
+               ServiceId = _context.TransactionServices.Where(q => q.TransactionId == t.TransactionId).Select(s => s.ServiceId).SingleOrDefault(),
             
 
             };

@@ -20,6 +20,7 @@ import { fetchTaskDetails, addBid } from "./Service/Auth";
 import { useParams, useNavigate ,Link} from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useAuth } from "../../../Components/Context";
+import { getTokenUsername } from "../../../Components/authUtils";
 
 
 
@@ -31,10 +32,13 @@ const TaskDetails = () => {
   const [openImageModal, setOpenImageModal] = useState(false);
   const [openBidModal, setOpenBidModal] = useState(false);
   const { token } = useAuth();
+  const username = getTokenUsername(token);
   const [bidAmount, setBidAmount] = useState('');
   const [isSnackbarOpen, setSnackbarOpen] = useState(false);
 
+const [snackbarMessage, setSnackbarMessage] = useState('');
 
+const [snackbarKey, setSnackbarKey] = useState(0);
 
 
 
@@ -78,29 +82,98 @@ const TaskDetails = () => {
 
   const handleAddBid = async () => {
     try {
-      if (!isNaN(parseFloat(bidAmount)) && isFinite(bidAmount)) {
-        const newBid = await addBid(ServiceId, parseFloat(bidAmount), token);
-
-        setTaskDetails((prevDetails) => ({
-          ...prevDetails,
-          bids: [...prevDetails.bids, newBid],
-        }));
-
-        setBidAmount('');
-        setSnackbarOpen(true);
-        handleCloseBidModal();
-      } else {
-        console.error('Invalid bid amount');
+      if (isNaN(parseFloat(bidAmount)) || !isFinite(bidAmount) || parseFloat(bidAmount) <= 0) {
+        throw new Error('Invalid bid amount');
       }
-    } catch (error) {
-      console.error('Error adding bid:', error.message);
-    }
-  };
+  
+      const numericBidAmount = parseFloat(bidAmount);
+      const userBids = taskDetails.bids.filter((bid) => bid.bidder && bid.bidder.userName === username);
+      console.log('User Bids:', userBids);
+
+
+      // Check if the user has placed a previous bid
+      const previousBid = userBids.length > 0 ? userBids[userBids.length - 1] : null;
+
 
   
+      // Compare bid amounts with the last bid placed by the user
+      if (previousBid && previousBid.bidAmount <= numericBidAmount) {
+        throw new Error('Bid amount must be lower than the previous bid.');
+      }
+      
+  
+  
+      const bidDurationParts = taskDetails.bidDuration.split(':');
+const bidDurationMilliseconds = (
+  parseInt(bidDurationParts[0]) * 60 * 60 * 1000 +
+  parseInt(bidDurationParts[1]) * 60 * 1000 +
+  parseInt(bidDurationParts[2]) * 1000
+);
+
+const bidExpiration = new Date(new Date(taskDetails.creationDate).getTime() + bidDurationMilliseconds);
+
+
+      
+      if (new Date() > bidExpiration) {
+        throw new Error('Bid duration has expired. No more bids can be placed.');
+      }
+      
+  
+      if (numericBidAmount > taskDetails.starting_bid) {
+        throw new Error('Bid amount must be lower than or equal to the service budget.');
+      }
+  
+      const newBid = await addBid(ServiceId, numericBidAmount, token);
+  
+      setTaskDetails((prevDetails) => ({
+        ...prevDetails,
+        bids: [...prevDetails.bids, newBid],
+      }));
+  
+      setBidAmount('');
+      setSnackbarMessage('Bid added successfully!');
+      handleOpenSnackbar();
+      handleCloseBidModal();
+    } catch (error) {
+      console.error('Error adding bid:', error.message);
+      setSnackbarMessage(error.message || 'An error occurred while adding the bid. if you have already placed a bid the new bid must be lower');
+      handleOpenSnackbar();
+    }
+  };
+  
+
+  // if (error.response && error.response.status === 400) {
+  //   setSnackbarMessage(error.response.data); // Assuming the error message is in the response data
+  //   setSnackbarOpen(true);
+  // }
+  
+
+  const handleOpenSnackbar = () => {
+    setSnackbarKey((prevKey) => prevKey + 1);
+    setSnackbarOpen(true);
+  };
 
   const handleCloseSnackbar = () => {
     setSnackbarOpen(false);
+  };
+
+  const calculateTimeLeft = (deadline) => {
+    const now = new Date();
+    const targetDate = new Date(deadline);
+    const timeDifference = targetDate - now;
+  
+    if (timeDifference <= 0) {
+      return 'Expired';
+    }
+  
+    const weeks = Math.floor(timeDifference / (1000 * 60 * 60 * 24 * 7));
+    const days = Math.floor((timeDifference % (1000 * 60 * 60 * 24 * 7)) / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+  
+  
+    return `${weeks} weeks, ${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds left`;
   };
 
   return (
@@ -193,8 +266,9 @@ const TaskDetails = () => {
                     Category: {taskDetails.category_name || "No Category"}
                   </Typography>
                   <Typography variant="body1">
-                    Rating: {taskDetails.rating || "No Rating"}
+                   DeadLine: {calculateTimeLeft(taskDetails.taskSubmissionTime) || "No specific DeadLine"}
                   </Typography>
+                 
                   <Typography variant="body2" color="textSecondary">
                     {`Created on: ${new Date(
                       taskDetails.creationDate
@@ -253,11 +327,12 @@ const TaskDetails = () => {
             </DialogActions>
           </Dialog>
           <Snackbar
-            open={isSnackbarOpen}
-            autoHideDuration={6000}
-            onClose={handleCloseSnackbar}
-            message="Bid added successfully!"
-          />
+        key={snackbarKey}
+        open={isSnackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        message={snackbarMessage}
+      />
           <Box mt={3}>
             <Typography variant="h6" gutterBottom>
               Received Bids
@@ -279,9 +354,7 @@ const TaskDetails = () => {
                             {bid.bidder.userName}
                           </Link>
                         </Typography>
-                        <Typography variant="body1">
-                          Rating: {bid.bidder.rating || 'No Rating'}
-                        </Typography>
+                       
                       </>
                     )}
                   </CardContent>

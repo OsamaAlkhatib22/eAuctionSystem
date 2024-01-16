@@ -1,4 +1,5 @@
 ﻿using API.Services;
+using Domain.ClientDTOs.Profile;
 using Domain.ClientDTOs.User;
 using Domain.DataModels.Skills;
 using Domain.DataModels.Transactions;
@@ -14,6 +15,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Runtime.InteropServices;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace API.Controllers 
 {
@@ -24,16 +26,19 @@ namespace API.Controllers
         public readonly UserManager<ApplicationUser> _userManager;
         public readonly DataContext _context;
         private readonly TokenService _tokenService;
+        private readonly IConfiguration _configuration;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
             DataContext context,
-            TokenService tokenService
+            TokenService tokenService,
+            IConfiguration configuration
         )
         {
             _userManager = userManager;
             _context = context;
             _tokenService = tokenService;
+            _configuration = configuration;
         }
 
         [AllowAnonymous]
@@ -96,7 +101,7 @@ namespace API.Controllers
                         FirstName = register.FirstName.ToLower(),
                         LastName = register.LastName.ToLower(),
                         Email = register.Email.ToLower(),
-                        RegistrationDate = DateTime.UtcNow,
+                        RegistrationDate = DateTime.Now,
                        
             };
 
@@ -152,9 +157,148 @@ namespace API.Controllers
             }
         }
 
-      
-         // Private Methods
-         private async Task<ActionResult> ValidateUserInput(RegisterDTO register)
+
+        //update profile 
+        [Authorize]
+        [HttpPut("update")]
+        public async Task<ActionResult<string>> UpdateUserInfo(ProfileUpdateDTO profileUpdateDTO)
+        {
+            string authHeader = Request.Headers["Authorization"];
+            JwtSecurityTokenHandler tokenHandler = new();
+            JwtSecurityToken jwtToken = tokenHandler.ReadJwtToken(authHeader[7..]);
+
+            var strUserName = jwtToken.Claims.First(c => c.Type == "username").Value;
+            Console.WriteLine(strUserName);
+            var user = await _userManager.FindByNameAsync(strUserName);
+            Console.WriteLine("User: " + user);
+
+            // Print token content
+            Console.WriteLine("Token: " + jwtToken.RawData);
+            Console.WriteLine("Issuer: " + jwtToken.Issuer);
+            Console.WriteLine("Claims:");
+            foreach (var claim in jwtToken.Claims)
+            {
+                Console.WriteLine($"{claim.Type}: {claim.Value}");
+            }
+
+            if (user == null)
+            {
+                return BadRequest("Bad security token.");
+            }
+
+        
+
+            if (!string.IsNullOrWhiteSpace(profileUpdateDTO.strNewBio))
+            {
+                user.Bio = profileUpdateDTO.strNewBio;
+            }
+            if (!string.IsNullOrWhiteSpace(profileUpdateDTO.strNewFieldOfWork))
+            {
+                if (profileUpdateDTO.strNewFieldOfWork.Length < 5 || !Regex.IsMatch(profileUpdateDTO.strNewFieldOfWork, "^[a-zA-Z& ]+$"))
+                {
+                    return BadRequest("Field of work must be at least 5 characters long, and can only contain letters and the '&' character.");
+                }
+                user.FieldOfWork = profileUpdateDTO.strNewFieldOfWork;
+            }
+            if (!string.IsNullOrWhiteSpace(profileUpdateDTO.strNewJobTitle))
+            {
+                if (profileUpdateDTO.strNewJobTitle.Length < 5 || !Regex.IsMatch(profileUpdateDTO.strNewJobTitle, "^[a-zA-Z& ]+$"))
+                {
+                    return BadRequest("Job title must be at least 5 characters long, and can only contain letters and the '&' character.");
+                }
+                user.JobTitle = profileUpdateDTO.strNewJobTitle;
+            }
+
+            if (user.UserTypeId == 3)
+            {
+                if (profileUpdateDTO.strNewSkills != null && profileUpdateDTO.strNewSkills.Any())
+                {
+                    var existingSkills = await _context.UserSkills
+            .Where(s => s.UserId == user.Id && profileUpdateDTO.strNewSkills.Contains(s.skillId))
+            .ToListAsync();
+
+                    if (existingSkills.Any())
+                    {
+                        return BadRequest("User already has some of the skills being added.");
+                    }
+                    // Update or add new skills
+                    foreach (var skill in profileUpdateDTO.strNewSkills)
+                    {
+                        var userSkill = await _context.UserSkills
+                            .FirstOrDefaultAsync(s => s.UserId == user.Id && s.skillId == skill);
+
+                        if (userSkill == null)
+                        {
+                            // Skill doesn't exist for the user, add it
+                            userSkill = new UserSkill
+                            {
+                                UserId = user.Id,
+                                skillId = skill
+                            };
+                            await _context.UserSkills.AddAsync(userSkill);
+                        }
+                        
+                    }
+                }
+            }
+
+
+
+            if (
+                !string.IsNullOrWhiteSpace(profileUpdateDTO.strNewPassword)
+                && !string.IsNullOrWhiteSpace(profileUpdateDTO.strOldPassword)
+            )
+            {
+                var result = await _userManager.ChangePasswordAsync(
+                    user,
+                    profileUpdateDTO.strOldPassword,
+                    profileUpdateDTO.strNewPassword
+                );
+
+                if (!result.Succeeded)
+                {
+                    return result.Errors.First().Description;
+                }
+            }
+           
+
+         /*  if (profileUpdateDTO.ProfileMediaRef != null)
+            {
+                string extension = Path.GetExtension(profileUpdateDTO.ProfileMediaRef);
+                string fileName = $"{DateTime.UtcNow.Ticks}{extension}";
+                string directory = _configuration["ProfilePicturePath"]; // Change this to your desired directory
+                string filePath = Path.Join(directory, fileName);
+
+                Directory.CreateDirectory(directory);
+
+                using var stream = File.Create(filePath);
+                await profileUpdateDTO.ProfileMediaRef.CopyToAsync(stream, cancellationToken);
+
+                // Update the user's profile picture reference
+                user.ProfileMediaRef = filePath;
+            }*/
+
+                using var transaction = await _context.Database.BeginTransactionAsync();
+            {
+                try
+                {
+                    await _userManager.UpdateAsync(user);
+                    await _context.SaveChangesAsync();
+                    transaction.Commit();
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                    return StatusCode(500, "An error occurred while updating user information.");
+                }
+            }
+
+            return _tokenService.CreateToken(user);
+        }
+
+
+        // Private Methods
+        private async Task<ActionResult> ValidateUserInput(RegisterDTO register)
          {
              // Duplicate validation
 
@@ -249,14 +393,14 @@ namespace API.Controllers
                 return BadRequest("Password does not match Confirm Password");
             }
 
-            if (!Regex.IsMatch(register.JobTitle, "^[a-zA-Z ]{4,}$"))
+            if (!Regex.IsMatch(register.JobTitle, "^[a-zA-Z& ]{5,}$"))
             {
-                return BadRequest("Job title must be at least 4 characters long, no numbers, and no special characters.");
+                return BadRequest("Job title must be at least 5 characters long, no numbers, and only & is allowed.");
             }
 
-            if (!Regex.IsMatch(register.FieldOfWork, "^[a-zA-Z ]{4,}$"))
+            if (!Regex.IsMatch(register.FieldOfWork, "^[a-zA-Z& ]{5,}$"))
             {
-                return BadRequest("Field of work must be at least 4 characters long, no numbers, and no special characters.");
+                return BadRequest("Field of work must be at least 5 characters long, no numbers, and only & is allowed.");
             }
 
 

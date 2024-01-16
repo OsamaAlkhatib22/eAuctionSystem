@@ -159,10 +159,10 @@ namespace Persistence
                q => q.HasKey(q => new { q.ServiceId, q.skillId })
            );
             builder.Entity<Notifications>(
-                q => q.HasKey(q => new {q.UserId, q.Notification})
-                );
+                q => q.HasKey(q => new { q.NotificationId })
+           );
 
-            
+
 
 
 

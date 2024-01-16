@@ -7,6 +7,9 @@ const PROFILE_API_URL = 'https://localhost:5000/api/Profile';
 const WALLET_API_URL = 'https://localhost:5000/api/Transaction/UserWallet';
 const ADD_MONEY_URL = 'https://localhost:5000/api/Transaction/Add';
 const SUB_MONEY_URL = 'https://localhost:5000/api/Transaction/Subtract';
+const UPDATE_PROFILE_URL = 'https://localhost:5000/api/Account/update';
+const USER_LIST_URL = 'https://localhost:5000/api/User/UserList';
+
 
 const authService = {
   login: async (loginData) => {
@@ -152,8 +155,28 @@ const authService = {
     }
   },
 
+  updatePersonalInfo: async (token, updatedInfo) => {
+    try {
+      const response = await axios.put(UPDATE_PROFILE_URL, updatedInfo, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
+      console.log('Update Personal Info response:', response);
 
+      if (!response) {
+        throw new Error('Failed to update personal information.');
+      }
+
+      return response.data;
+    } catch (error) {
+      console.error('Error updating personal information:', error.message);
+      throw error;
+    }
+  },
+
+  
 
 };
 

@@ -24,6 +24,8 @@ public class AddMoneyToWalletHandler : IRequestHandler<AddMoneyToWalletCommand, 
 
     public async Task<Result<Transaction>> Handle(AddMoneyToWalletCommand request, CancellationToken cancellationToken)
     {
+       
+
         using var transaction = await _context.Database.BeginTransactionAsync(
                cancellationToken
            );
@@ -39,10 +41,14 @@ public class AddMoneyToWalletHandler : IRequestHandler<AddMoneyToWalletCommand, 
             }
             Console.WriteLine($"User found for username: {request.UserName}");
 
+            if (request.Amount < 1)
+            {
+                return Result<Transaction>.Failure("Amount must be 1$ or more.");
+            }
 
             Transaction newTran = new Transaction
             {
-                TransactionDate = DateTime.UtcNow,
+                TransactionDate = DateTime.Now,
                 Amount = request.Amount,
                 UserId = user,
                 TransactionType = "Addition"

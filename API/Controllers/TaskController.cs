@@ -52,8 +52,6 @@ namespace API.Controllers
         [HttpGet("TaskList")] // .../api/Task/TaskList
         public async Task<IActionResult> GetTaskList([FromQuery]TasksFilter TasksFilter)
         {
-        
-
             return HandleResult(await Mediator.Send(new GetTaskListQuery(TasksFilter)));
         }
 

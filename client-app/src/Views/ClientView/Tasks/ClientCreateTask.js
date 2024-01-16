@@ -3,6 +3,10 @@ import HomeHeader from '../Home/HomeHeader';
 import { useAuth } from '../../../Components/Context';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 
 import {
   Box,
@@ -20,7 +24,6 @@ import {
   IconButton,
   Autocomplete,
   Grid,
-  InputAdornment,
 } from '@mui/material';
 
 function ClientCreateTask() {
@@ -38,8 +41,29 @@ function ClientCreateTask() {
   });
 
   const [selectedFiles, setSelectedFiles] = useState([]);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [selectedSkills, setSelectedSkills] = useState([]);
+
+  //snackbar
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [errorSnackbarOpen, setErrorSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [errorSnackbarMessage, setErrorSnackbarMessage] = useState('');
+  
+
+  //bid duration 
+  const [bidHours, setBidHours] = useState(0);
+  const [bidMinutes, setBidMinutes] = useState(0);
+  const [bidSeconds, setBidSeconds] = useState(0);
+
+  //deadline 
+  const [submissionYear, setSubmissionYear] = useState('');
+  const [submissionMonth, setSubmissionMonth] = useState('');
+  const [submissionDay, setSubmissionDay] = useState('');
+  const [submissionHours, setSubmissionHours] = useState('00');
+  const [submissionMinutes, setSubmissionMinutes] = useState('00');
+  const [submissionSeconds, setSubmissionSeconds] = useState('00');
+
+
 
 
   const TaskskillsOptions = [
@@ -107,6 +131,50 @@ function ClientCreateTask() {
   const handleSkillSelection = (event, values) => {
     setSelectedSkills(values);
   };
+//bid duration 
+  const handleBidDurationChange = (name, value) => {
+    switch (name) {
+      case 'bidHours':
+        setBidHours(value);
+        break;
+      case 'bidMinutes':
+        setBidMinutes(value);
+        break;
+      case 'bidSeconds':
+        setBidSeconds(value);
+        break;
+      default:
+        break;
+    }
+  };
+
+  //deadline
+
+  const handleSubmissionTimeChange = (name, value) => {
+    switch (name) {
+      case 'submissionYear':
+        setSubmissionYear(value);
+        break;
+      case 'submissionMonth':
+        setSubmissionMonth(value);
+        break;
+      case 'submissionDay':
+        setSubmissionDay(value);
+        break;
+      case 'submissionHours':
+        setSubmissionHours(value);
+        break;
+      case 'submissionMinutes':
+        setSubmissionMinutes(value);
+        break;
+      case 'submissionSeconds':
+        setSubmissionSeconds(value);
+        break;
+      default:
+        break;
+    }
+  };
+  
   
 
   const handleCreateTask = async () => {
@@ -115,6 +183,13 @@ function ClientCreateTask() {
 
       const uniqueSelectedSkills = Array.from(new Set(selectedSkills.map(skill => skill.id)))
       .map(id => TaskskillsOptions.find(skill => skill.id === id));
+
+      const bidDuration = `${bidHours}:${bidMinutes}:${bidSeconds}`;
+    formData.append('bid_duration', bidDuration);
+
+    const taskSubmissionTime = `${submissionYear}-${submissionMonth}-${submissionDay}T${submissionHours}:${submissionMinutes}:${submissionSeconds}Z`;
+    formData.append('TaskSubmissionTime', taskSubmissionTime);
+
 
       // Use selectedFiles array
       selectedFiles.forEach((attachment, index) => {
@@ -131,6 +206,22 @@ function ClientCreateTask() {
       uniqueSelectedSkills.forEach((skill, index) => {
         formData.append(`skillId[${index}]`, skill.id);
       });
+
+      // validate title
+      const titleRegex = /[a-zA-Z].*[a-zA-Z].*[a-zA-Z].*[a-zA-Z]/;
+    if (!titleRegex.test(taskData.Title)) {
+      setSnackbarMessage("Title must contain at least 4 alphabetical characters.");
+      setSnackbarOpen(true);
+      return;
+    }
+
+      // validate skills
+      if (selectedSkills.length === 0) {
+        setSnackbarMessage("Please select at least one skill.");
+        setSnackbarOpen(true);
+        return;
+      }
+      
     
 
       const response = await fetch('https://localhost:5000/api/Task/CreateTask', {
@@ -142,10 +233,17 @@ function ClientCreateTask() {
       });
 
       if (response.ok) {
+        setSnackbarMessage('Task created successfully');
         setSnackbarOpen(true);
         console.log('Task created successfully');
+
+        setTimeout(() => {
+          navigate('/MyTasks');
+        }, 1000);
       } else {
         console.error('Failed to create task:', await response.text());
+        setErrorSnackbarMessage('Failed to create task');
+      setErrorSnackbarOpen(true);
       }
     } catch (error) {
       console.error('Error creating task:', error.message);
@@ -156,10 +254,15 @@ function ClientCreateTask() {
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
+    setErrorSnackbarOpen(false);
   };
 
   const handleGoBack = () => {
     navigate('/ClientHome');
+  };
+
+  const padWithZero = (number) => {
+    return number < 10 ? `0${number}` : `${number}`;
   };
 
   return (
@@ -174,104 +277,230 @@ function ClientCreateTask() {
             Create Task
           </Typography>
           <Divider />
+
+          {/* Grid container for two-column layout */}
+          <Grid container spacing={3}>
+            {/* Left Side */}
+            <Grid item xs={12} md={6}>
+              <Box mt={2} mb={2}>
+                <TextField
+                  fullWidth
+                  label="Title"
+                  name="Title"
+                  value={taskData.Title}
+                  onChange={handleInputChange}
+                />
+              </Box>
+
+              <Box mt={2} mb={2}>
+                <TextField
+                  fullWidth
+                  label="Description"
+                  name="Description"
+                  multiline
+                  value={taskData.Description}
+                  onChange={handleInputChange}
+                />
+              </Box>
+
+              <Box mt={2} mb={2}>
+                <TextField
+                  fullWidth
+                  label="Budget"
+                  name="starting_bid"
+                  value={taskData.starting_bid}
+                  onChange={handleInputChange}
+                />
+              </Box>
+
+              <Box mt={2} mb={2}>
+                <FormControl fullWidth>
+                  <InputLabel>Category</InputLabel>
+                  <Select name="CategoryId" value={taskData.CategoryId} onChange={handleInputChange}>
+                    <MenuItem value={1}>Web Development</MenuItem>
+                    <MenuItem value={2}>Frontend Development</MenuItem>
+                    <MenuItem value={3}>Backend Development</MenuItem>
+                    <MenuItem value={4}>Database Administration</MenuItem>
+                    <MenuItem value={5}>DevOps</MenuItem>
+                    <MenuItem value={6}>Mobile App Development</MenuItem>
+                    <MenuItem value={7}>Game Development</MenuItem>
+                    <MenuItem value={8}>Data Science</MenuItem>
+                    <MenuItem value={9}>Machine Learning</MenuItem>
+                    <MenuItem value={10}>Other Programming Services</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
+
+              <Box mt={2} mb={2}>
+                <Autocomplete
+                  multiple
+                  id="skills"
+                  options={TaskskillsOptions}
+                  getOptionLabel={(option) => option.name}
+                  onChange={handleSkillSelection}
+                  value={selectedSkills}
+                  renderInput={(params) => (
+                    <TextField {...params} label="Skills Requirements For This Task" fullWidth />
+                  )}
+                />
+              </Box>
+
+              <Box mt={2} mb={2}>
+                <label>
+                  Add Image
+                  <input type="file" name="lstMedia[0].fileMedia" onChange={handleInputChange} accept="image/*" multiple />
+                </label>
+              </Box>
+            </Grid>
+
+            {/* Right Side */}
+            <Grid item xs={12} md={6}>
+              <Box mt={2} mb={2}>
+                <Typography variant="h6">Bid Duration</Typography>
+                <Grid container spacing={2} alignItems="center">
+                  <Grid item>
+                    <TextField
+                      type="number"
+                      label="Hours"
+                      name="bidHours"
+                      value={bidHours}
+                      onChange={(e) => handleBidDurationChange(e.target.name, e.target.value)}
+                      inputProps={{ min: 0, max: 23 }}
+                    />
+                  </Grid>
+                  <Grid item>
+                    <Typography>:</Typography>
+                  </Grid>
+                  <Grid item>
+                    <TextField
+                      type="number"
+                      label="Minutes"
+                      name="bidMinutes"
+                      value={bidMinutes}
+                      onChange={(e) => handleBidDurationChange(e.target.name, e.target.value)}
+                      inputProps={{ min: 0, max: 59 }}
+                    />
+                  </Grid>
+                  <Grid item>
+                    <Typography>:</Typography>
+                  </Grid>
+                  <Grid item>
+                    <TextField
+                      type="number"
+                      label="Seconds"
+                      name="bidSeconds"
+                      value={bidSeconds}
+                      onChange={(e) => handleBidDurationChange(e.target.name, e.target.value)}
+                      inputProps={{ min: 0, max: 59 }}
+                    />
+                  </Grid>
+                </Grid>
+              </Box>
+
+              <Box mt={2} mb={2}>
+                <Typography variant="h6">Task DeadLine</Typography>
+                <Grid container spacing={2} alignItems="center">
+                  <Grid item>
+                    <TextField
+                      type="number"
+                      label="Year"
+                      name="submissionYear"
+                      value={submissionYear}
+                      onChange={(e) => handleSubmissionTimeChange(e.target.name, e.target.value)}
+                      inputProps={{ min: 2024, max: 2030 }} // You can adjust the range as needed
+                    />
+                  </Grid>
+                  <Grid item>
+                    <Typography>-</Typography>
+                  </Grid>
+                  <Grid item>
+                    <TextField
+                      type="number"
+                      label="Month"
+                      name="submissionMonth"
+                      value={submissionMonth}
+                      onChange={(e) => handleSubmissionTimeChange(e.target.name, padWithZero(e.target.value))}
+                      inputProps={{ min: 1, max: 12 }}
+                    />
+                  </Grid>
+                  <Grid item>
+                    <Typography>-</Typography>
+                  </Grid>
+                  <Grid item>
+                    <TextField
+                      type="number"
+                      label="Day"
+                      name="submissionDay"
+                      value={submissionDay}
+                      onChange={(e) => handleSubmissionTimeChange(e.target.name, padWithZero(e.target.value))}
+                      inputProps={{ min: 1, max: 31 }}
+                    />
+                  </Grid>
+                  <Grid item>
+                    <Typography></Typography>
+                  </Grid>
+                  <Grid item>
+                    <TextField
+                      type="number"
+                      label="Hours"
+                      name="submissionHours"
+                      value={submissionHours}
+                      onChange={(e) => handleSubmissionTimeChange(e.target.name, padWithZero(e.target.value))}
+                      inputProps={{ min: 0, max: 23 }}
+                    />
+                  </Grid>
+                  <Grid item>
+                    <Typography>:</Typography>
+                  </Grid>
+                  <Grid item>
+                    <TextField
+                      type="number"
+                      label="Minutes"
+                      name="submissionMinutes"
+                      value={submissionMinutes}
+                      onChange={(e) => handleSubmissionTimeChange(e.target.name, padWithZero(e.target.value))}
+                      inputProps={{ min: 0, max: 59 }}
+                    />
+                  </Grid>
+                  <Grid item>
+                    <Typography>:</Typography>
+                  </Grid>
+                  <Grid item>
+                    <TextField
+                      type="number"
+                      label="Seconds"
+                      name="submissionSeconds"
+                      value={submissionSeconds}
+                      onChange={(e) => handleSubmissionTimeChange(e.target.name, padWithZero(e.target.value))}
+                      inputProps={{ min: 0, max: 59 }}
+                    />
+                  </Grid>
+                </Grid>
+              </Box>
+            </Grid>
+          </Grid>
+
+          {/* Create Task button */}
           <Box mt={2} mb={2}>
-            <TextField
-              fullWidth
-              label="Title"
-              name="Title"
-              value={taskData.Title}
-              onChange={handleInputChange}
-            />
-          </Box>
-          <Box mt={2} mb={2}>
-            <TextField
-              fullWidth
-              label="Description"
-              name="Description"
-              multiline
-              value={taskData.Description}
-              onChange={handleInputChange}
-            />
-          </Box>
-          <Box mt={2} mb={2}>
-            <TextField
-              fullWidth
-              label="Biding Duration (hh:mm:ss)"
-              name="bid_duration"
-              value={taskData.bid_duration}
-              onChange={handleInputChange}
-            />
-          </Box>
-          <Box mt={2} mb={2}>
-            <TextField
-              fullWidth
-              label="Budget"
-              name="starting_bid"
-              value={taskData.starting_bid}
-              onChange={handleInputChange}
-            />
-          </Box>
-          <Box mt={2} mb={2}>
-            <TextField
-              fullWidth
-              label="DeadLine (YYYY-MM-DDTHH:mm:ssZ)"
-              name="TaskSubmissionTime"
-              value={taskData.TaskSubmissionTime}
-              onChange={handleInputChange}
-            />
-          </Box>
-          <Box mt={2} mb={2}>
-            <FormControl fullWidth>
-              <InputLabel>Category</InputLabel>
-              <Select
-                name="CategoryId"
-                value={taskData.CategoryId}
-                onChange={handleInputChange}
-              >
-                 <MenuItem value={1}>Web Development</MenuItem>
-                <MenuItem value={2}>Frontend Development</MenuItem>
-                <MenuItem value={3}>Backend Development</MenuItem>
-                <MenuItem value={4}>Database Administration</MenuItem>
-                <MenuItem value={5}>DevOps</MenuItem>
-                <MenuItem value={6}>Mobile App Development</MenuItem>
-                <MenuItem value={7}>Game Development</MenuItem>
-                <MenuItem value={8}>Data Science</MenuItem>
-                <MenuItem value={9}>Machine Learning</MenuItem>
-                <MenuItem value={10}>Other Programming Services</MenuItem>
-              </Select>
-            </FormControl>
-          </Box>
-          <Box mt={2} mb={2}>
-              <Autocomplete
-                multiple
-                id="skills"
-                options={TaskskillsOptions}
-                getOptionLabel={(option) => option.name}
-                onChange={handleSkillSelection}
-                value={selectedSkills}
-                renderInput={(params) => (
-                  <TextField {...params} label="Skills Requirements For This Task" fullWidth />
-                )}
-              />
-          </Box>
-          <Box mt={2} mb={2}>
-            <label>
-              Add Image
-              <input type="file" name="lstMedia[0].fileMedia" onChange={handleInputChange} multiple />
-            </label>
-          </Box>
-          <Box mt={2} mb={2}>
-            <Button variant="contained" color="primary" onClick={handleCreateTask}>
+            <Button variant="contained" color="primary" onClick={handleCreateTask} style={{ backgroundColor: '#8b0000', color: 'white' }}>
               Create Task
             </Button>
           </Box>
         </CardContent>
       </Card>
+
+      {/* Snackbar notifications */}
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={6000}
         onClose={handleSnackbarClose}
-        message="Task created successfully!"
+        message={snackbarMessage}
+      />
+      <Snackbar
+        open={errorSnackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        message={errorSnackbarMessage}
       />
     </div>
   );

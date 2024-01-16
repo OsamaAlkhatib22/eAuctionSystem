@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Persistence;
+using System.Text.RegularExpressions;
 
 namespace Application.Handlers.Task
 {
@@ -47,9 +48,26 @@ namespace Application.Handlers.Task
             );
             try
             {
+                //valditions 
+                if (string.IsNullOrEmpty(request.CreateTaskUserDTO.Title) || !Regex.IsMatch(request.CreateTaskUserDTO.Title, @"[a-zA-Z].*[a-zA-Z].*[a-zA-Z].*[a-zA-Z]"))
+                {
+                    await transaction.RollbackAsync();
+                    return Result<CreateTaskUserDTO>.Failure("Title must contain at least 4 alphabetical characters.");
+                }
+
+                if (request.CreateTaskUserDTO.SkillId.Count == 0)
+                {
+                    await transaction.RollbackAsync();
+                    return Result<CreateTaskUserDTO>.Failure("Please select at least one skill.");
+                }
+
+                
+
+
+
                 var task = new Service
                 {
-                    CreationDate = DateTime.UtcNow,
+                    CreationDate = DateTime.Now,
                     UserId = userId,
                     starting_bid = request.CreateTaskUserDTO.starting_bid,
                     BidDuration = request.CreateTaskUserDTO.bid_duration,
@@ -99,12 +117,12 @@ namespace Application.Handlers.Task
                             return Result<CreateTaskUserDTO>.Failure("File was not received (null).");
                         }
                         string extension = Path.GetExtension(media.fileMedia.FileName);
-                        string fileName = $"{DateTime.UtcNow.Ticks}{extension}";
+                        string fileName = $"{DateTime.Now.Ticks}{extension}";
                         string directory = _configuration["FilesPath"];
                         string path = Path.Join(
-                            DateTime.UtcNow.Year.ToString(),
-                            DateTime.UtcNow.Month.ToString(),
-                            DateTime.UtcNow.Day.ToString(),
+                            DateTime.Now.Year.ToString(),
+                            DateTime.Now.Month.ToString(),
+                            DateTime.Now.Day.ToString(),
                             taskEntity.Entity.ServiceId.ToString()
                         );
                         string filePath = Path.Join(directory, path, fileName);
@@ -121,7 +139,7 @@ namespace Application.Handlers.Task
                             {
                                 ServiceId = taskEntity.Entity.ServiceId,
                                 MediaRef = filePath,
-                                DateCreated = DateTime.UtcNow,
+                                DateCreated = DateTime.Now,
                                 FromFreeLancer = false,
 
                             }
@@ -142,7 +160,7 @@ namespace Application.Handlers.Task
                 return Result<CreateTaskUserDTO>.Failure("Unknown Error" + e);
             }
 
-            taskDTO.CreationDate = DateTime.UtcNow;
+            taskDTO.CreationDate = DateTime.Now;
             return Result<CreateTaskUserDTO>.Success(taskDTO);
         }
     }

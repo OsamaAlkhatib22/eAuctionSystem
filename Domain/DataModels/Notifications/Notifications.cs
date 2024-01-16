@@ -17,6 +17,10 @@ namespace Domain.DataModels.Notifications
         public int UserId { get; set; }
         public ApplicationUser User { get; set; }
 
+        [Column("NotificationId")]
+        [Key]
+        public int NotificationId { get; set; }
+
         [Column("Notification")]
         [Required]
         public string Notification { get; set; }

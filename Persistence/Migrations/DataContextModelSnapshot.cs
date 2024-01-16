@@ -38,19 +38,27 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Domain.DataModels.Notifications.Notifications", b =>
                 {
-                    b.Property<int>("UserId")
+                    b.Property<int>("NotificationId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("UserId");
+                        .HasColumnName("NotificationId");
 
                     b.Property<string>("Notification")
-                        .HasColumnType("varchar(255)")
+                        .IsRequired()
+                        .HasColumnType("longtext")
                         .HasColumnName("Notification");
 
                     b.Property<DateTime>("NotificationDate")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("NotificationDate");
 
-                    b.HasKey("UserId", "Notification");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int")
+                        .HasColumnName("UserId");
+
+                    b.HasKey("NotificationId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Notifications");
                 });

@@ -28,6 +28,8 @@ public class WithdrawMoneyFromWalletHandler : IRequestHandler<WithdrawMoneyFromW
 
     public async Task<Result<Transaction>> Handle(WithdrawMoneyFromWalletCommand request, CancellationToken cancellationToken)
     {
+       
+
         using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
         try
         {
@@ -51,9 +53,14 @@ public class WithdrawMoneyFromWalletHandler : IRequestHandler<WithdrawMoneyFromW
                 return Result<Transaction>.Failure("Insufficient balance");
             }
 
+            if (request.Amount <= 0)
+            {
+                return Result<Transaction>.Failure("Withdrawal amount must be greater than 0.");
+            }
+
             Transaction newTran = new Transaction
             {
-                TransactionDate = DateTime.UtcNow,
+                TransactionDate = DateTime.Now,
                 Amount = request.Amount,
                 UserId = user,
                 TransactionType = "Reduction"

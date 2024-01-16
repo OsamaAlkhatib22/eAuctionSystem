@@ -52,6 +52,10 @@ const ClientTaskDetails = () => {
 
       // Close the confirmation dialog
       setOpenAcceptDialog(false);
+
+      setTimeout(() => {
+        navigate('/MyTasks');
+      }, 1000);
     } catch (error) {
       console.error('Error accepting bid:', error.message);
       // Handle the error or show an error message
@@ -160,9 +164,7 @@ const ClientTaskDetails = () => {
                   <Typography variant="body1">
                     Category: {taskDetails.category_name || "No Category"}
                   </Typography>
-                  <Typography variant="body1">
-                    Rating: {taskDetails.rating || "No Rating"}
-                  </Typography>
+                  
                   <Typography variant="body1">
                    DeadLine: {calculateTimeLeft(taskDetails.taskSubmissionTime) || "No specific DeadLine"}
                   </Typography>
@@ -235,9 +237,7 @@ const ClientTaskDetails = () => {
                             {bid.bidder.userName}
                           </Link>
                         </Typography>
-                        <Typography variant="body1">
-                          Rating: {bid.bidder.rating || 'No Rating'}
-                        </Typography>
+                        
                       </>
                     )}
                     <Button onClick={() => handleAcceptBid(bid)}>Accept Bid</Button>

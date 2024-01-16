@@ -62,7 +62,24 @@ namespace Application.Handlers.Task
                     serviceEntity.status = "Completed"; 
 
                     var taskAttachments = new List<TaskAttachment>();
-                    if (lstMedia.Count != 0)
+                    if (lstMedia.Count == 0)
+                    {
+                        taskDTO.Comment = request.InsertTaskSubmissionDTO.Comment != null ? request.InsertTaskSubmissionDTO.Comment : "No comment was provided by the freelancer";
+                        taskAttachments.Add(
+                                new TaskAttachment
+                                {
+                                    ServiceId = serviceEntity.ServiceId,
+
+                                    MediaRef = "No images were added by the freelancer",
+                                    DateCreated = DateTime.Now,
+                                    FromFreeLancer = true,
+                                    Comment = request.InsertTaskSubmissionDTO.Comment != null ? request.InsertTaskSubmissionDTO.Comment : "No comment was provided by the freelancer",
+
+                                });
+
+
+                    }
+                    else
                     {
                         foreach (var media in lstMedia)
                         {
@@ -73,12 +90,12 @@ namespace Application.Handlers.Task
                             }
 
                             string extension = Path.GetExtension(media.fileMedia.FileName);
-                            string fileName = $"{DateTime.UtcNow.Ticks}{extension}";
+                            string fileName = $"{DateTime.Now.Ticks}{extension}";
                             string directory = _configuration["FilesPath"];
                             string path = Path.Join(
-                                DateTime.UtcNow.Year.ToString(),
-                                DateTime.UtcNow.Month.ToString(),
-                                DateTime.UtcNow.Day.ToString(),
+                                DateTime.Now.Year.ToString(),
+                                DateTime.Now.Month.ToString(),
+                                DateTime.Now.Day.ToString(),
                                 serviceEntity.ServiceId.ToString()
                             );
                             string filePath = Path.Join(directory, path, fileName);
@@ -96,23 +113,24 @@ namespace Application.Handlers.Task
                                     ServiceId = serviceEntity.ServiceId,
                                     //MediaRef = filePath != null ? filePath : "No images were added by the freelancer"
                                     MediaRef = request.InsertTaskSubmissionDTO.lstMedia.Count != 0 ? filePath : "No images were added by the freelancer",
-                                    DateCreated = DateTime.UtcNow,
+                                    DateCreated = DateTime.Now,
                                     FromFreeLancer = true,
                                     Comment = request.InsertTaskSubmissionDTO.Comment != null ? request.InsertTaskSubmissionDTO.Comment : "No comment was provided by the freelancer",
 
                                 }
                             );
                         }
+                    }
 
                         await _context.TaskAttachments.AddRangeAsync(taskAttachments);
-                    }
+                    
 
                     await _notificationHandler.Handle(new NotificationCommand(
                          new NotificationDTO
                          {
                              UserId = serviceEntity.UserId,
                              Notification = $"Your Task has been Completed By (FreeLancer: {request.InsertTaskSubmissionDTO.UserName}) (Service Number: {request.InsertTaskSubmissionDTO.ServiceId})",
-                             NotificationDate = DateTime.UtcNow,
+                             NotificationDate = DateTime.Now,
                          }
                          ), cancellationToken);
 
@@ -135,7 +153,7 @@ namespace Application.Handlers.Task
                 return Result<InsertTaskSubmissionDTO>.Failure("Unknown Error" + e);
             }
 
-            taskDTO.TaskSubmissionTime = DateTime.UtcNow;
+            taskDTO.TaskSubmissionTime = DateTime.Now;
             return Result<InsertTaskSubmissionDTO>.Success(taskDTO);
         }
     }
