@@ -12,28 +12,59 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+
 } from "@mui/material";
+
 import HomeHeader from '../Home/HomeHeader';
 import { fetchTaskProcessDetails } from "./Service/Auth";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useAuth } from "../../../Components/Context";
 
-const MyTaskProcessDetails = () => {
 
+const MyTaskProcessDetails = () => {
   const { ServiceId } = useParams();
   const [taskDetails, setTaskDetails] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [openModal, setOpenModal] = useState(false);
+  const [deadlineTimeLeft, setDeadlineTimeLeft] = useState(null);
+
+
 
   const { token } = useAuth();
   const navigate = useNavigate();
+
+  const calculateTimeLeft = (deadline) => {
+    const now = new Date();
+    const targetDate = new Date(deadline);
+    const timeDifference = targetDate - now;
+
+    if (timeDifference <= 0) {
+      return 'Expired';
+    }
+
+    const weeks = Math.floor(timeDifference / (1000 * 60 * 60 * 24 * 7));
+    const days = Math.floor((timeDifference % (1000 * 60 * 60 * 24 * 7)) / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+
+    return `${weeks} weeks, ${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds left`;
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const details = await fetchTaskProcessDetails(ServiceId);
         setTaskDetails(details);
+
+        if (details && details.taskSubmissionTime) {
+          const intervalId = setInterval(() => {
+            setDeadlineTimeLeft(calculateTimeLeft(details.taskSubmissionTime));
+          }, 1000);
+
+          return () => clearInterval(intervalId);
+        }
       } catch (error) {
         console.error("Error fetching task details:", error.message);
       }
@@ -42,8 +73,10 @@ const MyTaskProcessDetails = () => {
     fetchData();
   }, [ServiceId]);
 
+ 
+
   const handleGoBack = () => {
-    navigate("/MyTasks"); 
+    navigate("/MyTasks");
   };
 
   const handleImageClick = (image) => {
@@ -54,26 +87,6 @@ const MyTaskProcessDetails = () => {
   const handleCloseModal = () => {
     setOpenModal(false);
   };
-
-  const calculateTimeLeft = (deadline) => {
-    const now = new Date();
-    const targetDate = new Date(deadline);
-    const timeDifference = targetDate - now;
-  
-    if (timeDifference <= 0) {
-      return 'Expired';
-    }
-  
-    const weeks = Math.floor(timeDifference / (1000 * 60 * 60 * 24 * 7));
-    const days = Math.floor((timeDifference % (1000 * 60 * 60 * 24 * 7)) / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
-  
-  
-    return `${weeks} weeks, ${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds left`;
-  };
-
 
   return (
     <div>
@@ -132,7 +145,7 @@ const MyTaskProcessDetails = () => {
               <Card>
                 <CardContent>
                   <Typography variant="body1">
-                    Accepted Bid: {taskDetails.accepted_Bid || "No Bid was Accepted"}
+                    Accepted Bid: {taskDetails.accepted_Bid || "No Bid was Accepted"} $
                   </Typography>
                   <Typography variant="body1">
                     Accepted Bidder: <Link to={`/SelectedProfileUserNameInfo/${taskDetails.freeLancerUserName}`}>{taskDetails.freeLancerUserName}</Link>
@@ -141,13 +154,10 @@ const MyTaskProcessDetails = () => {
                     Category: {taskDetails.category_name || "No Category"}
                   </Typography>
                   <Typography variant="body1">
-                    Rating: {taskDetails.rating || "No Rating"}
+                    DeadLine: {deadlineTimeLeft || "No specific DeadLine"}
                   </Typography>
                   <Typography variant="body1">
-                   DeadLine: {calculateTimeLeft(taskDetails.taskSubmissionTime) || "No specific DeadLine"}
-                  </Typography>
-                  <Typography variant="body1">
-                   Status: {(taskDetails.status) || "No specific status"}
+                    Status: {(taskDetails.status) || "No specific status"}
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
                     {`Created on: ${new Date(
@@ -157,27 +167,27 @@ const MyTaskProcessDetails = () => {
                 </CardContent>
               </Card>
               <Grid item xs={12}>
-                  <Typography variant="h6" gutterBottom>
-                    Skills Required for this Task
-                  </Typography>
-                  <Card>
-                    <CardContent>
-                      {taskDetails.skills ? (
-                        taskDetails.skills.length > 0 ? (
-                          taskDetails.skills.map((skill, index) => (
-                            <Typography key={index} variant="body1">
-                             - {skill}
-                            </Typography>
-                          ))
-                        ) : (
-                          <Typography variant="body2">No skills specified for this task.</Typography>
-                        )
+                <Typography variant="h6" gutterBottom>
+                  Skills Required for this Task
+                </Typography>
+                <Card>
+                  <CardContent>
+                    {taskDetails.skills ? (
+                      taskDetails.skills.length > 0 ? (
+                        taskDetails.skills.map((skill, index) => (
+                          <Typography key={index} variant="body1">
+                            - {skill}
+                          </Typography>
+                        ))
                       ) : (
-                        <Typography variant="body2">Skills information not available for this task.</Typography>
-                      )}
-                    </CardContent>
-                  </Card>
-                </Grid>
+                        <Typography variant="body2">No skills specified for this task.</Typography>
+                      )
+                    ) : (
+                      <Typography variant="body2">Skills information not available for this task.</Typography>
+                    )}
+                  </CardContent>
+                </Card>
+              </Grid>
             </Grid>
           </Grid>
 
@@ -196,18 +206,10 @@ const MyTaskProcessDetails = () => {
               </Button>
             </DialogActions>
           </Dialog>
-
-
-          
         </Box>
       )}
     </div>
   );
 };
 
-
-
- 
-
-
-export default MyTaskProcessDetails
+export default MyTaskProcessDetails;

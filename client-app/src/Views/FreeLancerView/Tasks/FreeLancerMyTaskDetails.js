@@ -40,11 +40,41 @@ const  FreeLancerMyTaskDetails = () => {
   const [snackbarKey, setSnackbarKey] = useState(0);
   const navigate = useNavigate();
 
+  const calculateBidTimeLeft = (bidDuration) => {
+    const [hoursStr, minutesStr, secondsStr] = bidDuration.split(':');
+    const hours = parseInt(hoursStr, 10);
+    const minutes = parseInt(minutesStr, 10);
+    const seconds = parseInt(secondsStr, 10);
+  
+    const now = new Date();
+    const targetDate = new Date(now.getTime() + (hours * 60 * 60 + minutes * 60 + seconds) * 1000);
+  
+    const timeDifference = targetDate - now;
+    if (timeDifference <= 0) {
+      return {
+        hours: 0,
+        minutes: 0,
+        seconds: 0,
+      };
+    }
+  
+    return {
+      hours,
+      minutes,
+      seconds,
+    };
+  };
+
+  const [bidTimeLeft, setBidTimeLeft] = useState(null);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const details = await fetchTaskDetails(ServiceId);
         setTaskDetails(details);
+        if (details && details.bidDuration) {
+          setBidTimeLeft(calculateBidTimeLeft(details.bidDuration));
+        }
       } catch (error) {
         console.error("Error fetching task details:", error.message);
       }
@@ -52,6 +82,44 @@ const  FreeLancerMyTaskDetails = () => {
 
     fetchData();
   }, [ServiceId]);
+
+  useEffect(() => {
+    if (taskDetails && taskDetails.bidDuration) {
+      const intervalId = setInterval(() => {
+        setBidTimeLeft((prevTimeLeft) => {
+          if (prevTimeLeft.seconds > 0) {
+            return {
+              ...prevTimeLeft,
+              seconds: prevTimeLeft.seconds - 1,
+            };
+          } else if (prevTimeLeft.minutes > 0) {
+            return {
+              ...prevTimeLeft,
+              minutes: prevTimeLeft.minutes - 1,
+              seconds: 59,
+            };
+          } else if (prevTimeLeft.hours > 0) {
+            return {
+              ...prevTimeLeft,
+              hours: prevTimeLeft.hours - 1,
+              minutes: 59,
+              seconds: 59,
+            };
+          } else {
+            clearInterval(intervalId);
+            // Handle timer expiration
+            return {
+              hours: 0,
+              minutes: 0,
+              seconds: 0,
+            };
+          }
+        });
+      }, 1000);
+
+      return () => clearInterval(intervalId);
+    }
+  }, [taskDetails]);
 
   const handleGoBack = () => {
     navigate(-1); 
@@ -195,25 +263,30 @@ const bidExpiration = new Date(new Date(taskDetails.creationDate).getTime() + bi
                 </CardContent>
               </Card>
               <Box mt={2}>
-                <Typography variant="h6" gutterBottom>
-                  Task Attachments
+              <Typography variant="h6" gutterBottom>
+                Task Attachments
+              </Typography>
+              {taskDetails.lstMedia && taskDetails.lstMedia.length > 0 ? (
+                taskDetails.lstMedia.map((media, index) => (
+                  <img
+                    key={index}
+                    alt={`Media ${index + 1}`}
+                    src={`data:image/png;base64,${media}`}
+                    style={{
+                      width: "20%",
+                      height: "20%",
+                      marginBottom: 10,
+                      cursor: "pointer",
+                    }}
+                    onClick={() => handleImageClick(media)}
+                  />
+                ))
+              ) : (
+                <Typography variant="body2">
+                  No attachments were attached to this task.
                 </Typography>
-                {taskDetails.lstMedia &&
-                  taskDetails.lstMedia.map((media, index) => (
-                    <img
-                      key={index}
-                      alt={`Media ${index + 1}`}
-                      src={`data:image/png;base64,${media}`}
-                      style={{
-                        width: "20%",
-                        height: "20%",
-                        marginBottom: 10,
-                        cursor: "pointer",
-                      }}
-                      onClick={() => handleImageClick(media)}
-                    />
-                  ))}
-              </Box>
+              )}
+            </Box>
             </Grid>
             <Grid item xs={4}>
               <Typography variant="h6" gutterBottom>
@@ -222,17 +295,21 @@ const bidExpiration = new Date(new Date(taskDetails.creationDate).getTime() + bi
               <Card>
                 <CardContent>
                   <Typography variant="body1">
-                    Budget: {taskDetails.starting_bid || "No Starting Bid"}
+                    Budget: {taskDetails.starting_bid || "No Starting Bid"} $
                   </Typography>
                   <Typography variant="body1">
-                    Bid Duration: {taskDetails.bidDuration || "No Bid Duration"}
+                    Bid Duration: {bidTimeLeft ? `${bidTimeLeft.hours} hours, ${bidTimeLeft.minutes} minutes, ${bidTimeLeft.seconds} seconds left` : 'Expired'}
                   </Typography>
                   <Typography variant="body1">
                     Category: {taskDetails.category_name || "No Category"}
                   </Typography>
                   
+                  
                   <Typography variant="body1">
-                   DeadLine: {calculateTimeLeft(taskDetails.taskSubmissionTime) || "No specific DeadLine"}
+                    DeadLine: {calculateTimeLeft(taskDetails.taskSubmissionTime) || "No specific DeadLine"}
+                  </Typography>
+                  <Typography variant="body1">
+                   Status: {(taskDetails.status) || "No specific status"}
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
                     {`Created on: ${new Date(
@@ -282,7 +359,7 @@ const bidExpiration = new Date(new Date(taskDetails.creationDate).getTime() + bi
             </DialogActions>
           </Dialog>
           <Grid item xs={12} textAlign="center">
-              <Button variant="contained" color="primary" onClick={handleAddBidButtonClick}>
+              <Button variant="contained" color="primary" onClick={handleAddBidButtonClick} style={{ backgroundColor: '#8b0000', color: 'white' }}>
                 Add Bid
               </Button>
             </Grid>
@@ -321,11 +398,11 @@ const bidExpiration = new Date(new Date(taskDetails.creationDate).getTime() + bi
               Received Bids
             </Typography>
             {taskDetails.bids && taskDetails.bids.length > 0 ? (
-              taskDetails.bids.map((bid) => (
-                <Card key={bid.bidId}>
+              taskDetails.bids.map((bid, index) => (
+                <Card key={bid.bidId} sx={{ marginBottom: index < taskDetails.bids.length - 1 ? 2 : 0 }}>
                   <CardContent>
                     <Typography variant="body1">
-                      Bid Amount: {bid.bidAmount}
+                      Bid Amount: {bid.bidAmount} $
                     </Typography>
                     {bid.bidder && (
                       <>
@@ -337,12 +414,8 @@ const bidExpiration = new Date(new Date(taskDetails.creationDate).getTime() + bi
                             {bid.bidder.userName}
                           </Link>
                         </Typography>
-                        <Typography variant="body1">
-                          Rating: {bid.bidder.rating || 'No Rating'}
-                        </Typography>
                       </>
                     )}
-                    
                   </CardContent>
                 </Card>
               ))
@@ -350,6 +423,7 @@ const bidExpiration = new Date(new Date(taskDetails.creationDate).getTime() + bi
               <Typography variant="body2">No bids received for this task.</Typography>
             )}
           </Box>
+
 
       
         </Box>

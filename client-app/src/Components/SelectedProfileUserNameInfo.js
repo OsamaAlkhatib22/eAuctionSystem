@@ -78,9 +78,7 @@ const SelectedProfileUserNameInfo = () => {
                   <strong>Skills:</strong> {ProfileInfo?.skills?.join(', ')}
                 </Typography>
               )}
-              <Typography variant="body1" sx={{ marginBottom: 2 }}>
-                <strong>Rating:</strong> {ProfileInfo?.rating}
-              </Typography>
+              
               <Typography variant="body1" sx={{ marginBottom: 2 }}>
                 <strong>Registration Date:</strong>{' '}
                 {ProfileInfo?.registrationDate
