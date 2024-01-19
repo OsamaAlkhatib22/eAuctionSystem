@@ -18,6 +18,8 @@ namespace Domain.ClientDTOs.Service
         public DateTime CreationDate { get; set; }
         public decimal Rating { get; set; }
         public List<String> lstMedia { get; set; }
+
+        public string status { get; set; }
         
 
         public List<string> Skills { get; set; }
