@@ -122,10 +122,9 @@ function FreeLancerMyTask() {
                                 Title: {task.title}{'\n'}
                                 Created by: {task.firstName} {task.lastName}{'\n'}
                                 Creation Date: {task.creationDate ? new Date(task.creationDate).toLocaleDateString() : 'Invalid Date'}{'\n'}
-                                Description: {task.description.length > 100
-                                              ? `${task.description.substring(0, 100)}...`
+                                Description: {task.description.length > 50
+                                              ? `${task.description.substring(0, 50)}...`
                                                : task.description}{'\n'}             
-                                Status: {task.status}
                               </Typography>
                             </TaskBox>
                           </div>
@@ -158,8 +157,9 @@ function FreeLancerMyTask() {
                                   ? new Date(task.creationDate).toLocaleDateString()
                                   : 'Invalid Date'}
                                 {'\n'}
-                                Description: {task.description}{'\n'}
-                                Status: {task.status}
+                                Description: {task.description.length > 50
+                                              ? `${task.description.substring(0, 50)}...`
+                                               : task.description}{'\n'}
                               </Typography>
                             </TaskBox>
                           </div>
@@ -192,8 +192,9 @@ function FreeLancerMyTask() {
                                   ? new Date(task.creationDate).toLocaleDateString()
                                   : 'Invalid Date'}
                                 {'\n'}
-                                Description: {task.description}{'\n'}
-                                Status: {task.status}
+                                Description: {task.description.length > 50
+                                              ? `${task.description.substring(0, 50)}...`
+                                               : task.description}{'\n'}
                               </Typography>
                             </TaskBox>
                           </div>

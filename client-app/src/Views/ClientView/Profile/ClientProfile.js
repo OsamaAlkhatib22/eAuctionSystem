@@ -36,7 +36,7 @@ const ClientProfile = () => {
 
   const [isEditing, setIsEditing] = useState(false);
   const [updatedInfo, setUpdatedInfo] = useState({
-    strNewUsername: '',
+    
     strOldPassword: '',
     strNewPassword: '',
     strNewBio: '',
@@ -94,7 +94,7 @@ const ClientProfile = () => {
     // Reset the updatedInfo state when entering edit mode
     if (!isEditing) {
       setUpdatedInfo({
-        strNewUsername: '',
+       
         strOldPassword: '',
         strNewPassword: '',
         strNewBio: publicProfileData?.bio || '',
@@ -106,19 +106,7 @@ const ClientProfile = () => {
 
   const handleUpdatePersonalInfo = async () => {
     try {
-      if (updatedInfo.strNewUsername) {
-        // Check if the new username is already used
-        const usernameTaken = await authService.isUsernameTaken(updatedInfo.strNewUsername);
-  
-        if (usernameTaken) {
-          setSnackbarMessage('Username is already used.');
-          setSnackbarOpen(true);
-          setIsUsernameTaken(true); // Set the state to handle UI indication if needed
-          return;
-        } else {
-          setIsUsernameTaken(false); // Reset the state
-        }
-      }
+      
 
       if (
         updatedInfo.strNewFieldOfWork.length < 5 ||
@@ -152,17 +140,11 @@ const ClientProfile = () => {
       setSnackbarMessage('Personal information updated successfully.');
       setSnackbarOpen(true);
 
-      if (updatedInfo.strNewUsername) {
-        setTimeout(() => {
-          // Clear authentication token and navigate to login page
-          clearAuthToken();
-          navigate('/login');
-        }, 1000);
-      } else {
+      
         // Fetch updated public profile if the username is not updated
         const updatedPublicProfile = await authService.getPublicProfile(token);
         setPublicProfileData(updatedPublicProfile);
-      }
+      
     } catch (error) {
       console.error('Error updating personal information:', error.message);
       setSnackbarMessage(`Error updating personal information`);
@@ -296,12 +278,7 @@ const ClientProfile = () => {
   <DialogContent>
     <Paper sx={{ width: '100%', padding: 2 }}>
       {/* Input fields for editing personal information */}
-      <TextField
-        label="New Username"
-        fullWidth
-        value={updatedInfo.strNewUsername}
-        onChange={(e) => setUpdatedInfo({ ...updatedInfo, strNewUsername: e.target.value })}
-      />
+      
 
       <Box sx={{ mt: 2, display: 'flex', gap: 2 }}>
         <TextField

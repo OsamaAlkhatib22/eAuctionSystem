@@ -7,16 +7,17 @@ import {
   Typography,
   Slider,
   Autocomplete,
-  TextField ,
+  TextField,
   FormControl,
-  InputLabel,
   Input,
+  InputLabel,
 } from "@mui/material";
 import FreeLancerHomeHeader from "../Home/FreeLancerHomeHeader";
 import TaskDetails from "../Home/TaskDetails";
 import { fetchTasks, fetchTaskDetails } from "../Home/Service/Auth";
 import "../Home/Styling/FreeLancerHome.css";
 import { useNavigate } from "react-router-dom";
+import FilterAltIcon from "@mui/icons-material/FilterAlt";
 
 const FreeLancerTask = () => {
   const [tasks, setTasks] = useState([]);
@@ -27,55 +28,40 @@ const FreeLancerTask = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedDateTo, setSelectedDateTo] = useState(null);
 
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
-  
   useEffect(() => {
     loadData();
-  }, [selectedCategories, selectedSkills, selectedBudget, selectedDate, selectedDateTo]); 
+  }, [selectedCategories, selectedSkills, selectedBudget, selectedDate, selectedDateTo]);
 
   const loadData = async () => {
     try {
       const data = await fetchTasks();
-      const filteredData =
-        (selectedCategories.length > 0
-          ? data.filter((task) =>
-              selectedCategories.some(
-                (category) => category.id === task.intCategoryId
-              )
-            )
-          : data
-        ).filter((task) =>
+      const filteredData = (selectedCategories.length > 0
+        ? data.filter((task) =>
+            selectedCategories.some((category) => category.id === task.intCategoryId)
+          )
+        : data
+      )
+        .filter((task) =>
           selectedSkills.length > 0
-            ? selectedSkills.every((skill) =>
-                task.intSkillIds.includes(skill.id)
-              )
+            ? selectedSkills.every((skill) => task.intSkillIds.includes(skill.id))
             : true
-        ) .filter((task) =>
-        selectedBudget > 0 ? task.budget >= selectedBudget : true
-      ).filter((task) =>
-      selectedDate
-        ? new Date(task.creationDate) >= selectedDate
-        : true
-    ) .filter((task) =>
-    selectedDateTo
-      ? new Date(task.creationDate) <= selectedDateTo
-      : true
-  );
-    setTasks(filteredData);
+        )
+        .filter((task) => (selectedBudget > 0 ? task.budget >= selectedBudget : true))
+        .filter((task) => (selectedDate ? new Date(task.creationDate) >= selectedDate : true))
+        .filter((task) => (selectedDateTo ? new Date(task.creationDate) <= selectedDateTo : true));
+      setTasks(filteredData);
     } catch (error) {
       console.error("Error fetching tasks:", error.message);
     }
   };
-
-
 
   const handleTaskClick = (ServiceId) => {
     // Use navigate to go to the TaskDetails page
     console.log("Task clicked. Navigating to:", `/task/${ServiceId}`);
     navigate(`/task/${ServiceId}`);
   };
-
 
   //filter
 
@@ -130,166 +116,160 @@ const FreeLancerTask = () => {
 ];
   
 
-  return (
-
-    <div>
-      <FreeLancerHomeHeader />
+return (
+  <div>
+    <FreeLancerHomeHeader />
+    <Box
+      sx={{
+        display: "flex",
+        gap: 2,
+        fontFamily: "Roboto, sans-serif",
+      }}
+    >
+      {/* Tasks Grid */}
       <Box
         sx={{
-          display: "flex",
+          flex: 2,
+          display: "grid",
           gap: 2,
           fontFamily: "Roboto, sans-serif",
+          placeItems: "left",
         }}
       >
-        {/* Tasks Grid */}
-        <Box
-          sx={{
-            flex: 2,
-            display: "grid",
-            gap: 2,
-            fontFamily: "Roboto, sans-serif",
-            placeItems: "left",
-          }}
-        >
-          {tasks.map((task) => (
-            <Card
-              key={task.serviceId}
-              sx={{
-                borderRadius: "15px",
-                cursor: "pointer",
-                backgroundColor: "#F5F5F5",
-                padding: "10px",
-                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                transition: "transform 0.3s",
-                width: "100%", // Full width
-                margin: "10px", // Add margin for spacing between cards
-                "&:hover": {
-                  transform: "scale(1.03)",
-                  boxShadow: "0 8px 16px rgba(0, 0, 0, 0.2)",
-                },
-              }}
-              onClick={() => handleTaskClick(task.serviceId)}
-            >
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  {task.title || "No Title"}
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  {`${task.firstName || "Unknown"} ${
-                    task.lastName || "Unknown"
-                  }`}
-                </Typography>
-                <Divider sx={{ my: 1 }} />
-                <Typography variant="body2" color="textSecondary">
-                  {`Created on: ${new Date(
-                    task.creationDate
-                  ).toLocaleString() || "Unknown Date"}`}
-                </Typography>
-                <Typography variant="body1">
-                  {task.description.length > 10
-                    ? `${task.description.substring(0, 10)}...`
-                    : task.description}
-                </Typography>
-                <Typography variant="body1">
-                  Category: {task.strCategoryName}
-                </Typography>
-                <Typography variant="body1" sx={{ marginBottom: 2 }}>
-                <strong>Task Skills:</strong> {task?.strSkills?.join(', ')}
+        {tasks.map((task) => (
+          <Card
+            key={task.serviceId}
+            sx={{
+              borderRadius: "15px",
+              cursor: "pointer",
+              backgroundColor: "#F5F5F5",
+              padding: "10px",
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+              transition: "transform 0.3s",
+              width: "100%", // Full width
+              margin: "10px", // Add margin for spacing between cards
+              "&:hover": {
+                transform: "scale(1.03)",
+                boxShadow: "0 8px 16px rgba(0, 0, 0, 0.2)",
+              },
+            }}
+            onClick={() => handleTaskClick(task.serviceId)}
+          >
+            <CardContent>
+              <Typography variant="h6" gutterBottom>
+                {task.title || "No Title"}
               </Typography>
-              </CardContent>
-            </Card>
-          ))}
-        </Box>
-
-        <Box sx={{ flex: 1, marginLeft: 2 }}>
-        <Typography variant="h5" gutterBottom>
-              Filtering
-            </Typography>
-            <Card>
-            <CardContent>
-              <Typography variant="h6">Category </Typography>
-              <Autocomplete
-                multiple
-                id="category-filter"
-                options={categoryOptions}
-                getOptionLabel={(option) => option.name}
-                value={selectedCategories}
-                onChange={(event, newValue) => setSelectedCategories(newValue)}
-                renderInput={(params) => <TextField {...params} label="Categories" />}
-              />
+              <Typography variant="body2" color="textSecondary">
+                {`${task.firstName || "Unknown"} ${task.lastName || "Unknown"}`}
+              </Typography>
+              <Divider sx={{ my: 1 }} />
+              <Typography variant="body2" color="textSecondary">
+                {`Created on: ${new Date(task.creationDate).toLocaleString() || "Unknown Date"}`}
+              </Typography>
+              <Typography variant="body1">
+                {task.description.length > 10
+                  ? `${task.description.substring(0, 10)}...`
+                  : task.description}
+              </Typography>
+              <Typography variant="body1">
+                Category: {task.strCategoryName}
+              </Typography>
+              <Typography variant="body1" sx={{ marginBottom: 2 }}>
+                <strong>Task Skills:</strong> {task?.strSkills?.join(", ")}
+              </Typography>
             </CardContent>
           </Card>
-
-          <Card>
-          <CardContent>
-            <Typography variant="h6">Skills </Typography>
-            <Autocomplete
-              multiple
-              id="skills-filter"
-              options={FilterTaskskillsOptions}
-              getOptionLabel={(option) => option.name}
-              value={selectedSkills}
-              onChange={(event, newValue) => setSelectedSkills(newValue)}
-              renderInput={(params) => (
-                <TextField {...params} label="Skills" />
-              )}
-            />
-          </CardContent>
-        </Card>
-        <Card>
-        <CardContent>
-          <Typography variant="h6">Budget </Typography>
-
-          <Slider
-                value={selectedBudget}
-                onChange={(event, newValue) => setSelectedBudget(newValue)}
-                valueLabelDisplay="auto"
-                aria-labelledby="range-slider"
-                min={0}
-                max={1000}
-              />
-        </CardContent>
-      </Card>
-
-           <Card>
-            <CardContent>
-              <Typography variant="h6">Date From </Typography>
-
-              <FormControl fullWidth>
-                <InputLabel></InputLabel>
-                <Input
-                  type="date"
-                  value={selectedDate ? selectedDate.toISOString().split("T")[0] : ""}
-                  onChange={(event) => {
-                    const newDate = event.target.value ? new Date(event.target.value) : null;
-                    setSelectedDate(newDate);
-                  }}
-                />
-              </FormControl>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent>
-              <Typography variant="h6">Date To </Typography>
-
-              <FormControl fullWidth>
-                <InputLabel></InputLabel>
-                <Input
-                  type="date"
-                  value={selectedDateTo ? selectedDateTo.toISOString().split("T")[0] : ""}
-                  onChange={(event) => {
-                    const newDate = event.target.value ? new Date(event.target.value) : null;
-                    setSelectedDateTo(newDate);
-                  }}
-                />
-              </FormControl>
-            </CardContent>
-          </Card>
-        </Box>
+        ))}
       </Box>
-    </div>
 
-  );
+      <Box sx={{ flex: 1, marginLeft: 2 }}>
+  <Typography variant="h5" gutterBottom>
+    <FilterAltIcon sx={{ fontSize: 20, marginRight: 1 }} />
+    Filtering
+  </Typography>
+
+  <Card sx={{ marginBottom: 2 }}>
+    <CardContent>
+      <Typography variant="h6">Category </Typography>
+      <Autocomplete
+        multiple
+        id="category-filter"
+        options={categoryOptions}
+        getOptionLabel={(option) => option.name}
+        value={selectedCategories}
+        onChange={(event, newValue) => setSelectedCategories(newValue)}
+        renderInput={(params) => <TextField {...params} label="Categories" />}
+      />
+    </CardContent>
+  </Card>
+
+  <Card sx={{ marginBottom: 2 }}>
+    <CardContent>
+      <Typography variant="h6">Skills </Typography>
+      <Autocomplete
+        multiple
+        id="skills-filter"
+        options={FilterTaskskillsOptions}
+        getOptionLabel={(option) => option.name}
+        value={selectedSkills}
+        onChange={(event, newValue) => setSelectedSkills(newValue)}
+        renderInput={(params) => (
+          <TextField {...params} label="Skills" />
+        )}
+      />
+    </CardContent>
+  </Card>
+
+  <Card sx={{ marginBottom: 2 }}>
+    <CardContent>
+      <Typography variant="h6">Budget </Typography>
+      <Slider
+        value={selectedBudget}
+        onChange={(event, newValue) => setSelectedBudget(newValue)}
+        valueLabelDisplay="auto"
+        aria-labelledby="range-slider"
+        min={0}
+        max={1000}
+      />
+    </CardContent>
+  </Card>
+
+  <Card sx={{ marginBottom: 2 }}>
+    <CardContent>
+      <Typography variant="h6">Date Range </Typography>
+      <FormControl fullWidth>
+        <Typography variant="caption" color="textSecondary" sx={{ mb: 1 }}>
+          From
+        </Typography>
+        <Input
+          type="date"
+          value={selectedDate ? selectedDate.toISOString().split("T")[0] : ""}
+          onChange={(event) => {
+            const newDate = event.target.value ? new Date(event.target.value) : null;
+            setSelectedDate(newDate);
+          }}
+        />
+      </FormControl>
+
+      <FormControl fullWidth mt={2}>
+        <Typography variant="caption" color="textSecondary" sx={{ mb: 1 }}>
+          To
+        </Typography>
+        <Input
+          type="date"
+          value={selectedDateTo ? selectedDateTo.toISOString().split("T")[0] : ""}
+          onChange={(event) => {
+            const newDate = event.target.value ? new Date(event.target.value) : null;
+            setSelectedDateTo(newDate);
+          }}
+        />
+      </FormControl>
+    </CardContent>
+  </Card>
+</Box>
+    </Box>
+  </div>
+);
 };
 
 export default FreeLancerTask;

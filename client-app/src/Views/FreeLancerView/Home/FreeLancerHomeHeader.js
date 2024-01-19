@@ -15,6 +15,7 @@ import {
   IconButton,
   CircularProgress,
 } from '@mui/material';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import MenuIcon from '@mui/icons-material/Menu';
 import logo from '../../../Assets/Images/auction.png';
 import profilelogo from '../../../Assets/Images/icons8-customer-100.png';
@@ -95,40 +96,21 @@ const FreeLancerHomeHeader = ({ showProfileLink = true }) => {
     setIsDrawerOpen(!isDrawerOpen);
   };
 
+  const handleNotificationsClick = () => {
+    setIsDrawerOpen(!isDrawerOpen);
+  };
+
   const formatDate = (dateString) => {
     const notificationDate = new Date(dateString);
-    const currentDate = new Date();
-    const timeDifference = currentDate - notificationDate;
-  
-    const seconds = Math.floor(timeDifference / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const hours = Math.floor(minutes / 60);
-  
-    if (seconds < 60) {
-      return `${seconds} seconds ago`;
-    } else if (minutes < 60) {
-      return `${minutes} minutes ago`;
-    } else if (hours < 24) {
-      return `${hours} hours ago`;
-    } else {
-      const options = { year: 'numeric', month: 'long', day: 'numeric' };
-      return notificationDate.toLocaleDateString(undefined, options);
-    }
+
+    const options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
+    return notificationDate.toLocaleString(undefined, options);
   };
-  
 
   return (
     <React.Fragment>
       <NewHeader position="static">
         <Toolbar>
-          <IconButton
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            onClick={toggleDrawer}
-          >
-            <MenuIcon />
-          </IconButton>
           <Logo>
             <Link
               to="/FreeLancerHome"
@@ -145,48 +127,50 @@ const FreeLancerHomeHeader = ({ showProfileLink = true }) => {
           </Logo>
           <ButtonList>
             <HeaderButton component={Link} to="/FreeLancerMyTask">
-              My Task
+              My Tasks
             </HeaderButton>
             <HeaderButton component={Link} to="/FreeLancerTransactions">
-              Transactions
+              My Transactions
             </HeaderButton>
           </ButtonList>
           {showProfileLink && (
             <ProfileLink>
+              <IconButton color="inherit" onClick={handleNotificationsClick}>
+                <NotificationsIcon />
+              </IconButton>
               <Link
                 to="/FreeLancerProfile"
                 style={{ textDecoration: 'none', color: 'white' }}
               >
-                <LogoImg src={profilelogo} alt="Auction Logo" />
+                <LogoImg src={profilelogo} alt="Profile Logo" />
               </Link>
+              
             </ProfileLink>
           )}
         </Toolbar>
       </NewHeader>
       {!loading && (
-        <Drawer anchor="left" open={isDrawerOpen} onClose={toggleDrawer}>
-        {error && <p>Error fetching notifications: {error.message}</p>}
-        {!error && (
-          <List>
-            <ListItem>
-              <ListItemIcon>
-                <img src={notificationIcon} alt="Notification Icon" />
-              </ListItemIcon>
-              <ListItemText primary="Notifications" />
-            </ListItem>
-            {notifications.map((notification, index) => (
-              <ListItem key={index} button>
-                <ListItemText
-                  primary={notification.notification}
-                  secondary={formatDate(notification.notificationDate)}
-                />
+        <Drawer anchor="right" open={isDrawerOpen} onClose={toggleDrawer}>
+          {error && <p>Error fetching notifications: {error.message}</p>}
+          {!error && (
+            <List>
+              <ListItem>
+                <ListItemIcon>
+                  <img src={notificationIcon} alt="Notification Icon" />
+                </ListItemIcon>
+                <ListItemText primary="Notifications" />
               </ListItem>
-            ))}
-          </List>
-        )}
-      </Drawer>
-      
-      
+              {notifications.map((notification, index) => (
+                <ListItem key={index} button>
+                  <ListItemText
+                    primary={notification.notification}
+                    secondary={formatDate(notification.notificationDate)}
+                  />
+                </ListItem>
+              ))}
+            </List>
+          )}
+        </Drawer>
       )}
     </React.Fragment>
   );

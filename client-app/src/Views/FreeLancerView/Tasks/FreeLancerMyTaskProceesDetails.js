@@ -28,10 +28,38 @@ const FreeLancerMyTaskProceesDetails= () => {
   const [openModal, setOpenModal] = useState(false);
   const [submissionComment, setSubmissionComment] = useState("");
 const [submissionAttachments, setSubmissionAttachments] = useState([]);
+const [deadlineTimeLeft, setDeadlineTimeLeft] = useState(null);
 
 
   const { token } = useAuth();
   const navigate = useNavigate();
+
+  const calculateBidTimeLeft = (bidDuration) => {
+    const [hoursStr, minutesStr, secondsStr] = bidDuration.split(':');
+    const hours = parseInt(hoursStr, 10);
+    const minutes = parseInt(minutesStr, 10);
+    const seconds = parseInt(secondsStr, 10);
+  
+    const now = new Date();
+    const targetDate = new Date(now.getTime() + (hours * 60 * 60 + minutes * 60 + seconds) * 1000);
+  
+    const timeDifference = targetDate - now;
+    if (timeDifference <= 0) {
+      return {
+        hours: 0,
+        minutes: 0,
+        seconds: 0,
+      };
+    }
+  
+    return {
+      hours,
+      minutes,
+      seconds,
+    };
+  };
+
+  const [bidTimeLeft, setBidTimeLeft] = useState(null);
 
 
   useEffect(() => {
@@ -39,6 +67,13 @@ const [submissionAttachments, setSubmissionAttachments] = useState([]);
       try {
         const details = await fetchFreeLancerTaskProcessDetails(ServiceId);
         setTaskDetails(details);
+        if (details && details.taskSubmissionTime) {
+          const intervalId = setInterval(() => {
+            setDeadlineTimeLeft(calculateTimeLeft(details.taskSubmissionTime));
+          }, 1000);
+
+          return () => clearInterval(intervalId);
+        }
       } catch (error) {
         console.error("Error fetching task details:", error.message);
       }
@@ -46,6 +81,8 @@ const [submissionAttachments, setSubmissionAttachments] = useState([]);
 
     fetchData();
   }, [ServiceId]);
+
+
 
   const handleGoBack = () => {
     navigate(-1); 
@@ -60,24 +97,7 @@ const [submissionAttachments, setSubmissionAttachments] = useState([]);
     setOpenModal(false);
   };
 
-  const calculateTimeLeft = (deadline) => {
-    const now = new Date();
-    const targetDate = new Date(deadline);
-    const timeDifference = targetDate - now;
-  
-    if (timeDifference <= 0) {
-      return 'Expired';
-    }
-  
-    const weeks = Math.floor(timeDifference / (1000 * 60 * 60 * 24 * 7));
-    const days = Math.floor((timeDifference % (1000 * 60 * 60 * 24 * 7)) / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
-  
-  
-    return `${weeks} weeks, ${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds left`;
-  };
+
   const handleFileInputChange = (e) => {
     const files = e.target.files;
     const attachments = Array.from(files).map((file) => ({
@@ -127,6 +147,25 @@ const [submissionAttachments, setSubmissionAttachments] = useState([]);
       console.error("Error submitting task:", error.message);
     }
   };
+
+  const calculateTimeLeft = (deadline) => {
+    const now = new Date();
+    const targetDate = new Date(deadline);
+    const timeDifference = targetDate - now;
+  
+    if (timeDifference <= 0) {
+      return 'Expired';
+    }
+  
+    const weeks = Math.floor(timeDifference / (1000 * 60 * 60 * 24 * 7));
+    const days = Math.floor((timeDifference % (1000 * 60 * 60 * 24 * 7)) / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+  
+    return `${weeks} weeks, ${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds left`;
+  };
+
   
 
   
@@ -161,25 +200,30 @@ const [submissionAttachments, setSubmissionAttachments] = useState([]);
                 </CardContent>
               </Card>
               <Box mt={2}>
-                <Typography variant="h6" gutterBottom>
-                  Task Attachments
+              <Typography variant="h6" gutterBottom>
+                Task Attachments
+              </Typography>
+              {taskDetails.lstMedia && taskDetails.lstMedia.length > 0 ? (
+                taskDetails.lstMedia.map((media, index) => (
+                  <img
+                    key={index}
+                    alt={`Media ${index + 1}`}
+                    src={`data:image/png;base64,${media}`}
+                    style={{
+                      width: "20%",
+                      height: "20%",
+                      marginBottom: 10,
+                      cursor: "pointer",
+                    }}
+                    onClick={() => handleImageClick(media)}
+                  />
+                ))
+              ) : (
+                <Typography variant="body2">
+                  No attachments were attached to this task.
                 </Typography>
-                {taskDetails.lstMedia &&
-                  taskDetails.lstMedia.map((media, index) => (
-                    <img
-                      key={index}
-                      alt={`Media ${index + 1}`}
-                      src={`data:image/png;base64,${media}`}
-                      style={{
-                        width: "20%",
-                        height: "20%",
-                        marginBottom: 10,
-                        cursor: "pointer",
-                      }}
-                      onClick={() => handleImageClick(media)}
-                    />
-                  ))}
-              </Box>
+              )}
+            </Box>
             </Grid>
             <Grid item xs={4}>
               <Typography variant="h6" gutterBottom>
@@ -188,7 +232,7 @@ const [submissionAttachments, setSubmissionAttachments] = useState([]);
               <Card>
                 <CardContent>
                   <Typography variant="body1">
-                    Accepted Bid: {taskDetails.accepted_Bid || "No Bid was Accepted"}
+                    Accepted Bid: {taskDetails.accepted_Bid || "No Bid was Accepted"} $
                   </Typography>
                   <Typography variant="body1">
                   Client: 
@@ -201,7 +245,7 @@ const [submissionAttachments, setSubmissionAttachments] = useState([]);
                   </Typography>
                   
                   <Typography variant="body1">
-                   DeadLine: {calculateTimeLeft(taskDetails.taskSubmissionTime) || "No specific DeadLine"}
+                    DeadLine: {calculateTimeLeft(taskDetails.taskSubmissionTime) || "No specific DeadLine"}
                   </Typography>
                   <Typography variant="body1">
                    Status: {(taskDetails.status) || "No specific status"}
@@ -254,7 +298,7 @@ const [submissionAttachments, setSubmissionAttachments] = useState([]);
             </DialogActions>
           </Dialog>
 
-          <Button variant="contained" color="primary" onClick={() => setOpenModal(true)}>
+          <Button variant="contained" color="primary" onClick={() => setOpenModal(true)} style={{ backgroundColor: '#8b0000', color: 'white' }}>
                Submit Task
           </Button>
           <Dialog open={openModal} onClose={handleCloseModal}>

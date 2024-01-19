@@ -60,6 +60,11 @@ namespace Application.Handlers.Task
                     await transaction.RollbackAsync();
                     return Result<CreateTaskUserDTO>.Failure("Please select at least one skill.");
                 }
+                if (request.CreateTaskUserDTO.starting_bid <= 0)
+                { 
+                await transaction.RollbackAsync();
+                    return Result<CreateTaskUserDTO>.Failure("Please enter a postive number");
+                }
 
                 
 

@@ -12,12 +12,16 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import HomeHeader from '../Home/HomeHeader';
 import { fetchTaskDetails, addBidAcceptance } from "./Service/Auth"; 
 import { useParams, useNavigate,Link } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useAuth } from "../../../Components/Context";
+import authService from "../../Authentication/Service/Auth";
+
 
 const ClientTaskDetails = () => {
   const { ServiceId } = useParams();
@@ -29,11 +33,46 @@ const ClientTaskDetails = () => {
   const { token } = useAuth();
   const navigate = useNavigate();
 
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("error");
+
+  const calculateBidTimeLeft = (bidDuration) => {
+    const [hoursStr, minutesStr, secondsStr] = bidDuration.split(':');
+    const hours = parseInt(hoursStr, 10);
+    const minutes = parseInt(minutesStr, 10);
+    const seconds = parseInt(secondsStr, 10);
+  
+    const now = new Date();
+    const targetDate = new Date(now.getTime() + (hours * 60 * 60 + minutes * 60 + seconds) * 1000);
+  
+    const timeDifference = targetDate - now;
+    if (timeDifference <= 0) {
+      return {
+        hours: 0,
+        minutes: 0,
+        seconds: 0,
+      };
+    }
+  
+    return {
+      hours,
+      minutes,
+      seconds,
+    };
+  };
+
+  const [bidTimeLeft, setBidTimeLeft] = useState(null);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const details = await fetchTaskDetails(ServiceId);
         setTaskDetails(details);
+
+        if (details && details.bidDuration) {
+          setBidTimeLeft(calculateBidTimeLeft(details.bidDuration));
+        }
       } catch (error) {
         console.error("Error fetching task details:", error.message);
       }
@@ -42,30 +81,108 @@ const ClientTaskDetails = () => {
     fetchData();
   }, [ServiceId]);
 
+
+   useEffect(() => {
+    if (taskDetails && taskDetails.bidDuration) {
+      const intervalId = setInterval(() => {
+        setBidTimeLeft((prevTimeLeft) => {
+          if (prevTimeLeft.seconds > 0) {
+            return {
+              ...prevTimeLeft,
+              seconds: prevTimeLeft.seconds - 1,
+            };
+          } else if (prevTimeLeft.minutes > 0) {
+            return {
+              ...prevTimeLeft,
+              minutes: prevTimeLeft.minutes - 1,
+              seconds: 59,
+            };
+          } else if (prevTimeLeft.hours > 0) {
+            return {
+              ...prevTimeLeft,
+              hours: prevTimeLeft.hours - 1,
+              minutes: 59,
+              seconds: 59,
+            };
+          } else {
+            clearInterval(intervalId);
+            // Handle timer expiration
+            return {
+              hours: 0,
+              minutes: 0,
+              seconds: 0,
+            };
+          }
+        });
+      }, 1000);
+
+      return () => clearInterval(intervalId);
+    }
+  }, [taskDetails]);
+
+  const handleAcceptBid = async (bid) => {
+    try {
+      const senderWallet = await authService.getUserWallet(token);
+
+      if (senderWallet.Balance < bid.bidAmount) {
+        console.error('Insufficient balance. Bid cannot be accepted.');
+        // Show Snackbar error message
+        showSnackbar("Insufficient balance. Bid cannot be accepted.", "error");
+        return;
+      }
+
+      setSelectedBid(bid);
+      setOpenAcceptDialog(true);
+    } catch (error) {
+      console.error('Error checking balance:', error.message);
+      // Handle the error or show an error message
+      showSnackbar("Error checking balance.", "error");
+    }
+  };
+
   const handleAcceptConfirmation = async () => {
     try {
-      // Make the API call to accept the bid using selectedBid
-      const response = await addBidAcceptance(ServiceId, selectedBid.bidAmount, selectedBid.bidId, token);
+      const senderWallet = await authService.getUserWallet(token);
 
-      // Handle the response or update the UI as needed
+      if (senderWallet.Balance < selectedBid.bidAmount) {
+        console.error('Insufficient balance. Bid cannot be accepted.');
+        // Show Snackbar error message
+        showSnackbar("Insufficient balance. Bid cannot be accepted.", "error");
+        setOpenAcceptDialog(false);
+        return;
+      }
+
+      const response = await addBidAcceptance(ServiceId, selectedBid.bidAmount, selectedBid.bidId, token);
       console.log('Bid accepted successfully:', response);
 
-      // Close the confirmation dialog
       setOpenAcceptDialog(false);
 
       setTimeout(() => {
         navigate('/MyTasks');
       }, 1000);
     } catch (error) {
-      console.error('Error accepting bid:', error.message);
+      console.error('Insufficient balance:', error.message);
       // Handle the error or show an error message
+      showSnackbar("Insufficient balance.", "error");
     }
   };
 
-  const handleAcceptBid = (bid) => {
-    setSelectedBid(bid);
-    setOpenAcceptDialog(true);
+
+  const showSnackbar = (message, severity) => {
+    setSnackbarMessage(message);
+    setSnackbarSeverity(severity);
+    setSnackbarOpen(true);
   };
+
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setSnackbarOpen(false);
+  };
+
+ 
 
   const handleGoBack = () => {
     navigate("/MyTasks"); 
@@ -94,7 +211,6 @@ const ClientTaskDetails = () => {
     const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
-  
   
     return `${weeks} weeks, ${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds left`;
   };
@@ -129,25 +245,30 @@ const ClientTaskDetails = () => {
                 </CardContent>
               </Card>
               <Box mt={2}>
-                <Typography variant="h6" gutterBottom>
-                  Task Attachments
+              <Typography variant="h6" gutterBottom>
+                Task Attachments
+              </Typography>
+              {taskDetails.lstMedia && taskDetails.lstMedia.length > 0 ? (
+                taskDetails.lstMedia.map((media, index) => (
+                  <img
+                    key={index}
+                    alt={`Media ${index + 1}`}
+                    src={`data:image/png;base64,${media}`}
+                    style={{
+                      width: "20%",
+                      height: "20%",
+                      marginBottom: 10,
+                      cursor: "pointer",
+                    }}
+                    onClick={() => handleImageClick(media)}
+                  />
+                ))
+              ) : (
+                <Typography variant="body2">
+                  No attachments were attached to this task.
                 </Typography>
-                {taskDetails.lstMedia &&
-                  taskDetails.lstMedia.map((media, index) => (
-                    <img
-                      key={index}
-                      alt={`Media ${index + 1}`}
-                      src={`data:image/png;base64,${media}`}
-                      style={{
-                        width: "20%",
-                        height: "20%",
-                        marginBottom: 10,
-                        cursor: "pointer",
-                      }}
-                      onClick={() => handleImageClick(media)}
-                    />
-                  ))}
-              </Box>
+              )}
+            </Box>
             </Grid>
             <Grid item xs={4}>
               <Typography variant="h6" gutterBottom>
@@ -156,10 +277,10 @@ const ClientTaskDetails = () => {
               <Card>
                 <CardContent>
                   <Typography variant="body1">
-                    Budget: {taskDetails.starting_bid || "No Starting Bid"}
+                    Budget: {taskDetails.starting_bid || "No Starting Bid"} $
                   </Typography>
                   <Typography variant="body1">
-                    Bid Duration: {taskDetails.bidDuration || "No Bid Duration"}
+                    Bid Duration: {bidTimeLeft ? `${bidTimeLeft.hours} hours, ${bidTimeLeft.minutes} minutes, ${bidTimeLeft.seconds} seconds left` : 'Expired'}
                   </Typography>
                   <Typography variant="body1">
                     Category: {taskDetails.category_name || "No Category"}
@@ -167,6 +288,9 @@ const ClientTaskDetails = () => {
                   
                   <Typography variant="body1">
                    DeadLine: {calculateTimeLeft(taskDetails.taskSubmissionTime) || "No specific DeadLine"}
+                  </Typography>
+                  <Typography variant="body1">
+                   Status: {(taskDetails.status) || "No specific status"}
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
                     {`Created on: ${new Date(
@@ -217,37 +341,37 @@ const ClientTaskDetails = () => {
           </Dialog>
 
           <Box mt={3}>
-            <Typography variant="h6" gutterBottom>
-              Received Bids
-            </Typography>
-            {taskDetails.bids && taskDetails.bids.length > 0 ? (
-              taskDetails.bids.map((bid) => (
-                <Card key={bid.bidId}>
-                  <CardContent>
-                    <Typography variant="body1">
-                      Bid Amount: {bid.bidAmount}
-                    </Typography>
-                    {bid.bidder && (
-                      <>
-                        <Typography variant="body1">
-                          Bidder: {`${bid.bidder.firstName || 'Unknown'} ${bid.bidder.lastName || 'Unknown'}`}
-                        </Typography>
-                        <Typography variant="body1" gutterBottom>
-                          <Link to={`/SelectedProfileUserNameInfo/${bid.bidder.userName}`}>
-                            {bid.bidder.userName}
-                          </Link>
-                        </Typography>
-                        
-                      </>
-                    )}
-                    <Button onClick={() => handleAcceptBid(bid)}>Accept Bid</Button>
-                  </CardContent>
-                </Card>
-              ))
-            ) : (
-              <Typography variant="body2">No bids received for this task.</Typography>
-            )}
-          </Box>
+  <Typography variant="h6" gutterBottom>
+    Received Bids
+  </Typography>
+  {taskDetails.bids && taskDetails.bids.length > 0 ? (
+    taskDetails.bids.map((bid) => (
+      <Card key={bid.bidId} style={{ marginBottom: '16px' }}>
+        <CardContent>
+          <Typography variant="body1">
+            Bid Amount: {bid.bidAmount} $
+          </Typography>
+          {bid.bidder && (
+            <>
+              <Typography variant="body1">
+                Bidder: {`${bid.bidder.firstName || 'Unknown'} ${bid.bidder.lastName || 'Unknown'}`}
+              </Typography>
+              <Typography variant="body1" gutterBottom>
+                <Link to={`/SelectedProfileUserNameInfo/${bid.bidder.userName}`}>
+                  {bid.bidder.userName}
+                </Link>
+              </Typography>
+            </>
+          )}
+          <Button onClick={() => handleAcceptBid(bid)}>Accept Bid</Button>
+        </CardContent>
+      </Card>
+    ))
+  ) : (
+    <Typography variant="body2">No bids received for this task.</Typography>
+  )}
+</Box>
+
 
           <Dialog open={openAcceptDialog} onClose={() => setOpenAcceptDialog(false)}>
             <DialogTitle>Accept Bid Confirmation</DialogTitle>
@@ -271,6 +395,16 @@ const ClientTaskDetails = () => {
           </Dialog>
         </Box>
       )}
+
+<Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

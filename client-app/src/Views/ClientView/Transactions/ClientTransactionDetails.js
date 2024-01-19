@@ -66,7 +66,7 @@ function ClientTransactionDetails() {
                 </Grid>
                 <Grid item xs={6}>
                   <Paper elevation={3} style={{ padding: '20px' }}>
-                    <Typography variant="subtitle1">Amount: {transactionDetails.amount}</Typography>
+                    <Typography variant="subtitle1">Amount: {transactionDetails.amount} $</Typography>
                   </Paper>
                 </Grid>
                 <Grid item xs={6}>

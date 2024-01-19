@@ -93,7 +93,7 @@ function ClientTransactions() {
                       >
                         <Typography variant="body1">
                           Transaction Number: {transaction.transactionId}{'\n'}
-                          Amount: {transaction.amount}{'\n'}
+                          Amount: {transaction.amount} ${'\n'} 
                           Date: {new Date(transaction.transactionDate).toLocaleDateString()}{'\n'}
                           Type: {transaction.transaction_Type}
                         </Typography>

@@ -3,10 +3,21 @@ import HomeHeader from '../Home/HomeHeader';
 import { useAuth } from '../../../Components/Context';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+// ... other imports
+//import { LocalizationProvider, DateTimePicker, AdapterDateFns    } from '@mui/x-date-pickers';
+import Stack from '@mui/material/Stack';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers';
+import { format, addMinutes, parseISO } from 'date-fns';
+// ... rest of the code
+
+
+
+
+
+
+
+
 
 import {
   Box,
@@ -148,33 +159,7 @@ function ClientCreateTask() {
     }
   };
 
-  //deadline
-
-  const handleSubmissionTimeChange = (name, value) => {
-    switch (name) {
-      case 'submissionYear':
-        setSubmissionYear(value);
-        break;
-      case 'submissionMonth':
-        setSubmissionMonth(value);
-        break;
-      case 'submissionDay':
-        setSubmissionDay(value);
-        break;
-      case 'submissionHours':
-        setSubmissionHours(value);
-        break;
-      case 'submissionMinutes':
-        setSubmissionMinutes(value);
-        break;
-      case 'submissionSeconds':
-        setSubmissionSeconds(value);
-        break;
-      default:
-        break;
-    }
-  };
-  
+ 
   
 
   const handleCreateTask = async () => {
@@ -187,8 +172,7 @@ function ClientCreateTask() {
       const bidDuration = `${bidHours}:${bidMinutes}:${bidSeconds}`;
     formData.append('bid_duration', bidDuration);
 
-    const taskSubmissionTime = `${submissionYear}-${submissionMonth}-${submissionDay}T${submissionHours}:${submissionMinutes}:${submissionSeconds}Z`;
-    formData.append('TaskSubmissionTime', taskSubmissionTime);
+   
 
 
       // Use selectedFiles array
@@ -260,6 +244,9 @@ function ClientCreateTask() {
   const handleGoBack = () => {
     navigate('/ClientHome');
   };
+
+
+  
 
   const padWithZero = (number) => {
     return number < 10 ? `0${number}` : `${number}`;
@@ -398,85 +385,30 @@ function ClientCreateTask() {
               </Box>
 
               <Box mt={2} mb={2}>
-                <Typography variant="h6">Task DeadLine</Typography>
-                <Grid container spacing={2} alignItems="center">
-                  <Grid item>
-                    <TextField
-                      type="number"
-                      label="Year"
-                      name="submissionYear"
-                      value={submissionYear}
-                      onChange={(e) => handleSubmissionTimeChange(e.target.name, e.target.value)}
-                      inputProps={{ min: 2024, max: 2030 }} // You can adjust the range as needed
-                    />
-                  </Grid>
-                  <Grid item>
-                    <Typography>-</Typography>
-                  </Grid>
-                  <Grid item>
-                    <TextField
-                      type="number"
-                      label="Month"
-                      name="submissionMonth"
-                      value={submissionMonth}
-                      onChange={(e) => handleSubmissionTimeChange(e.target.name, padWithZero(e.target.value))}
-                      inputProps={{ min: 1, max: 12 }}
-                    />
-                  </Grid>
-                  <Grid item>
-                    <Typography>-</Typography>
-                  </Grid>
-                  <Grid item>
-                    <TextField
-                      type="number"
-                      label="Day"
-                      name="submissionDay"
-                      value={submissionDay}
-                      onChange={(e) => handleSubmissionTimeChange(e.target.name, padWithZero(e.target.value))}
-                      inputProps={{ min: 1, max: 31 }}
-                    />
-                  </Grid>
-                  <Grid item>
-                    <Typography></Typography>
-                  </Grid>
-                  <Grid item>
-                    <TextField
-                      type="number"
-                      label="Hours"
-                      name="submissionHours"
-                      value={submissionHours}
-                      onChange={(e) => handleSubmissionTimeChange(e.target.name, padWithZero(e.target.value))}
-                      inputProps={{ min: 0, max: 23 }}
-                    />
-                  </Grid>
-                  <Grid item>
-                    <Typography>:</Typography>
-                  </Grid>
-                  <Grid item>
-                    <TextField
-                      type="number"
-                      label="Minutes"
-                      name="submissionMinutes"
-                      value={submissionMinutes}
-                      onChange={(e) => handleSubmissionTimeChange(e.target.name, padWithZero(e.target.value))}
-                      inputProps={{ min: 0, max: 59 }}
-                    />
-                  </Grid>
-                  <Grid item>
-                    <Typography>:</Typography>
-                  </Grid>
-                  <Grid item>
-                    <TextField
-                      type="number"
-                      label="Seconds"
-                      name="submissionSeconds"
-                      value={submissionSeconds}
-                      onChange={(e) => handleSubmissionTimeChange(e.target.name, padWithZero(e.target.value))}
-                      inputProps={{ min: 0, max: 59 }}
-                    />
-                  </Grid>
-                </Grid>
-              </Box>
+        <Typography variant="h6">Task Deadline</Typography>
+        <Grid container spacing={2} alignItems="center">
+          <Grid item>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+  <DateTimePicker
+    label="Submission Time"
+    value={
+      parseISO(taskData.TaskSubmissionTime) ||
+      new Date()  // Set the default value to the current date and time
+    }
+    onChange={(value) => {
+      const formattedDate = format(value, "yyyy-MM-dd'T'HH:mm:00");
+      setTaskData((prevData) => ({
+        ...prevData,
+        TaskSubmissionTime: formattedDate,
+      }));
+    }}
+    minDateTime={new Date()}
+  />
+</LocalizationProvider>
+
+          </Grid>
+        </Grid>
+      </Box>
             </Grid>
           </Grid>
 

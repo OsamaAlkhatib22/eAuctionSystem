@@ -97,25 +97,30 @@ const  FreeLancerMyTaskCompletedDetails = () => {
                 </CardContent>
               </Card>
               <Box mt={2}>
-                <Typography variant="h6" gutterBottom>
-                  Task Attachments
+              <Typography variant="h6" gutterBottom>
+                Task Attachments
+              </Typography>
+              {taskDetails.lstMedia && taskDetails.lstMedia.length > 0 ? (
+                taskDetails.lstMedia.map((media, index) => (
+                  <img
+                    key={index}
+                    alt={`Media ${index + 1}`}
+                    src={`data:image/png;base64,${media}`}
+                    style={{
+                      width: "20%",
+                      height: "20%",
+                      marginBottom: 10,
+                      cursor: "pointer",
+                    }}
+                    onClick={() => handleImageClick(media)}
+                  />
+                ))
+              ) : (
+                <Typography variant="body2">
+                  No attachments were attached to this task.
                 </Typography>
-                {taskDetails.lstMedia &&
-                  taskDetails.lstMedia.map((media, index) => (
-                    <img
-                      key={index}
-                      alt={`Media ${index + 1}`}
-                      src={`data:image/png;base64,${media}`}
-                      style={{
-                        width: "20%",
-                        height: "20%",
-                        marginBottom: 10,
-                        cursor: "pointer",
-                      }}
-                      onClick={() => handleImageClick(media)}
-                    />
-                  ))}
-              </Box>
+              )}
+            </Box>
             </Grid>
             <Grid item xs={4}>
               <Typography variant="h6" gutterBottom>
@@ -124,7 +129,7 @@ const  FreeLancerMyTaskCompletedDetails = () => {
               <Card>
                 <CardContent>
                   <Typography variant="body1">
-                    Accepted Bid: {taskDetails.accepted_Bid || "No Bid was Accepted"}
+                    Accepted Bid: {taskDetails.accepted_Bid || "No Bid was Accepted"} $
                   </Typography>
                   <Typography variant="body1">
                   Client: 
@@ -193,25 +198,25 @@ const  FreeLancerMyTaskCompletedDetails = () => {
             <CardContent>
               <Typography variant="body1">Comment: {freelancerSubmission.comment || "No comment"}</Typography>
               {freelancerSubmission.lstMedia.length > 0 ? (
-  freelancerSubmission.lstMedia.map((media, index) => (
-    <React.Fragment key={index}>
-      {media.trim() !== "" && (
-        <img
-          alt={`Freelancer Submission ${index + 1}`}
-          src={`data:image/png;base64,${media}`}
-          style={{
-            width: "20%",
-            height: "20%",
-            marginBottom: 10,
-          }}
-          onClick={() => handleImageClick(media)}
-        />
-      )}
-    </React.Fragment>
-  ))
-) : (
-  <Typography variant="body2">No images were added by the freelancer.</Typography>
-)}
+                    freelancerSubmission.lstMedia.map((media, index) => (
+                      <React.Fragment key={index}>
+                        {media.trim() !== "" && (
+                          <img
+                            alt={`Freelancer Submission ${index + 1}`}
+                            src={`data:image/png;base64,${media}`}
+                            style={{
+                              width: "20%",
+                              height: "20%",
+                              marginBottom: 10,
+                            }}
+                            onClick={() => handleImageClick(media)}
+                          />
+                        )}
+                      </React.Fragment>
+                    ))
+                  ) : (
+                    <Typography variant="body2">No images were added by the freelancer.</Typography>
+                  )}
 
             </CardContent>
           </Card>
